@@ -1,6 +1,8 @@
 package pt.isel
-const val SIDEMIN = 4
-const val SIDEMAX = 26
+
+const val SIDE_MIN = 4
+const val SIDE_MAX = 26
+
 /**
  * Represents a board game grid.
  *
@@ -11,8 +13,8 @@ class Board(private val side: Int) {
     private val pieces: List<Piece> = listOf()
 
     init {
-        require(side in SIDEMIN..SIDEMAX) {
-            "Side must be between $SIDEMIN and $SIDEMAX"
+        require(side in SIDE_MIN..SIDE_MAX) {
+            "Side must be between $SIDE_MIN and $SIDE_MAX"
         }
         require(side % 2 == 0) {
             "Side must be an even number"
@@ -28,14 +30,14 @@ class Board(private val side: Int) {
      */
     data class Piece(val row: Int, val col: Int, var value: Char) {
         init {
-            val value = value.lowercase()[0]
-            require(row in 1..SIDEMAX) {
-                "Row must be between 1 and $SIDEMAX"
+            val char = value.lowercase()[0]
+            require(row in 1..SIDE_MAX) {
+                "Row must be between 1 and $SIDE_MAX"
             }
-            require(col in 1..SIDEMAX) {
-                "Column must be between 1 and $SIDEMAX"
+            require(col in 1..SIDE_MAX) {
+                "Column must be between 1 and $SIDE_MAX"
             }
-            require(value == 'b' || value == 'w') {
+            require(char == 'b' || char == 'w') {
                 "Value must be 'b' or 'w'"
             }
         }
@@ -45,7 +47,7 @@ class Board(private val side: Int) {
      * Gets the piece at the specified row and column.
      * @return The piece at the specified position, or null if there is no piece.
      */
-    operator fun get(row: Int, col: Char): Piece? = this[row, charIdxToInt(col)]
+    operator fun get(row: Int, col: Char): Piece? = this[row, charIndexToInt(col)]
 
     /**
      * Gets the piece at the specified row and column.
@@ -64,7 +66,7 @@ class Board(private val side: Int) {
      * Changes the piece at the specified row and column from 'b' to 'w' or from 'w' to 'b'.
      * @return true if the piece was changed, false if there is no piece at the specified position.
      */
-    fun changePiece(row: Int, col: Char): Boolean = changePiece(row, charIdxToInt(col))
+    fun changePiece(row: Int, col: Char): Boolean = changePiece(row, charIndexToInt(col))
 
     /**
      * Changes the piece at the specified row and column from 'b' to 'w' or from 'w' to 'b'.
@@ -85,7 +87,7 @@ class Board(private val side: Int) {
     /**
      * Adds a piece to the board at the specified row and column.
      */
-    fun addPiece(row: Int, col: Char, value: Char) = addPiece(row, charIdxToInt(col), value)
+    fun addPiece(row: Int, col: Char, value: Char) = addPiece(row, charIndexToInt(col), value)
 
     /**
      * Adds a piece to the board at the specified row and column.
@@ -109,7 +111,7 @@ class Board(private val side: Int) {
     /**
      * Converts a column character ('a', 'b', ...) to its corresponding integer index.
      */
-    private fun charIdxToInt(col: Char): Int {
+    private fun charIndexToInt(col: Char): Int {
         val colLower = col.lowercase()[0]
         require(colLower in 'a'..'a' + side - 1) {
             "Column must be between 'a' and '${'a' + side - 1}'" }
