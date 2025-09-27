@@ -1,3 +1,5 @@
+import org.jetbrains.dokka.gradle.DokkaTask
+
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '2.2.0'
     id 'org.jetbrains.dokka' version '2.0.0'
@@ -18,12 +20,67 @@ subprojects {
 
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    implementation 'com.github.RafaPear:CLIlib:master-SNAPSHOT'
+    implementation 'com.github.RafaPear:CLIlib:1.5.9-Beta'
+}
+
+tasks.withType(DokkaTask).configureEach {
+    outputDirectory.set(layout.buildDirectory.dir("dokka/html"))
 }
 
 test {
     useJUnitPlatform()
 }
+
 kotlin {
     jvmToolchain(21)
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+// evita falhas por ficheiros duplicados em todas as tasks do tipo Jar
+tasks.withType(Jar).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+project.afterEvaluate {
+    def dokkaTaskCandidate = tasks.named('dokkaJavadoc')
+    if (dokkaTaskCandidate == null) dokkaTaskCandidate = tasks.named('dokkaGenerate')
+    if (dokkaTaskCandidate == null) dokkaTaskCandidate = tasks.find { it.name?.startsWith('dokka') }
+
+    def dokkaGenerateTask = tasks.named('dokkaGenerate')
+    if (dokkaGenerateTask != null) {
+        tasks.named('javadocJar') {
+            dependsOn dokkaGenerateTask
+            from(layout.buildDirectory.dir('dokka/html'))
+        }
+        tasks.named('jar') {
+            dependsOn dokkaGenerateTask
+            from(layout.buildDirectory.dir('dokka/html')) {
+                into('docs')
+            }
+        }
+    }
+
+    if (dokkaTaskCandidate != null) {
+        tasks.named('javadocJar') {
+            dependsOn dokkaTaskCandidate
+            if (dokkaTaskCandidate.hasProperty('outputDirectory')) {
+                from(dokkaTaskCandidate.outputDirectory)
+            }
+        }
+
+        tasks.named('jar') {
+            dependsOn dokkaTaskCandidate
+            if (dokkaTaskCandidate.hasProperty('outputDirectory')) {
+                from(dokkaTaskCandidate.outputDirectory) {
+                    into('docs')
+                }
+            }
+        }
+    } else {
+        logger.warn('Nenhuma task Dokka encontrada; javadocJar/jar não irão incluir documentação Dokka.')
+    }
 }
