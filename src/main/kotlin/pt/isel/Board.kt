@@ -1,5 +1,6 @@
 package pt.isel
 
+
 const val SIDE_MIN = 4
 const val SIDE_MAX = 26
 
@@ -10,10 +11,13 @@ const val SIDE_MAX = 26
  * @property rows The number of rows on the board.
  * @property cols The number of columns on the board.
  */
-class Board(private val rows: Int, private val cols: Int) {
-    private var pieces: List<Piece> = listOf()
+data class Board(private val rows: Int,
+                private val cols: Int,
+                private val  pieces: List<Piece> = emptyList()
+) {
 
     constructor(row: Int) : this(row, row)
+
     init {
         require(rows in SIDE_MIN..SIDE_MAX) {
             "Row must be between $SIDE_MIN and $SIDE_MAX"
@@ -24,13 +28,8 @@ class Board(private val rows: Int, private val cols: Int) {
         require(rows % 2 == 0 && cols % 2 == 0) {
             "Row must be even"
         }
-        val midRow = rows / 2
-        val midCol = cols/ 2
-        pieces += Piece(midRow, midCol, 'w')
-        pieces += Piece(midRow + 1, midCol + 1, 'w')
-        pieces += Piece(midRow, midCol + 1, 'b')
-        pieces += Piece(midRow + 1, midCol, 'b')
     }
+
     /**
      * Represents a piece on the board.
      */
@@ -94,12 +93,12 @@ class Board(private val rows: Int, private val cols: Int) {
     /**
      * Adds a piece to the board at the specified row and column.
      */
-    fun addPiece(row: Int, col: Char, value: Char) = addPiece(row, charIndexToInt(col), value)
+    fun addPiece(row: Int, col: Char, value: Char): Board = this.addPiece(row, charIndexToInt(col), value)
 
     /**
      * Adds a piece to the board at the specified row and column.
      */
-    fun addPiece(row: Int, col: Int, value: Char): Boolean {
+    fun addPiece(row: Int, col: Int, value: Char): Board {
         val value = value.lowercase()[0]
         require(row in 1..rows) {
             "Row must be between 1 and $rows"
@@ -110,9 +109,8 @@ class Board(private val rows: Int, private val cols: Int) {
         require(value == 'b' || value == 'w') {
             "Value must be 'b' or 'w'"
         }
-        if (this[row, col] == null) return false
-        pieces = pieces + Piece(row, col, value)
-        return true
+        if (this[row, col] == null) return this
+        return this.copy(pieces = pieces + Piece(row, col, value))
     }
 
     /**
@@ -123,5 +121,20 @@ class Board(private val rows: Int, private val cols: Int) {
         require(colLower in 'a'..'a' + cols - 1) {
             "Column must be between 'a' and '${'a' + cols - 1}'" }
         return colLower - 'a' + 1
+    }
+
+    /**
+     * Starts the board with the initial pieces in the center.
+     * @return A list of the initial pieces.
+     */
+    private fun startPieces(): Board {
+        val midRow = rows / 2
+        val midCol = cols / 2
+        return this.copy(pieces = listOf(
+            Piece(midRow, midCol, 'w'),
+            Piece(midRow + 1, midCol + 1, 'w'),
+            Piece(midRow, midCol + 1, 'b'),
+            Piece(midRow + 1, midCol, 'b')
+        ))
     }
 }
