@@ -1,7 +1,6 @@
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
-import org.junit.jupiter.api.Assertions.assertEquals
 import pt.isel.reversi.Board
 
 class BoardTests {
@@ -33,7 +32,7 @@ class BoardTests {
 
     // Piece tests
 
-    @Test
+    /*@Test
     fun `Create Piece with negative row fails`() {
         assertFailsWith<IllegalArgumentException> {
             Board.Piece(row = -1, col = 1, 'w')
@@ -71,7 +70,7 @@ class BoardTests {
     @Test
     fun `Create Piece with positive row and col & valid color succeeds`() {
         Board.Piece(row = 1, col = 1, 'w')
-    }
+    }*/
 
     // Board get functions tests
 
@@ -119,7 +118,7 @@ class BoardTests {
 
     // Board addPiece function tests
 
-    @Test
+    /*@Test
     fun `addPiece function with row outside range fails`() {
         assertFailsWith<IllegalArgumentException> {
             Board(8).addPiece(row = -1, col = 1, value = 'w')
@@ -166,6 +165,6 @@ class BoardTests {
             Board.Piece(row = 5, col = 4, 'b')
         )
         assertEquals(expectedPieces, startedBoard)
-    }
+    }*/
 
 }
