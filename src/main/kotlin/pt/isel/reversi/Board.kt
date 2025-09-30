@@ -70,12 +70,14 @@ data class Board private constructor(
     /**
      * Gets the piece at the specified row and column.
      * @return The piece at the specified position, or null if there is no piece.
+     * @throws IllegalArgumentException if the row or column are out of bounds.
      */
     operator fun get(row: Int, col: Char): PieceType? = this[row, col.toIntIndex()]
 
     /**
      * Gets the piece at the specified index like linear list.
      * @return The piece at the PieceType, or null if there is no piece.
+     * @throws IllegalArgumentException if the index is out of bounds.
      */
     operator fun get(idx: Int): PieceType? {
         require(idx in 0 until side * side) {
@@ -88,6 +90,7 @@ data class Board private constructor(
     /**
      * Gets the piece at the specified row and column.
      * @return The piece at the specified position, or null if there is no piece.
+     * @throws IllegalArgumentException if the row or column are out of bounds.
      */
     operator fun get(row: Int, col: Int): PieceType? {
         checkPosition(row, col)
@@ -98,18 +101,26 @@ data class Board private constructor(
     /**
      * Changes the piece at the specified row and column from 'b' to 'w' or from 'w' to 'b'.
      * @return true if the piece was changed, false if there is no piece at the specified position.
+     * @throws IllegalArgumentException if the row or column are out of bounds.
      */
     fun changePiece(row: Int, col: Char): Board = changePiece(row, col.toIntIndex())
 
     /**
      * Changes the piece at the specified row and column from 'b' to 'w' or from 'w' to 'b'.
      * @return true if the piece was changed, false if there is no piece at the specified position.
+     * @throws IllegalArgumentException if the row or column are out of bounds.
      */
     fun changePiece(row: Int, col: Int): Board {
         checkPosition(row, col)
         return changePieceNoCheks(row, col)
     }
 
+    /**
+     * Changes the piece at the specified index like linear list from 'b' to 'w' or from 'w' to 'b'.
+     * @param idx The index of the piece to change.
+     * @return true if the piece was changed, false if there is no piece at the specified position.
+     * @throws IllegalArgumentException if the index is out of bounds.
+     */
     fun changePiece(idx: Int): Board {
         require(idx in 0 until side * side) {
             "Index must be between 0 and ${side * side - 1}"
@@ -130,6 +141,7 @@ data class Board private constructor(
 
     /**
      * Adds a piece to the board at the specified row and column.
+     * @throws IllegalArgumentException if the row or column are out of bounds.
      */
     fun addPiece(row: Int, col: Char, value: PieceType): Board =
         this.addPiece(row, col.toIntIndex(), value)
@@ -137,6 +149,7 @@ data class Board private constructor(
 
     /**
      * Adds a piece to the board at the specified row and column.
+     * @throws IllegalArgumentException if the row or column are out of bounds.
      */
     fun addPiece(row: Int, col: Int, value: PieceType): Board {
         checkPosition(row, col)
@@ -152,6 +165,7 @@ data class Board private constructor(
      * Adds a piece to the board at the specified index like linear list.
      * @param idx The index where the piece will be added.
      * @param value The type of piece to add.
+     * @throws IllegalArgumentException if the row or column are out of bounds.
      */
     fun addPiece(idx: Int, value: PieceType): Board {
         require(idx in 0 until side * side) {
