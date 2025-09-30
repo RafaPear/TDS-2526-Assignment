@@ -1,4 +1,4 @@
-package pt.isel
+package pt.isel.reversi
 
 
 const val SIDE_MIN = 4
@@ -28,6 +28,9 @@ data class Board private constructor(
         }
     }
 
+    /**
+     * Represents the type of piece on the board.
+     */
     enum class PieceType(val symbol: Char) {
         BLACK('#'),
         WHITE('@');
@@ -35,10 +38,34 @@ data class Board private constructor(
         fun swap(): PieceType = if (this == BLACK) WHITE else BLACK
     }
 
+
     /**
      * Represents a piece on the board.
      */
     private data class Piece(val row: Int, val col: Int, val value: PieceType)
+
+
+    fun Int.toCoordinates(): Pair<Int, Int> {
+        require(this in 0 until side * side) {
+            "Index must be between 0 and ${side * side - 1}"
+        }
+        val row = (this / side) + 1
+        val col = (this % side)
+        return Pair(row, col)
+    }
+
+    /**
+     * Checks if the specified row and column are within the bounds of the board.
+     * @throws IllegalArgumentException if the row or column are out of bounds.
+     */
+    private fun checkPosition(row: Int, col: Int) {
+        require(row in 1..side) {
+            "Row must be between 1 and $side"
+        }
+        require(col in 1..side) {
+            "Column must be between 1 and $side"
+        }
+    }
 
     /**
      * Gets the piece at the specified row and column.
@@ -46,12 +73,16 @@ data class Board private constructor(
      */
     operator fun get(row: Int, col: Char): PieceType? = this[row, col.toIntIndex()]
 
-    private fun checkPosition(row: Int, col: Int) {
-        require(row in 1..side) {
-            "Row must be between 1 and $side" }
-        require(col in 1..side) {
-            "Column must be between 1 and $side"
+    /**
+     * Gets the piece at the specified index like linear list.
+     * @return The piece at the PieceType, or null if there is no piece.
+     */
+    operator fun get(idx: Int): PieceType? {
+        require(idx in 0 until side * side) {
+            "Index must be between 0 and ${side * side - 1}"
         }
+        val (row, col) = idx.toCoordinates()
+        return pieces.find { it.row == row && it.col == col }?.value
     }
 
     /**
@@ -63,12 +94,12 @@ data class Board private constructor(
         return pieces.find { it.row == row && it.col == col }?.value
     }
 
+
     /**
      * Changes the piece at the specified row and column from 'b' to 'w' or from 'w' to 'b'.
      * @return true if the piece was changed, false if there is no piece at the specified position.
      */
-    fun changePiece(row: Int, col: Char): Board =
-        changePiece(row, col.toIntIndex())
+    fun changePiece(row: Int, col: Char): Board = changePiece(row, col.toIntIndex())
 
     /**
      * Changes the piece at the specified row and column from 'b' to 'w' or from 'w' to 'b'.
@@ -76,7 +107,19 @@ data class Board private constructor(
      */
     fun changePiece(row: Int, col: Int): Board {
         checkPosition(row, col)
-        val value = this[row, col]?.swap() ?: return this
+        return changePieceNoCheks(row, col)
+    }
+
+    fun changePiece(idx: Int): Board {
+        require(idx in 0 until side * side) {
+            "Index must be between 0 and ${side * side - 1}"
+        }
+        val (row, col) = idx.toCoordinates()
+        return changePieceNoCheks(row, col)
+    }
+
+    private fun changePieceNoCheks(row: Int, col: Int): Board {
+        val value = this[row, col]?.swap() ?: throw IllegalArgumentException("No piece at position ($row, $col)")
         return this.copy(pieces = pieces.map { piece ->
             if (piece.row == row && piece.col == col)
                 piece.copy(value = value)
@@ -91,17 +134,31 @@ data class Board private constructor(
     fun addPiece(row: Int, col: Char, value: PieceType): Board =
         this.addPiece(row, col.toIntIndex(), value)
 
+
     /**
      * Adds a piece to the board at the specified row and column.
      */
     fun addPiece(row: Int, col: Int, value: PieceType): Board {
-        //val value = value.lowercase()[0]
         checkPosition(row, col)
-        /*require(value) {
-            "Value must be 'b' or 'w'"
-        }*/
-        if (this[row, col] == null) return this
+        return addPieceNoCheks(row, col, value)
+    }
+
+    private fun addPieceNoCheks(row: Int, col: Int, value: PieceType): Board {
+        if (this[row, col] != null) throw IllegalArgumentException("There is already a piece at position ($row, $col)")
         return this.copy(pieces = pieces + Piece(row, col, value))
+    }
+
+    /**
+     * Adds a piece to the board at the specified index like linear list.
+     * @param idx The index where the piece will be added.
+     * @param value The type of piece to add.
+     */
+    fun addPiece(idx: Int, value: PieceType): Board {
+        require(idx in 0 until side * side) {
+            "Index must be between 0 and ${side * side - 1}"
+        }
+        val (row, col) = idx.toCoordinates()
+        return addPieceNoCheks(row, col, value)
     }
 
     /**
