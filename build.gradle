@@ -1,13 +1,20 @@
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '2.2.0'
+    id 'org.jetbrains.kotlin.jvm' version '2.1.20'
+    id 'application'
+    id 'maven-publish'
     id 'org.jetbrains.dokka' version '2.0.0'
 }
 
+group = 'pt.isel.reversi'
+def artifact = 'MainKt'
+version = '0.0.1'
+mainClassName = "$group.$artifact"
 
-group = 'pt.isel'
-version = '1.0-SNAPSHOT'
+application {
+    mainClass = mainClassName
+}
 
 repositories {
     mavenCentral()
@@ -21,18 +28,11 @@ subprojects {
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     implementation 'com.github.RafaPear:KtFlag:1.0.2'
-}
 
-tasks.withType(DokkaTask).configureEach {
-    outputDirectory.set(layout.buildDirectory.dir("dokka/html"))
 }
 
 test {
     useJUnitPlatform()
-}
-
-kotlin {
-    jvmToolchain(21)
 }
 
 java {
@@ -40,9 +40,54 @@ java {
     withJavadocJar()
 }
 
+// directoria para guardar o ficheiro version.properties gerado
+def generatedVersionDir = layout.buildDirectory.dir('generated-version').get().asFile.path
+
+sourceSets {
+    main {
+        output.dir(generatedVersionDir, builtBy: 'generateVersionProperties')
+    }
+}
+
+// gera ficheiro version.properties em tempo de build
+tasks.register('generateVersionProperties') {
+    doLast {
+        def propertiesFile = file("${generatedVersionDir}/version.properties")
+        propertiesFile.parentFile.mkdirs()
+        def properties = new Properties()
+        properties.setProperty('version', rootProject.version.toString())
+        propertiesFile.withWriter { properties.store(it, null) }
+    }
+}
+
+processResources.dependsOn tasks.named('generateVersionProperties')
+
 // evita falhas por ficheiros duplicados em todas as tasks do tipo Jar
 tasks.withType(Jar).configureEach {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+kotlin {
+    jvmToolchain(21)
+
+}
+
+tasks.withType(DokkaTask).configureEach {
+    outputDirectory.set(layout.buildDirectory.dir("dokka/html"))
+}
+
+// JAR executável (fat jar): inclui dependências e define o Main-Class
+tasks.named('jar') {
+    manifest {
+        attributes(
+                'Main-Class': mainClassName,
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version
+        )
+    }
+    from({
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    })
 }
 
 project.afterEvaluate {
@@ -64,23 +109,19 @@ project.afterEvaluate {
         }
     }
 
-    if (dokkaTaskCandidate != null) {
-        tasks.named('javadocJar') {
-            dependsOn dokkaTaskCandidate
-            if (dokkaTaskCandidate.hasProperty('outputDirectory')) {
-                from(dokkaTaskCandidate.outputDirectory)
-            }
+    tasks.named('javadocJar') {
+        dependsOn dokkaTaskCandidate
+        if (dokkaTaskCandidate.hasProperty('outputDirectory')) {
+            from(dokkaTaskCandidate.outputDirectory)
         }
+    }
 
-        tasks.named('jar') {
-            dependsOn dokkaTaskCandidate
-            if (dokkaTaskCandidate.hasProperty('outputDirectory')) {
-                from(dokkaTaskCandidate.outputDirectory) {
-                    into('docs')
-                }
+    tasks.named('jar') {
+        dependsOn dokkaTaskCandidate
+        if (dokkaTaskCandidate.hasProperty('outputDirectory')) {
+            from(dokkaTaskCandidate.outputDirectory) {
+                into('docs')
             }
         }
-    } else {
-        logger.warn('Nenhuma task Dokka encontrada; javadocJar/jar não irão incluir documentação Dokka.')
     }
 }

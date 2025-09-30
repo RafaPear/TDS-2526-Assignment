@@ -1,6 +1,6 @@
-package pt.isel.commands
+package pt.isel.reversi.commands
 
-import pt.isel.Board
+import pt.isel.reversi.Board
 import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult

@@ -1,7 +1,7 @@
-package pt.isel
+package pt.isel.reversi
 
-import pt.isel.commands.CmdNew
-import pt.isel.parser.CommandParser
+import pt.isel.reversi.commands.CmdNew
+import pt.isel.reversi.parser.CommandParser
 import pt.rafap.ktflag.cmd.CommandResult
 import pt.rafap.ktflag.style.Colors
 import pt.rafap.ktflag.style.Colors.colorText

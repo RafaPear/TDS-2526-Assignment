@@ -1,9 +1,6 @@
 package pt.isel.reversi
 
 
-const val SIDE_MIN = 4
-const val SIDE_MAX = 26
-
 /**
  * Represents a board game grid.
  *
@@ -16,6 +13,9 @@ data class Board private constructor(
     private val side: Int,
     private val pieces: List<Piece>
 ) : Iterable<Board.PieceType> {
+
+    private val SIDE_MIN = 4
+    private val SIDE_MAX = 26
 
     constructor(side: Int) : this(side = side, emptyList())
 

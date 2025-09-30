@@ -1,4 +1,4 @@
-package pt.isel.parser
+package pt.isel.reversi.parser
 
 import pt.rafap.ktflag.cmd.CommandRegister
 import pt.rafap.ktflag.cmd.CommandResult
