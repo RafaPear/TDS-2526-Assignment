@@ -1,4 +1,5 @@
 import pt.isel.reversi.board.Board
+import pt.isel.reversi.board.PieceType
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 

@@ -1,6 +1,7 @@
 package pt.isel.reversi.commands
 
 import pt.isel.reversi.board.Board
+import pt.isel.reversi.board.PieceType
 import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult
@@ -29,7 +30,7 @@ object NewCmd: CommandImpl<Board>() {
         context: Board?
     ): CommandResult<Board> {
         val firstPlayer = PieceType.entries.find { it.symbol.toString() == arg[0] }
-            ?: return ERROR("First player must be one of: $pieceTypes")
+                          ?: return ERROR("First player must be one of: $pieceTypes")
 
         println(colorText("First player: $firstPlayer", Colors.INFO_COLOR))
 

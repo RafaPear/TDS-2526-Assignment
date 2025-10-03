@@ -1,7 +1,7 @@
 package pt.isel.reversi.game
 
-import Piece
-import PieceType
+import pt.isel.reversi.board.Piece
+import pt.isel.reversi.board.PieceType
 import pt.isel.reversi.board.Board
 
 interface GameDataAccessImpl {

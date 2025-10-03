@@ -1,7 +1,5 @@
 package pt.isel.reversi.board
 
-import Piece
-import PieceType
 import kotlin.collections.find
 import kotlin.collections.map
 

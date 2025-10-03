@@ -1,6 +1,6 @@
 package pt.isel.reversi.game
 
-import PieceType
+import pt.isel.reversi.board.PieceType
 import pt.isel.reversi.board.Board
 
 interface GameLogicImpl {
