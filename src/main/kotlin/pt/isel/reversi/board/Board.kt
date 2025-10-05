@@ -25,34 +25,24 @@ data class Board(
         }
     }
 
-    fun Int.toCoordinates(): Pair<Int, Int> {
+    fun Int.toCoordinates(): Coordinates {
         require(this in 0 until side * side) {
             "Index must be between 0 and ${side * side - 1}"
         }
         val row = (this / side) + 1
         val col = (this % side)
-        return Pair(row, col)
+        return Coordinates(row,col)
     }
 
     /**
      * Checks if the specified row and column are within the bounds of the board.
      * @throws IllegalArgumentException if the row or column are out of bounds.
      */
-    private fun checkPosition(row: Int, col: Int) {
-        require(row in 1..side) {
-            "Row must be between 1 and $side"
-        }
-        require(col in 1..side) {
-            "Column must be between 1 and $side"
+    private fun checkPosition(coordinate: Coordinates) {
+        require(coordinate.isValid(side)) {
+            "Position ($coordinate is out of bounds)"
         }
     }
-
-    /**
-     * Gets the piece at the specified row and column.
-     * @return The piece at the specified position, or null if there is no piece.
-     * @throws IllegalArgumentException if the row or column are out of bounds.
-     */
-    operator fun get(row: Int, col: Char): PieceType? = this[row, col.toIntIndex()]
 
     /**
      * Gets the piece at the specified index like linear list.
@@ -63,8 +53,8 @@ data class Board(
         require(idx in 0 until side * side) {
             "Index must be between 0 and ${side * side - 1}"
         }
-        val (row, col) = idx.toCoordinates()
-        return pieces.find { it.row == row && it.col == col }?.value
+        val coordinate = idx.toCoordinates()
+        return pieces.find { it.coordinate == coordinate }?.value
     }
 
     /**
@@ -72,27 +62,19 @@ data class Board(
      * @return The piece at the specified position, or null if there is no piece.
      * @throws IllegalArgumentException if the row or column are out of bounds.
      */
-    operator fun get(row: Int, col: Int): PieceType? {
-        checkPosition(row, col)
-        return pieces.find { it.row == row && it.col == col }?.value
+    operator fun get(coordinate: Coordinates): PieceType? {
+        checkPosition(coordinate)
+        return pieces.find { it.coordinate == coordinate }?.value
     }
 
-
     /**
      * Changes the piece at the specified row and column from 'b' to 'w' or from 'w' to 'b'.
      * @return true if the piece was changed, false if there is no piece at the specified position.
      * @throws IllegalArgumentException if the row or column are out of bounds.
      */
-    fun changePiece(row: Int, col: Char): Board = changePiece(row, col.toIntIndex())
-
-    /**
-     * Changes the piece at the specified row and column from 'b' to 'w' or from 'w' to 'b'.
-     * @return true if the piece was changed, false if there is no piece at the specified position.
-     * @throws IllegalArgumentException if the row or column are out of bounds.
-     */
-    fun changePiece(row: Int, col: Int): Board {
-        checkPosition(row, col)
-        return changePieceNoCheks(row, col)
+    fun changePiece(coordinate: Coordinates): Board {
+        checkPosition(coordinate)
+        return changePieceNoCheks(coordinate)
     }
 
     /**
@@ -105,14 +87,14 @@ data class Board(
         require(idx in 0 until side * side) {
             "Index must be between 0 and ${side * side - 1}"
         }
-        val (row, col) = idx.toCoordinates()
-        return changePieceNoCheks(row, col)
+        val coordinate = idx.toCoordinates()
+        return changePieceNoCheks(coordinate)
     }
 
-    private fun changePieceNoCheks(row: Int, col: Int): Board {
-        val value = this[row, col]?.swap() ?: throw IllegalArgumentException("No piece at position ($row, $col)")
+    private fun changePieceNoCheks(coordinate: Coordinates): Board {
+        val value = this[coordinate]?.swap() ?: throw IllegalArgumentException("No piece at position $coordinate")
         return this.copy(pieces = pieces.map { piece ->
-            if (piece.row == row && piece.col == col)
+            if (piece.coordinate == coordinate)
                 piece.copy(value = value)
             else
                 piece
@@ -123,22 +105,14 @@ data class Board(
      * Adds a piece to the board at the specified row and column.
      * @throws IllegalArgumentException if the row or column are out of bounds.
      */
-    fun addPiece(row: Int, col: Char, value: PieceType): Board =
-        this.addPiece(row, col.toIntIndex(), value)
-
-
-    /**
-     * Adds a piece to the board at the specified row and column.
-     * @throws IllegalArgumentException if the row or column are out of bounds.
-     */
-    fun addPiece(row: Int, col: Int, value: PieceType): Board {
-        checkPosition(row, col)
-        return addPieceNoCheks(row, col, value)
+    fun addPiece(coordinate: Coordinates, value: PieceType): Board {
+        checkPosition(coordinate)
+        return addPieceNoCheks(coordinate, value)
     }
 
-    private fun addPieceNoCheks(row: Int, col: Int, value: PieceType): Board {
-        if (this[row, col] != null) throw IllegalArgumentException("There is already a piece at position ($row, $col)")
-        return this.copy(pieces = pieces + Piece(row, col, value))
+    private fun addPieceNoCheks(coordinate: Coordinates, value: PieceType): Board {
+        if (this[coordinate] != null) throw IllegalArgumentException("There is already a piece at position $coordinate")
+        return this.copy(pieces = pieces + Piece(coordinate, value))
     }
 
     /**
@@ -151,19 +125,8 @@ data class Board(
         require(idx in 0 until side * side) {
             "Index must be between 0 and ${side * side - 1}"
         }
-        val (row, col) = idx.toCoordinates()
-        return addPieceNoCheks(row, col, value)
-    }
-
-    /**
-     * Converts a column character ('a', 'b', ...) to its corresponding integer index.
-     */
-    private fun Char.toIntIndex(): Int {
-        val colLower = this.lowercase()[0]
-        require(colLower in 'a'..'a' + side - 1) {
-            "Column must be between 'a' and '${'a' + side - 1}'"
-        }
-        return colLower - 'a' + 1
+        val coordinate = idx.toCoordinates()
+        return addPieceNoCheks(coordinate, value)
     }
 
     /**
@@ -174,10 +137,10 @@ data class Board(
         val mid = side / 2
         return this.copy(
             pieces = listOf(
-                Piece(row = mid, col = mid, value = PieceType.WHITE),
-                Piece(row = mid + 1, col = mid + 1, value = PieceType.WHITE),
-                Piece(row = mid, col = mid + 1, value = PieceType.BLACK),
-                Piece(row = mid + 1, col = mid, value = PieceType.BLACK)
+                Piece(Coordinates(mid, mid), PieceType.WHITE),
+                Piece(Coordinates(mid + 1, mid + 1), PieceType.WHITE),
+                Piece(Coordinates(mid, mid + 1), PieceType.BLACK),
+                Piece(Coordinates(mid + 1, mid), PieceType.BLACK)
             )
         )
     }
