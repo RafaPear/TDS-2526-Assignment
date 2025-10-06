@@ -19,6 +19,10 @@ Defines the high‑level game abstraction (composition of board, players, and ac
 # Data Access
 Encapsulates persistence contracts and a lightweight local file implementation using a line‑oriented plain text format. It standardizes outcome reporting with typed result codes and colored CLI formatting while remaining decoupled from the core game rules. Responsibilities include translating domain state to/from a canonical textual representation and validating structural integrity (headers, piece chronology, turn alternation hints).
 
+#package pt.isel.reversi.core.game.localgda
+# Local GDA
+Implements the concrete local filesystem persistence (text file format) for the generic data access abstraction. Complements the `pt.isel.reversi.core.game.data` contracts by providing a human‑readable, append‑oriented storage strategy used by the CLI and tests. Suitable for development and teaching; replaceable by alternative implementations (network / database) without touching domain logic.
+
 #package pt.isel.reversi.cli
 # CLI
 Hosts the command‑line presentation & interaction layer: parsing user intent, rendering board snapshots, and routing validated commands into the game abstraction. It focuses on progressive disclosure of information (e.g., optional target hints) and aims to remain scriptable and testable without side‑effects beyond standard IO.

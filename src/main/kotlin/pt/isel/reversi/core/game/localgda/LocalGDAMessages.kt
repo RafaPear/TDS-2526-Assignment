@@ -3,10 +3,17 @@ package pt.isel.reversi.core.game.localgda
 import pt.isel.reversi.core.board.Piece
 import pt.isel.reversi.core.board.PieceType
 
+/**
+ * Centralized message factory for [LocalGDA]. Keeps user-facing / log-facing strings in one place
+ * to simplify localization or stylistic changes. Each function returns a concise description used
+ * in [pt.isel.reversi.core.game.data.GDAResult.message].
+ */
 object LocalGDAMessages {
+    /** File could not be resolved or is not writable. */
     fun fileNotFound(file: String) =
         "The file '$file' does not exist, is not a valid file, or does not have write permissions"
 
+    /** File exists but contains zero lines. */
     fun fileEmpty(file: String) =
         "The file '$file' is empty — unable to load game data"
 
