@@ -66,7 +66,7 @@ open class MockGame(
         isLocal: Boolean = this.isLocal
     ) = MockGame(dataAccess, players, currGameName, board, target, isLocal)
 
-    class EmptyPlayers(dataAccess: LocalGDA, path: String) : MockGame(
+    class EmptyPlayers(dataAccess: GDAImpl, path: String) : MockGame(
         dataAccess = dataAccess,
         players = emptyList(),
         currGameName = path,
@@ -75,7 +75,7 @@ open class MockGame(
         isLocal = false
     )
 
-    class OnePlayer(dataAccess: LocalGDA, path: String) : MockGame(
+    class OnePlayer(dataAccess: GDAImpl, path: String) : MockGame(
         dataAccess = dataAccess,
         players = listOf(Player(PieceType.BLACK, 0, 32)),
         currGameName = path,
@@ -84,7 +84,7 @@ open class MockGame(
         isLocal = false
     )
 
-    class TwoPlayers(dataAccess: LocalGDA, path: String) : MockGame(
+    class TwoPlayers(dataAccess: GDAImpl, path: String) : MockGame(
         dataAccess = dataAccess,
         players = listOf(Player(PieceType.BLACK, 0, 32), Player(PieceType.WHITE, 0, 32)),
         currGameName = path,

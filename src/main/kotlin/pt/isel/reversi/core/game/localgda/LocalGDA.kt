@@ -122,7 +122,12 @@ class LocalGDA : GDAImpl {
     override fun postGame(fileName: String, game: GameImpl) = try {
         val file = getFile(fileName).data ?: File(fileName).apply { createNewFile() }
         val missing = PieceType.entries.map { it.symbol } - game.players.map { it.type.symbol }.toSet()
+        val isLocal = game.isLocal
+
+        // todo verify if local
         val players = game.players.joinToString("\n") { "$playerPrefix ${it.type.symbol} ${it.points} ${it.playsLeft}" }
+
+
 
         file.writeText(
             "$availablePiecesPrefix ${missing.joinToString("|")}\n" +

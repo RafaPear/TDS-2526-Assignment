@@ -8,6 +8,7 @@ import pt.isel.reversi.core.game.GameImpl
 import pt.isel.reversi.core.game.MockGame
 import pt.isel.reversi.core.game.Player
 import pt.isel.reversi.core.game.data.GDAResult
+import java.io.File
 import java.nio.file.Files
 
 fun main() {
@@ -16,28 +17,22 @@ fun main() {
     // val path = dir.resolve("game${(0..100).random()}.txt").toString()
     val path = "game.txt"
     println("Using file: $path")
-    var game: GameImpl = MockGame.EmptyPlayers(dataAccess, path)
+    var game: MockGame = MockGame.OnePlayer(dataAccess, path)
+    val game2 = MockGame.OnePlayer(dataAccess, path)
 
     val resultsList = mutableListOf<GDAResult<*>>()
 
+    println("Press Enter to start tests...")
+    readln()
     resultsList += dataAccess.postGame(path, game)
+    File(path).forEachLine { println(it) }
+    println("Press Enter to continue...")
+    readln()
+    resultsList += dataAccess.postGame(path, game2)
+    File(path).forEachLine { println(it) }
+    println("Press Enter to continue...")
+    readln()
     resultsList += dataAccess.postPiece(path, Piece(Coordinate(2, 3), PieceType.BLACK))
-
-    game = MockGame.OnePlayer(dataAccess, path)
-    resultsList += dataAccess.postGame(path, game)
-    resultsList += dataAccess.postPiece(path, Piece(Coordinate(2, 3), PieceType.BLACK))
-
-    game = MockGame(
-        dataAccess, listOf(
-            Player(PieceType.BLACK, 15, 17),
-            Player(PieceType.WHITE, 15, 17)
-        ), path, Board(8), target = false, isLocal = false
-    )
-    resultsList += dataAccess.postGame(path, game)
-    resultsList += dataAccess.postPiece(path, Piece(Coordinate(2, 3), PieceType.BLACK))
-    resultsList += dataAccess.postPiece(path, Piece(Coordinate(2, 3), PieceType.WHITE))
-    resultsList += dataAccess.postPass(path, PieceType.WHITE)
-    resultsList += dataAccess.postPass(path, PieceType.BLACK)
 
     val result = dataAccess.getBoard(path)
     resultsList += result
