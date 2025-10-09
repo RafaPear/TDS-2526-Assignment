@@ -46,7 +46,6 @@ class BoardTests {
         assert(uut[Coordinate(9, 'i')] == PieceType.WHITE)
     }
 
-
     @Test
     fun `get function with row outside range fails`() {
         assertFailsWith<IllegalArgumentException> {
@@ -81,6 +80,7 @@ class BoardTests {
         assert(Board(4)[Coordinate(4, 4)] == null)
         assert(Board(4)[5] == null)
     }
+
     @Test
     fun `get and addPiece function with valid row and col (Char) succeeds`() {
         var uut = Board(4)
@@ -123,6 +123,7 @@ class BoardTests {
             Board(8).changePiece(Coordinate(1, '['))
         }
     }
+
     @Test
     fun `changePiece function with no piece at position does nothing`() {
         var uut = Board(4)
@@ -138,6 +139,7 @@ class BoardTests {
             Board(8).changePiece(64)
         }
     }
+
     @Test
     fun `changePiece function with valid row and col (Char) succeeds`() {
         var uut = Board(4).addPiece(Coordinate(1, 'a'), PieceType.WHITE)
@@ -161,7 +163,7 @@ class BoardTests {
 
     @Test
     fun `addPiece function with row outside range fails`() {
-        assertFailsWith<IllegalArgumentException>{
+        assertFailsWith<IllegalArgumentException> {
             Board(8).addPiece(Coordinate(-1, 1), value = PieceType.BLACK)
             Board(8).addPiece(Coordinate(0, 1), value = PieceType.BLACK)
             Board(8).addPiece(Coordinate(27, 1), value = PieceType.BLACK)
@@ -170,7 +172,7 @@ class BoardTests {
 
     @Test
     fun `addPiece function with col outside range fails`() {
-        assertFailsWith<IllegalArgumentException>{
+        assertFailsWith<IllegalArgumentException> {
             Board(8).addPiece(Coordinate(1, -1), value = PieceType.BLACK)
             Board(8).addPiece(Coordinate(1, 0), value = PieceType.BLACK)
             Board(8).addPiece(Coordinate(1, 27), value = PieceType.BLACK)
@@ -181,7 +183,7 @@ class BoardTests {
 
     @Test
     fun `addPiece function with index outside range fails`() {
-        assertFailsWith<IllegalArgumentException>{
+        assertFailsWith<IllegalArgumentException> {
             Board(8).addPiece(-1, PieceType.BLACK)
             Board(8).addPiece(64, PieceType.BLACK)
         }
@@ -189,7 +191,7 @@ class BoardTests {
 
     @Test
     fun `addPiece function with piece already at position fails`() {
-        assertFailsWith <IllegalArgumentException>{
+        assertFailsWith<IllegalArgumentException> {
             var uut = Board(4).addPiece(Coordinate(1, 'a'), PieceType.WHITE)
             uut = uut.addPiece(Coordinate(1, 'a'), PieceType.BLACK)
             var uut2 = Board(4).addPiece(5, PieceType.WHITE)

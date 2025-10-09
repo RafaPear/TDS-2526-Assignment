@@ -10,6 +10,6 @@ import pt.isel.reversi.core.board.PieceType
  */
 data class Player(
     val type: PieceType,
-    val points: Int,
-    val playsLeft: Int
+    val points: Int = 0,
+    val playsLeft: Int = 32
 )

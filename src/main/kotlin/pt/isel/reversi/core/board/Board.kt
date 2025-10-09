@@ -1,8 +1,5 @@
 package pt.isel.reversi.core.board
 
-import kotlin.collections.find
-import kotlin.collections.map
-
 /**
  * Represents a board game grid.
  *
@@ -13,12 +10,12 @@ data class Board(
     val side: Int,
     private val pieces: List<Piece> = emptyList()
 ) : Iterable<Piece> {
-    private val SIDE_MIN = 4
-    private val SIDE_MAX = 26
+    private val sideMin = 4
+    private val sideMax = 26
 
     init {
-        require(side in SIDE_MIN..SIDE_MAX) {
-            "Side must be between $SIDE_MIN and $SIDE_MAX"
+        require(side in sideMin..sideMax) {
+            "Side must be between $sideMin and $sideMax"
         }
         require(side % 2 == 0) {
             "Side must be even"

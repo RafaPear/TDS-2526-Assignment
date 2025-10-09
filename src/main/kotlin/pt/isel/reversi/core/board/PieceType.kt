@@ -14,4 +14,13 @@ enum class PieceType(val symbol: Char) {
     fun swap(): PieceType =
         if (this == BLACK) WHITE
         else BLACK
+
+    companion object {
+        /**
+         * Retrieves the PieceType corresponding to the given symbol.
+         * @param symbol The character symbol representing the piece type.
+         * @return The matching PieceType, or null if no match is found.
+         */
+        fun fromSymbol(symbol: Char): PieceType? = entries.firstOrNull { it.symbol == symbol }
+    }
 }

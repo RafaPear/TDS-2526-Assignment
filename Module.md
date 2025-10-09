@@ -1,37 +1,44 @@
-# Module Reversi
+#package pt.isel.reversi
 
-This module implements the Reversi game with a focus on modularity, clarity, and extensibility. The architecture is divided into distinct packages to separate responsibilities, facilitating maintenance, testing, and project evolution.
+## Descrição
+Este módulo contém toda a implementação do jogo Reversi, organizado de forma modular e limpa. Inclui lógica de jogo, interface de linha de comando e integração com bibliotecas externas.
 
-The module includes:
-- Core game logic, including rules, turn alternation, and victory conditions.
-- Efficient board representation, with support for different sizes and variants.
-- Intuitive command-line interface, allowing direct interaction with the game.
-- Extensible command system to facilitate new functionalities.
-- Structure designed for future integration with graphical or web interfaces.
+## Pacotes Principais
 
-This project can be used as a foundation for studying object-oriented programming, modular design, and game development in Kotlin. The documentation details each component, facilitating understanding and collaboration.
+- **pt.isel.reversi.core**  
+  Lógica principal do jogo, regras e manipulação do tabuleiro.
 
-#Package pt.isel.reversi.core.board
-# Board
+- **pt.isel.reversi.cli**  
+  Interface de linha de comando para interação com o utilizador.
 
-This package is responsible for the internal representation of the Reversi board, including structures for cells and pieces, and algorithms for move validation and board state updates. It allows adaptation for different sizes and rule variants, with optimized methods for board manipulation.
+- **pt.isel.reversi.utils**  
+  Utilitários e helpers usados em todo o projeto.
 
-#Package pt.isel.reversi.core.game
-# Game
+## Como executar
 
-Manages the Reversi game lifecycle, turn alternation, verification of victory or draw conditions, and coordination between board and players. Provides abstractions for different player types and facilitates integration with external interfaces.
+Para executar o projeto via linha de comando:
+```sh
+java -jar reversi-fat.jar
+```
 
-#Package pt.isel.reversi.cli
-# CLI
+## Documentação
 
-Implements the command-line interface, managing board presentation, reading and validating user commands, and displaying messages. Supports customization of the game experience and different interaction modes.
+A documentação gerada por Dokka encontra-se no diretório `build/dokka/html` ou pode ser distribuída via o artefacto `javadoc.jar`.
 
-#Package pt.isel.reversi.cli.commands
-# CLI Commands
+## Autores
 
-Organizes and defines the commands available in the command-line interface, such as starting a game, making a move, showing help, and ending a match. Facilitates extension for new commands and ensures validation of user actions.
+Grupo 1 - TDS 2025
+# Commands
+Groups discrete user operations (start, join, move, pass, help, quit) under cohesive command objects. Emphasizes clear feedback, argument validation, and future extensibility (adding commands without modifying existing logic). Avoids embedding persistence or rendering concerns directly.
 
-#Package pt.isel.reversi
-# Main
+#package pt.isel.reversi
+# Core Entry
+Provides the application bootstrap: wiring dependencies, selecting configured implementations (e.g., local data access), and delegating control to the CLI loop. Serves as the integration point for embedding this module into alternate front‑ends (GUI, web service) or automated test harnesses.
 
-Entry point of the Reversi application, responsible for initializing the main components, environment configuration, and launching the command-line interface. Integrates all packages, ensuring correct game flow and enabling future integrations.
+---
+
+## Design Notes
+- Immutability: Core structures (Board, Piece) return new instances, simplifying reasoning and potential concurrency.
+- Small Surface: Interfaces (GameImpl, GameLogicImpl, GameDataAccessImpl) concentrate on intent, enabling alternative implementations (AI strategies, remote persistence) without refactoring callers.
+- Explicit Outcomes: Data access uses structured result codes rather than exceptions for expected domain states (missing data, invalid format), aiding CLI feedback & tooling.
+- Progressive Enhancement: The current feature set is a foundation; logic expansion (legal move generation, scoring, endgame detection) is intentionally modular.

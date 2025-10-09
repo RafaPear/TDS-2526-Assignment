@@ -6,6 +6,7 @@ import pt.isel.reversi.core.board.PieceType
 /**
  * Interface for game logic operations in Reversi.
  */
+@Suppress("unused")
 interface GameLogicImpl {
     /**
      * Plays a move on the board at the specified row and column.
