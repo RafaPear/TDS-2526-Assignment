@@ -45,7 +45,7 @@ class GameLogicTests {
             Piece(Coordinates(3, 1), BLACK),
             Coordinates(0, 1)
         )
-        assert(uut2.isEmpty())
+        assert(uut3.isEmpty())
 
         val uut4 = GameLogic().getCapturablePieces(
             board,
