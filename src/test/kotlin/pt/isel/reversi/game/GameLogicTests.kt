@@ -417,7 +417,41 @@ class GameLogicTests {
             val uut = GameLogic().play(board, myPiece)
         }
     }
+    @Test
+            /*
+              1 2 3 4
+            1 . . . .
+            2 . W W B
+            3 . W W .
+            4 . . B .
+           */
+    fun `play with valid move updates sequence of pieces correctly`() {
+        val myPiece = Piece(Coordinate(2, 1), BLACK)
+        val correctSequence = listOf(
+            Coordinate(2, 2),
+            Coordinate(2, 3),
+            Coordinate(3, 2),
+            Coordinate(3, 3),
+            Coordinate(2, 4),
+            Coordinate(4, 3),
+            myPiece.coordinate,
+        )
 
+        var board = Board(4)
+
+        (0..3).forEach {
+            board = board.addPiece(correctSequence[it], WHITE)
+        }
+        (4..5).forEach {
+            board = board.addPiece(correctSequence[it], BLACK)
+        }
+
+        val uut = GameLogic().play(board, myPiece)
+
+        uut.forEachIndexed { idx,piece ->
+            assert(piece.coordinate == correctSequence[idx])
+        }
+    }
     @Test
             /*
               1 2 3 4
@@ -427,8 +461,7 @@ class GameLogicTests {
             4 . . B B
            */
     fun `play should return updated board when move is valid` () {
-        var board = Board(4).addPiece(Coordinate(1, 2), WHITE)
-        board = board.addPiece(Coordinate(2, 2), WHITE)
+        var board = Board(4).addPiece(Coordinate(2, 2), WHITE)
         board = board.addPiece(Coordinate(2, 4), WHITE)
         board = board.addPiece(Coordinate(4, 3), BLACK)
         board = board.addPiece(Coordinate(4, 4), BLACK)
@@ -436,13 +469,14 @@ class GameLogicTests {
         board = board.addPiece(Coordinate(3, 2), BLACK)
         board = board.addPiece(Coordinate(1, 4), BLACK)
         board = board.addPiece(Coordinate(3, 3), BLACK)
+        board = board.addPiece(Coordinate(1, 2), WHITE)
 
         val myPiece = Piece(Coordinate(1, 1), BLACK)
 
-        var expectedBoard = board.addPiece(myPiece.coordinate, myPiece.value)
-        expectedBoard = expectedBoard.changePiece(Coordinate(1, 2))
+        var expectedBoard = board.changePiece(Coordinate(1, 2))
         expectedBoard = expectedBoard.changePiece(Coordinate(1, 3))
         expectedBoard = expectedBoard.changePiece(Coordinate(2, 2))
+        expectedBoard = expectedBoard.addPiece(myPiece.coordinate, myPiece.value)
 
         val uut = GameLogic().play(board, myPiece)
 

@@ -1,5 +1,6 @@
 package pt.isel.reversi.core.game
 
+import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.PieceType
 
 /**
@@ -12,4 +13,15 @@ data class Player(
     val type: PieceType,
     val points: Int = 0,
     val playsLeft: Int = 32
-)
+) {
+    fun refresh(board: Board): Player {
+        return Player(
+            type = type,
+            points = when (type) {
+                PieceType.BLACK -> board.totalBlackPieces
+                PieceType.WHITE -> board.totalWhitePieces
+            },
+            playsLeft = playsLeft - 1
+        )
+    }
+}

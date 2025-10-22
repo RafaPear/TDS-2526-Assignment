@@ -8,7 +8,30 @@ import kotlin.test.assertFailsWith
 class BoardTests {
 
     // Board tests
+    @Test
+    fun `toCoordinate with index outside range fails`() {
+        assertFailsWith <IllegalArgumentException> {
+            Board(8).run{8.toCoordinate()}
+            Board(8).run{(-1).toCoordinate()}
+        }
+    }
 
+    @Test
+    fun `toCoordinate with valid index succeeds`() {
+        val uut = Board(8)
+        val coordinate1 = uut.run{0.toCoordinate()}
+        assert(coordinate1.row == 1 && coordinate1.col == 1)
+
+        val coordinate2 = uut.run{((8*8) - 1) .toCoordinate()}
+        assert(coordinate2.row == 8 && coordinate2.col == 8)
+
+        val coordinate3 = uut.run{9.toCoordinate()}
+        assert(coordinate3.row == 2 && coordinate3.col == 2)
+
+        val coordinate4 = uut.run{7.toCoordinate()}
+        assert(coordinate4.row == 1 && coordinate4.col == 8)
+
+    }
     @Test
     fun `Create Board with side outside range fails`() {
         assertFailsWith<IllegalArgumentException> {
@@ -233,17 +256,75 @@ class BoardTests {
         val piece1 = Piece(Coordinate(1, 'a'), PieceType.WHITE)
         val piece2 = Piece(Coordinate(2, 'b'), PieceType.BLACK)
         val piece3 = Piece(Coordinate(3, 'c'), PieceType.WHITE)
-        val expectedPieces = listOf(piece1, piece2, piece3)
+        val piece4 = Piece(Coordinate(4, 'd'), PieceType.BLACK)
+        val expectedPieces = listOf(piece1, piece2, piece3, piece4)
 
         val uut = Board(4)
             .addPiece(piece1)
             .addPiece(piece2)
             .addPiece(piece3)
+            .addPiece(piece4)
             .changePiece(Coordinate(2, 'b'))
             .changePiece(Coordinate(3, 'c'))
+
         uut.forEachIndexed { index, piece ->
-            if (index == 0) assert(piece == expectedPieces[index])
-            else assert(piece == expectedPieces[index].swap())
+            assert(piece.coordinate == expectedPieces[index].coordinate)
         }
+    }
+
+    @Test
+    fun `totalBlackPieces and totalWhitePieces are correct after startPieces`() {
+        val uut = Board(4).startPieces()
+
+        assert(uut.totalBlackPieces == 2)
+        assert(uut.totalWhitePieces == 2)
+    }
+
+    @Test
+    fun `totalBlackPieces and totalWhitePieces are correct after adding pieces`() {
+        var uut = Board(8)
+
+        val expectedBlackPieces = 5
+        val expectedWhitePieces = 2
+
+        (1..(expectedBlackPieces)).forEach {
+            uut = uut.addPiece(it, PieceType.BLACK)
+        }
+        (expectedBlackPieces + 1..(expectedBlackPieces + expectedWhitePieces)).forEach {
+            uut = uut.addPiece(it, PieceType.WHITE)
+        }
+        assert(uut.totalBlackPieces == expectedBlackPieces)
+        assert(uut.totalWhitePieces == expectedWhitePieces)
+    }
+
+    @Test
+    fun `totalBlackPieces and totalWhitePieces are correct after changing pieces`() {
+        var uut = Board(8)
+
+        val initialBlackPieces = 5
+        val initialWhitePieces = 2
+
+        (1..(initialBlackPieces)).forEach {
+            uut = uut.addPiece(it, PieceType.BLACK)
+        }
+        (initialBlackPieces + 1..(initialBlackPieces + initialWhitePieces)).forEach {
+            uut = uut.addPiece(it, PieceType.WHITE)
+        }
+
+        val piecesToChangeFromBlackToWhite = 2
+        val piecesToChangeFromWhiteToBlack = 1
+
+        (1..piecesToChangeFromBlackToWhite).forEach {
+            uut = uut.changePiece(it)
+        }
+        ((initialBlackPieces + 1)..(initialBlackPieces + piecesToChangeFromWhiteToBlack)).forEach {
+            uut = uut.changePiece(it)
+        }
+
+        val expectedBlackPieces = initialBlackPieces - piecesToChangeFromBlackToWhite + piecesToChangeFromWhiteToBlack
+        val expectedWhitePieces = initialWhitePieces - piecesToChangeFromWhiteToBlack + piecesToChangeFromBlackToWhite
+
+        assert(uut.totalBlackPieces == expectedBlackPieces)
+        assert(uut.totalWhitePieces == expectedWhitePieces)
     }
 }

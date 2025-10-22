@@ -39,11 +39,12 @@ class GameLogic {
         if (capturablePieces.isEmpty()) throw InvalidPlayException("Invalid play: $myPiece")
 
         //Create a new board with myPiece added and all capturable pieces swapped
-        val newPieces = board.map {piece ->
-            if (piece.coordinate in capturablePieces) piece.swap()
-            else piece
+        var newBoard: Board = board.changePiece(capturablePieces[0])
+        capturablePieces.drop(n = 1).forEach { coordinate ->
+            newBoard = newBoard.changePiece(coordinate)
         }
-        return board.copy(pieces = newPieces + myPiece)
+
+        return newBoard.addPiece(myPiece)
     }
 
     /**

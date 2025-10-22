@@ -2,6 +2,7 @@ package pt.isel.reversi.core.game
 
 import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.Coordinate
+import pt.isel.reversi.core.board.DEFAULT_SIDE
 import pt.isel.reversi.core.board.PieceType
 
 /**
@@ -23,20 +24,17 @@ interface GameImpl {
     /** Indicates if target mode is enabled. */
     val target: Boolean
 
-    /** Indicates if the game is local. */
-    val isLocal: Boolean
-
+    /** Index of the next player's turn. */
+    val playerTurn: PieceType
     /**
      * Plays a move at the specified row and column.
-     * @param row The row to play.
-     * @param col The column to play.
+     * @param coordinate The (row, column) coordinate for the move.
      * @return The new game state after the move, or null if invalid.
      */
     fun play(coordinate: Coordinate): GameImpl
 
     /**
      * Gets the available piece options for a player name.
-     * @param name The player's name.
      * @return List of available piece types.
      */
     fun pieceOptions(): List<PieceType>
@@ -57,7 +55,12 @@ interface GameImpl {
     /**
      * Starts a new game.
      */
-    fun startNewGame()
+    fun startNewGame(
+        side: Int = DEFAULT_SIDE,
+        players: List<Player>,
+        firstTurn: PieceType = firstPlayerTurn,
+        currGameName: String? = null,
+        ): GameImpl
 
     /**
      * Passes the current turn.
@@ -79,9 +82,9 @@ interface GameImpl {
     fun copy(
         dataAccess: GDAImpl = this.dataAccess,
         players: List<Player> = this.players,
+        target: Boolean = this.target,
+        playerTurn: PieceType = this.playerTurn,
         currGameName: String? = this.currGameName,
         board: Board? = this.board,
-        target: Boolean = this.target,
-        isLocal: Boolean = this.isLocal
     ): GameImpl
 }

@@ -31,7 +31,6 @@ object JoinCmd : CommandImpl<GameImpl>() {
         try {
             var game: GameImpl = context.copy(
                 currGameName = name,
-                isLocal = false
             )
 
             val pieces = game.pieceOptions()

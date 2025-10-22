@@ -61,7 +61,7 @@ class LocalGDA : GDAImpl {
 
         val (availablePieces, side) = GameFileAccess.readGameInfo(file)
 
-        if (side != game.board.side) throw InvalidGameWriteException("Mismatched side in existing file")
+        if (side != game.board?.side) throw InvalidGameWriteException("Mismatched side in existing file")
 
         val availablePiecesData = availablePieces.filter { it !in game.players.map { p -> p.type } }
 

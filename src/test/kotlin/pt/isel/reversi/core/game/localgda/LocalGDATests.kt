@@ -4,7 +4,7 @@ import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.Piece
 import pt.isel.reversi.core.board.PieceType
-import pt.isel.reversi.core.game.MockGame
+import pt.isel.reversi.core.game.Game
 import pt.isel.reversi.core.game.exceptions.InvalidAvailablePiecesInFileException
 import pt.isel.reversi.core.game.exceptions.InvalidGameWriteException
 import pt.isel.reversi.core.game.exceptions.InvalidPieceInFileException
@@ -21,7 +21,7 @@ class LocalGDATests {
         val file = File.createTempFile("localgda-game", ".txt")
         try {
             val gda = LocalGDA()
-            val game = MockGame.EmptyPlayers(gda, file.absolutePath)
+            val game = Game.EmptyPlayers(gda, file.absolutePath)
 
             // should create the file and write headers
             gda.postGame(file.absolutePath, game)
@@ -31,7 +31,7 @@ class LocalGDATests {
             assertEquals(PieceType.entries.toList(), available)
 
             val board = gda.getBoard(file.absolutePath)
-            assertEquals(game.board.side, board.side)
+            assertEquals(game.board?.side, board.side)
         } finally {
             file.delete()
         }
@@ -42,7 +42,7 @@ class LocalGDATests {
         val file = File.createTempFile("localgda-piece", ".txt")
         try {
             val gda = LocalGDA()
-            val game = MockGame.EmptyPlayers(gda, file.absolutePath)
+            val game = Game.EmptyPlayers(gda, file.absolutePath)
             gda.postGame(file.absolutePath, game)
 
             val piece = Piece(Coordinate(1, 'a'), PieceType.BLACK)
@@ -63,7 +63,7 @@ class LocalGDATests {
         val file = File.createTempFile("localgda-pass", ".txt")
         try {
             val gda = LocalGDA()
-            val game = MockGame.EmptyPlayers(gda, file.absolutePath)
+            val game = Game.EmptyPlayers(gda, file.absolutePath)
             gda.postGame(file.absolutePath, game)
 
             gda.postPass(file.absolutePath, PieceType.WHITE)
@@ -89,7 +89,7 @@ class LocalGDATests {
             file.writeText("availablePieces: #|@\nside: 6\n")
 
             val gda = LocalGDA()
-            val game = MockGame.EmptyPlayers(gda, file.absolutePath) // board side is 8
+            val game = Game.EmptyPlayers(gda, file.absolutePath) // board side is 8
 
             val ex = assertFailsWith<InvalidGameWriteException> {
                 gda.postGame(file.absolutePath, game)
@@ -111,7 +111,7 @@ class LocalGDATests {
 
             val gda = LocalGDA()
             // game with one player BLACK should remove BLACK from available pieces
-            val game = MockGame.OnePlayer(gda, file.absolutePath)
+            val game = Game.OnePlayer(gda, file.absolutePath)
 
             gda.postGame(file.absolutePath, game)
 
@@ -131,7 +131,7 @@ class LocalGDATests {
 
             val gda = LocalGDA()
             // game with two players should remove both BLACK and WHITE
-            val game = MockGame.TwoPlayers(gda, file.absolutePath)
+            val game = Game.TwoPlayers(gda, file.absolutePath)
 
             gda.postGame(file.absolutePath, game)
 
@@ -147,7 +147,7 @@ class LocalGDATests {
         val file = File.createTempFile("localgda-board", ".txt")
         try {
             val gda = LocalGDA()
-            val baseGame = MockGame.EmptyPlayers(gda, file.absolutePath)
+            val baseGame = Game.EmptyPlayers(gda, file.absolutePath)
             // create a board with a piece at 1,a
             val boardWithPiece = Board(8).addPiece(Coordinate(1, 'a'), PieceType.BLACK)
             val game = baseGame.copy(board = boardWithPiece)
@@ -167,7 +167,7 @@ class LocalGDATests {
         val file = File.createTempFile("localgda-mixed", ".txt")
         try {
             val gda = LocalGDA()
-            val game = MockGame.EmptyPlayers(gda, file.absolutePath)
+            val game = Game.EmptyPlayers(gda, file.absolutePath)
             gda.postGame(file.absolutePath, game)
 
             val p1 = Piece(Coordinate(2, 'b'), PieceType.BLACK)
@@ -213,7 +213,7 @@ class LocalGDATests {
         val file = File.createTempFile("localgda-noplay", ".txt")
         try {
             val gda = LocalGDA()
-            val game = MockGame.EmptyPlayers(gda, file.absolutePath)
+            val game = Game.EmptyPlayers(gda, file.absolutePath)
             gda.postGame(file.absolutePath, game)
 
             val ex = assertFailsWith<NoSuchElementException> {

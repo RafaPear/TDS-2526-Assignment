@@ -1,5 +1,6 @@
 package pt.isel.reversi.core.board
 
+
 /**
  * Represents a board game grid.
  *
@@ -28,8 +29,10 @@ data class Board(
         require(this in 0 until side * side) {
             "Index must be between 0 and ${side * side - 1}"
         }
-        val row = (this / side) + 1
-        val col = (this % side)
+
+
+        val row = this / side + 1
+        val col = this % side + 1
         return Coordinate(row, col)
     }
 
@@ -74,18 +77,22 @@ data class Board(
         val value = this[coordinate]?.swap() ?: throw IllegalArgumentException("No piece at position $coordinate")
 
         return this.copy(
-            pieces = pieces.map { piece ->
-            if (piece.coordinate != coordinate) piece
-            else Piece(coordinate, value)
-        },
+            pieces = pieces.map {piece -> // need preserve the original order
+                if (piece.coordinate == coordinate)
+                    Piece(coordinate, value)
+                else
+                    piece
+            },
             totalBlackPieces =
                 if (value == PieceType.BLACK)
-                        totalBlackPieces + 1
-                else totalBlackPieces - 1,
+                    totalBlackPieces + 1
+                else
+                    totalBlackPieces - 1,
             totalWhitePieces =
                 if (value == PieceType.WHITE)
                     totalWhitePieces + 1
-                else totalWhitePieces - 1
+                else
+                    totalWhitePieces - 1
         )
     }
 

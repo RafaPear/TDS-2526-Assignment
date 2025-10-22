@@ -6,6 +6,7 @@ import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.game.Game
 import pt.isel.reversi.core.game.GameImpl
 import pt.isel.reversi.core.game.Player
+import pt.isel.reversi.core.game.firstPlayerTurn
 import pt.isel.reversi.core.game.localgda.LocalGDA
 import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
@@ -38,21 +39,20 @@ object NewCmd : CommandImpl<GameImpl>() {
         val name: String? = if (args.size == 2) args[1] else null
 
         val baseGame = Game(
-            LocalGDA(),
-            emptyList(),
-            null,
-            Board(Environment.BOARD_SIDE),
+            dataAccess = LocalGDA(),
+            players = emptyList(),
             target = false,
-            isLocal = false,
+            playerTurn = firstPlayerTurn,
+            board = Board(Environment.BOARD_SIDE),
+            currGameName = null,
         )
 
         val game: GameImpl =
             if (name != null) {
-                baseGame.copy(currGameName = name, isLocal = false)
+                baseGame.copy(currGameName = name)
             } else {
                 baseGame.copy(
                     players = baseGame.players + Player(firstPlayer.swap()),
-                    isLocal = true
                 )
             }
 

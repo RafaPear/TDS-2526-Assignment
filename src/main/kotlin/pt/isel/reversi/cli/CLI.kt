@@ -6,6 +6,7 @@ import pt.isel.reversi.core.Environment
 import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.game.Game
 import pt.isel.reversi.core.game.GameImpl
+import pt.isel.reversi.core.game.firstPlayerTurn
 import pt.isel.reversi.core.game.localgda.LocalGDA
 import pt.rafap.ktflag.CommandParser
 import pt.rafap.ktflag.cmd.CommandImpl
@@ -31,12 +32,12 @@ class CLI(
          * The current game board. Initialized with size 8.
          */
         var game: GameImpl = Game(
-            LocalGDA(),
-            emptyList(),
-            null,
-            Board(Environment.BOARD_SIDE),
+            dataAccess = LocalGDA(),
+            players = emptyList(),
             target = false,
-            isLocal = false,
+            playerTurn = firstPlayerTurn,
+            board = Board(Environment.BOARD_SIDE),
+            currGameName = null,
         )
 
         val debugCommands: Array<CommandImpl<GameImpl>> = if (debug) arrayOf(
