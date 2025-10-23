@@ -10,9 +10,9 @@ package pt.isel.reversi.core.board
 data class Board(
     val side: Int,
     private val pieces: List<Piece> = emptyList(),
-    val totalBlackPieces: Int = 0,
-    val totalWhitePieces: Int = 0,
 ) : Iterable<Piece> {
+    private val `totalBlackPieces()`: Int
+    private val totalWhitePieces: Int
     private val sideMin = 4
     private val sideMax = 26
 
@@ -23,8 +23,34 @@ data class Board(
         require(side % 2 == 0) {
             "Side must be even"
         }
+
+        var countBlackPieces = 0
+        var countWhitePieces = 0
+
+        pieces.forEach { piece ->
+            if (piece.value == PieceType.BLACK) {
+                countBlackPieces++
+            } else if (piece.value == PieceType.WHITE) {
+                countWhitePieces++
+            }
+        }
+        `totalBlackPieces()` = countBlackPieces
+        totalWhitePieces = countWhitePieces
     }
 
+    /**
+     * Gets the total number of black pieces on the board.
+     */
+    fun totalBlackPieces(): Int = `totalBlackPieces()`
+    /**
+     * Gets the total number of white pieces on the board.
+     */
+    fun totalWhitePieces(): Int = totalWhitePieces
+
+    /**
+     * Converts a linear index to a Coordinate on the board.
+     * @throws IllegalArgumentException if the index is out of bounds.
+     */
     fun Int.toCoordinate(): Coordinate {
         require(this in 0 until side * side) {
             "Index must be between 0 and ${side * side - 1}"
@@ -83,16 +109,6 @@ data class Board(
                 else
                     piece
             },
-            totalBlackPieces =
-                if (value == PieceType.BLACK)
-                    totalBlackPieces + 1
-                else
-                    totalBlackPieces - 1,
-            totalWhitePieces =
-                if (value == PieceType.WHITE)
-                    totalWhitePieces + 1
-                else
-                    totalWhitePieces - 1
         )
     }
 
@@ -118,15 +134,7 @@ data class Board(
             "There is already a piece at position $coordinate"
         }
         return this.copy(
-            pieces = pieces + Piece(coordinate, value),
-            totalBlackPieces =
-                if (value == PieceType.BLACK)
-                    totalBlackPieces + 1
-                else totalBlackPieces,
-            totalWhitePieces =
-                if (value == PieceType.WHITE)
-                    totalWhitePieces + 1
-                else totalWhitePieces
+            pieces = pieces + Piece(coordinate, value)
         )
     }
 
@@ -162,8 +170,6 @@ data class Board(
                 Piece(Coordinate(mid, mid + 1), PieceType.BLACK),
                 Piece(Coordinate(mid + 1, mid), PieceType.BLACK)
             ),
-            totalBlackPieces = 2,
-            totalWhitePieces = 2
         )
     }
 

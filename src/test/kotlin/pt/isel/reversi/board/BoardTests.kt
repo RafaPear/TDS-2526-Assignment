@@ -276,8 +276,8 @@ class BoardTests {
     fun `totalBlackPieces and totalWhitePieces are correct after startPieces`() {
         val uut = Board(4).startPieces()
 
-        assert(uut.totalBlackPieces == 2)
-        assert(uut.totalWhitePieces == 2)
+        assert(uut.totalBlackPieces() == 2)
+        assert(uut.totalWhitePieces() == 2)
     }
 
     @Test
@@ -293,8 +293,8 @@ class BoardTests {
         (expectedBlackPieces + 1..(expectedBlackPieces + expectedWhitePieces)).forEach {
             uut = uut.addPiece(it, PieceType.WHITE)
         }
-        assert(uut.totalBlackPieces == expectedBlackPieces)
-        assert(uut.totalWhitePieces == expectedWhitePieces)
+        assert(uut.totalBlackPieces() == expectedBlackPieces)
+        assert(uut.totalWhitePieces() == expectedWhitePieces)
     }
 
     @Test
@@ -324,7 +324,7 @@ class BoardTests {
         val expectedBlackPieces = initialBlackPieces - piecesToChangeFromBlackToWhite + piecesToChangeFromWhiteToBlack
         val expectedWhitePieces = initialWhitePieces - piecesToChangeFromWhiteToBlack + piecesToChangeFromBlackToWhite
 
-        assert(uut.totalBlackPieces == expectedBlackPieces)
-        assert(uut.totalWhitePieces == expectedWhitePieces)
+        assert(uut.totalBlackPieces() == expectedBlackPieces)
+        assert(uut.totalWhitePieces() == expectedWhitePieces)
     }
 }
