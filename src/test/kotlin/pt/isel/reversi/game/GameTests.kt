@@ -3,6 +3,7 @@ package pt.isel.reversi.game
 import pt.isel.reversi.core.Environment.firstPlayerTurn
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.game.Game
+import pt.isel.reversi.core.game.exceptions.InvalidGameException
 import pt.isel.reversi.core.game.exceptions.InvalidPlayException
 import pt.isel.reversi.core.game.localgda.LocalGDA
 import kotlin.test.Test
@@ -20,7 +21,7 @@ class GameTests {
             board = null,
         )
 
-        assertFailsWith <InvalidPlayException> {
+        assertFailsWith <InvalidGameException> {
             game.play(Coordinate(1,1))
         }
     }
