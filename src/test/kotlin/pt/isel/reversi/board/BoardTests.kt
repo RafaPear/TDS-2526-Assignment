@@ -3,51 +3,52 @@ import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.Piece
 import pt.isel.reversi.core.board.PieceType
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class BoardTests {
 
     // Board tests
+
     @Test
     fun `toCoordinate with index outside range fails`() {
-        assertFailsWith <IllegalArgumentException> {
-            Board(8).run{8.toCoordinate()}
-            Board(8).run{(-1).toCoordinate()}
+        val indexes = listOf(-1, 64)
+
+        indexes.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                Board(8).run{ it.toCoordinate() }
+            }
         }
     }
 
     @Test
     fun `toCoordinate with valid index succeeds`() {
-        val uut = Board(8)
-        val coordinate1 = uut.run{0.toCoordinate()}
-        assert(coordinate1.row == 1 && coordinate1.col == 1)
+        val indexes = listOf(0, 63)
+        val expected = listOf(Coordinate(1,1), Coordinate(8,8))
 
-        val coordinate2 = uut.run{((8*8) - 1) .toCoordinate()}
-        assert(coordinate2.row == 8 && coordinate2.col == 8)
-
-        val coordinate3 = uut.run{9.toCoordinate()}
-        assert(coordinate3.row == 2 && coordinate3.col == 2)
-
-        val coordinate4 = uut.run{7.toCoordinate()}
-        assert(coordinate4.row == 1 && coordinate4.col == 8)
-
+        assertContentEquals(expected, indexes.map { Board(8).run{ it.toCoordinate() } })
     }
+
     @Test
     fun `Create Board with side outside range fails`() {
-        assertFailsWith<IllegalArgumentException> {
-            Board(-1)
-            Board(0)
-            Board(2)
-            Board(33)
+        val sizes = listOf(-1, 0, 2, 33)
+
+        sizes.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                Board(it)
+            }
         }
     }
 
     @Test
     fun `Create Board with odd side within range fails`() {
-        assertFailsWith<IllegalArgumentException> {
-            Board(7)
-            Board(25)
-            Board(15)
+        val sizes = listOf(7, 15, 25)
+
+        sizes.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                Board(it)
+            }
         }
     }
 
@@ -70,145 +71,190 @@ class BoardTests {
         assert(uut[Coordinate(9, 'i')] == PieceType.WHITE)
     }
 
+    @Test
+    fun `get function with index outside range fails`() {
+        val indexes = listOf(-1, 64)
+
+        indexes.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                Board(8)[it]
+            }
+        }
+    }
 
     @Test
     fun `get function with row outside range fails`() {
-        assertFailsWith<IllegalArgumentException> {
-            Board(8)[Coordinate(-1, 1)]
-            Board(8)[Coordinate(0, 1)]
-            Board(8)[Coordinate(27, 1)]
+        val rows = listOf(-1, 0, 9)
+
+        rows.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                Board(8)[Coordinate(it, 1)]
+            }
         }
     }
 
     @Test
-    fun `get function with col outside range fails`() {
-        assertFailsWith<IllegalArgumentException> {
-            Board(8)[Coordinate(1, -1)]
-            Board(8)[Coordinate(1, 0)]
-            Board(8)[Coordinate(1, 27)]
-            Board(8)[Coordinate(1, '@')]
-            Board(8)[Coordinate(1, '[')]
+    fun `get function with col (Int) outside range fails`() {
+        val cols = listOf(-1, 0, 9)
+
+        cols.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                Board(8)[Coordinate(1, it)]
+            }
         }
     }
 
     @Test
-    fun `get function with index outside range fails`() {
-        assertFailsWith<IllegalArgumentException> {
-            Board(8)[-1]
-            Board(8)[64]
+    fun `get function with col (Char) outside range fails`() {
+        val cols = listOf('@', '[')
+
+        cols.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                Board(8)[Coordinate(1, it)]
+            }
         }
     }
 
     @Test
-    fun `get function with no piece at position `() {
-        assert(Board(4)[Coordinate(1, 'a')] == null)
-        assert(Board(4)[Coordinate(4, 4)] == null)
-        assert(Board(4)[5] == null)
-    }
-
-    @Test
-    fun `get and addPiece function with valid row and col (Char) succeeds`() {
-        var uut = Board(4)
-        uut = uut.addPiece(Coordinate(1, 'a'), PieceType.WHITE)
-        assert(uut[Coordinate(1, 'a')] == PieceType.WHITE)
+    fun `get function with no piece at index returns null`() {
+        assert(Board(8)[0] == null)
     }
 
     @Test
     fun `get and addPiece function with valid row and col (Int) succeeds`() {
-        val side = 4
-        var uut = Board(side)
-        uut = uut.addPiece(Coordinate(4, 2), PieceType.BLACK)
-        assert(uut[Coordinate(4, 2)] == PieceType.BLACK)
+        val board = Board(4).addPiece(Coordinate(1, 1), PieceType.WHITE)
+
+        assert(board[Coordinate(1, 1)] == PieceType.WHITE)
+    }
+
+    @Test
+    fun `get and addPiece function with valid row and col (Char) succeeds`() {
+        val board = Board(4).addPiece(Coordinate(1, 'a'), PieceType.WHITE)
+
+        assert(board[Coordinate(1, 'a')] == PieceType.WHITE)
     }
 
     @Test
     fun `get and addPiece function with valid index succeeds`() {
-        val side = 4
-        var uut = Board(side)
-        uut = uut.addPiece(5, PieceType.BLACK)
-        assert(uut[5] == PieceType.BLACK)
+        val board = Board(4).addPiece(Coordinate(1, 'a'), PieceType.WHITE)
+
+        assert(board[0] == PieceType.WHITE)
+    }
+
+    @Test
+    fun `changePiece function with index outside range fails`() {
+        assertFailsWith<IllegalArgumentException> {
+            Board(8).changePiece(-1)
+        }
     }
 
     @Test
     fun `changePiece function with row outside range fails`() {
-        assertFailsWith<IllegalArgumentException> {
-            Board(8).changePiece(Coordinate(-1, 1))
-            Board(8).changePiece(Coordinate(0, 1))
-            Board(8).changePiece(Coordinate(27, 1))
+        val rows = listOf(-1, 0, 9)
+
+        rows.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                Board(8).changePiece(Coordinate(it, 1))
+            }
         }
     }
 
     @Test
-    fun `changePiece function with col outside range fails`() {
-        assertFailsWith<IllegalArgumentException> {
-            Board(8).changePiece(Coordinate(1, -1))
-            Board(8).changePiece(Coordinate(1, 0))
-            Board(8).changePiece(Coordinate(1, 27))
-            Board(8).changePiece(Coordinate(1, '@'))
-            Board(8).changePiece(Coordinate(1, '['))
+    fun `changePiece function with col (Int) outside range fails`() {
+        val cols = listOf(-1, 0, 9)
+
+        cols.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                Board(8).changePiece(Coordinate(1, it))
+            }
         }
     }
 
     @Test
-    fun `changePiece function with no piece at position does nothing`() {
-        var uut = Board(4)
-        assertFailsWith<IllegalArgumentException> {
-            uut = uut.changePiece(Coordinate(1, 'a'))
+    fun `changePiece function with col (Char) outside range fails`() {
+        val cols = listOf('@', '[')
+
+        cols.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                Board(8).changePiece(Coordinate(1, it))
+            }
         }
     }
 
     @Test
-    fun `changePiece function with indenx outside range fails`() {
+    fun `changePiece function with no piece at position fails`() {
         assertFailsWith<IllegalArgumentException> {
-            Board(8).changePiece(-1)
-            Board(8).changePiece(64)
+            Board(8).changePiece(Coordinate(1, 'a'))
         }
     }
 
     @Test
     fun `changePiece function with valid row and col (Char) succeeds`() {
-        var uut = Board(4).addPiece(Coordinate(1, 'a'), PieceType.WHITE)
-        uut = uut.changePiece(Coordinate(1, 'a'))
-        assert(uut[Coordinate(1, 'a')] == PieceType.BLACK)
-        uut = uut.addPiece(Coordinate(3, 'd'), PieceType.BLACK)
-        uut = uut.changePiece(Coordinate(3, 'd'))
-        assert(uut[Coordinate(3, 'd')] == PieceType.WHITE)
+        val board = Board(4).startPieces()
+        val updatedBoard = board.changePiece(Coordinate(2, 'b'))
+        val expected = listOf(
+            Piece(Coordinate(2, 'b'), PieceType.BLACK),
+            Piece(Coordinate(3, 'c'), PieceType.WHITE),
+            Piece(Coordinate(2, 'c'), PieceType.BLACK),
+            Piece(Coordinate(3, 'b'), PieceType.BLACK)
+        )
 
+        assertEquals(updatedBoard.toList(), expected)
     }
 
     @Test
     fun `changePiece function with valid row and col (Int) succeeds`() {
-        var uut = Board(4).addPiece(Coordinate(4, 2), PieceType.BLACK)
-        uut = uut.changePiece(Coordinate(4, 2))
-        assert(uut[Coordinate(4, 2)] == PieceType.WHITE)
-        uut = uut.addPiece(Coordinate(2, 3), PieceType.WHITE)
-        uut = uut.changePiece(Coordinate(2, 3))
-        assert(uut[Coordinate(2, 3)] == PieceType.BLACK)
+        val board = Board(4).startPieces()
+        val updatedBoard = board.changePiece(Coordinate(2, 2))
+        val expected = listOf(
+            Piece(Coordinate(2, 2), PieceType.BLACK),
+            Piece(Coordinate(3, 3), PieceType.WHITE),
+            Piece(Coordinate(2, 3), PieceType.BLACK),
+            Piece(Coordinate(3, 2), PieceType.BLACK)
+        )
+
+        assertEquals(updatedBoard.toList(), expected)
     }
 
     @Test
     fun `addPiece function with row outside range fails`() {
-        assertFailsWith<IllegalArgumentException> {
-            Board(8).addPiece(Coordinate(-1, 1), value = PieceType.BLACK)
-            Board(8).addPiece(Coordinate(0, 1), value = PieceType.BLACK)
-            Board(8).addPiece(Coordinate(27, 1), value = PieceType.BLACK)
+        val board = Board(8)
+        val rows = listOf(-1, 0, 9)
+
+        rows.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                board.addPiece(Coordinate(it, 1), PieceType.BLACK)
+            }
         }
     }
 
     @Test
-    fun `addPiece function with col outside range fails`() {
-        assertFailsWith<IllegalArgumentException> {
-            Board(8).addPiece(Coordinate(1, -1), value = PieceType.BLACK)
-            Board(8).addPiece(Coordinate(1, 0), value = PieceType.BLACK)
-            Board(8).addPiece(Coordinate(1, 27), value = PieceType.BLACK)
-            Board(8).addPiece(Coordinate(1, '@'), value = PieceType.BLACK)
-            Board(8).addPiece(Coordinate(1, '['), value = PieceType.BLACK)
+    fun `addPiece function with col (Int) outside range fails`() {
+        val board = Board(8)
+        val cols = listOf(-1, 0, 9)
+
+        cols.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                board.addPiece(Coordinate(1, it), PieceType.BLACK)
+            }
+        }
+    }
+
+    @Test
+    fun `addPiece function with col (Char) outside range fails`() {
+        val board = Board(8)
+        val cols = listOf('@', '[')
+
+        cols.forEach {
+            assertFailsWith<IllegalArgumentException> {
+                board.addPiece(Coordinate(1, it), PieceType.BLACK)
+            }
         }
     }
 
     @Test
     fun `addPiece function with index outside range fails`() {
-        assertFailsWith<IllegalArgumentException>{
+        assertFailsWith<IllegalArgumentException> {
             Board(8).addPiece(-1, PieceType.BLACK)
             Board(8).addPiece(64, PieceType.BLACK)
         }
@@ -216,6 +262,7 @@ class BoardTests {
 
     @Test
     fun `addPiece function with piece already at position fails`() {
+        val board = Board(4).addPiece(Coordinate(1, 'a'), PieceType.WHITE)
         assertFailsWith<IllegalArgumentException> {
             var uut = Board(4).addPiece(Coordinate(1, 'a'), PieceType.WHITE)
             uut = uut.addPiece(Coordinate(1, 'a'), PieceType.BLACK)

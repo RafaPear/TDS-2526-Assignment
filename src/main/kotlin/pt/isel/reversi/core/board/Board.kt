@@ -1,6 +1,5 @@
 package pt.isel.reversi.core.board
 
-
 /**
  * Represents a board game grid.
  * @property pieces The list of pieces on the board.
@@ -47,6 +46,7 @@ data class Board(
      * @return The total number of black pieces.
      */
     fun totalBlackPieces(): Int = totalBlackPieces
+
     /**
      * Gets the total number of white pieces on the board.
      * @return The total number of white pieces.
@@ -95,7 +95,6 @@ data class Board(
         checkPosition(coordinate)
         return pieces.find { it.coordinate == coordinate }?.value
     }
-
 
     /**
      * Changes the piece at the specified row and column from 'b' to 'w' or from 'w' to 'b'.
