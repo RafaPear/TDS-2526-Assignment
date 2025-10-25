@@ -58,8 +58,10 @@ open class Game(
         val nextPlayerTurn = playerTurn.swap()
 
         // save the piece to the data access if game is not local
-        if (currGameName != null) {
-            dataAccess.postPiece(currGameName!!, piece)
+        val tempCurrGameName = currGameName
+
+        if (tempCurrGameName != null) {
+            dataAccess.postPiece(tempCurrGameName, piece)
         }
 
         return this.copy(
@@ -76,8 +78,8 @@ open class Game(
      * @throws java.io.IOException if there is an error accessing the data.
      */
     override fun pieceOptions(): List<PieceType> {
-        if (currGameName == null) return emptyList()
-        return dataAccess.getAvailablePieces(currGameName!!)
+        val tempCurrGameName = currGameName ?: return emptyList()
+        return dataAccess.getAvailablePieces(tempCurrGameName)
     }
 
     /**
@@ -130,17 +132,30 @@ open class Game(
         )
     }
 
-    override fun pass() {
-        TODO("Not yet implemented")
+    override fun pass(): GameImpl {
+        if (players.size == 1 && players[0].type != playerTurn) {
+            throw InvalidPlayException(
+                message = "It's not your turn"
+            )
+        }
+
+        val tempCurrGameName = currGameName
+
+        if (tempCurrGameName != null) {
+            dataAccess.postPass(tempCurrGameName, playerTurn)
+        }
+        return this.copy(
+            playerTurn = playerTurn.swap()
+        )
     }
+
 
     override fun refresh(): GameImpl {
         TODO("Not yet implemented")
     }
 
-    override fun poopBoard(): Board {
-        TODO("Not yet implemented")
-    }
+    override fun poopBoard(): Board = TODO("Board is public, use the property directly")
+
 
     /**
      * Convenience copy function to mutate selected fields for tests.

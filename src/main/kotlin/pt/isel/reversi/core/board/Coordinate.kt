@@ -6,6 +6,18 @@ package pt.isel.reversi.core.board
  * @property col The column index (1-based).
  */
 data class Coordinate(val row: Int, val col: Int) {
+    companion object {
+        val allDirection = listOf(
+            Coordinate(-1, -1), // UP LEFT
+            Coordinate(-1, 0), // UP
+            Coordinate(-1, 1), // UP RIGHT
+            Coordinate(0, -1), // LEFT
+            Coordinate(0, 1), // RIGHT
+            Coordinate(1, -1), // DOWN LEFT
+            Coordinate(1, 0), // DOWN
+            Coordinate(1, 1) // DOWN RIGHT
+        )
+    }
     /**
      * Creates a coordinate from a row and a column character.
      * @param row The row index (1-based).

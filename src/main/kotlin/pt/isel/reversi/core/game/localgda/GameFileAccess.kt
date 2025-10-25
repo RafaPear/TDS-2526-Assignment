@@ -75,9 +75,10 @@ object GameFileAccess {
     }
 
     private fun writeGameUtil(file: File, line1: String, game: GameImpl) {
-        val sideLine = "$SIDE_PREFIX ${game.board?.side}\n"
+        val board = game.board ?: throw IllegalArgumentException("Game board is null")
+        val sideLine = "$SIDE_PREFIX ${board.side}\n"
         file.writeText(line1 + sideLine)
-        game.board?.forEach { writePiece(file, it) }
+        board.forEach { writePiece(file, it) }
     }
 
     /**

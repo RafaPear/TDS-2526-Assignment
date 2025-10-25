@@ -16,8 +16,6 @@ import pt.isel.reversi.core.board.PieceType
  */
 interface GDAImpl {
 
-    // POST METHODS
-
     /**
      * Persist a newly placed [piece] into the game storage identified by [fileName].
      *
@@ -71,7 +69,7 @@ interface GDAImpl {
     fun getAvailablePieces(fileName: String): List<PieceType>
 
     /**
-     * Obtain the last placed piece (chronologically) recorded in the game resource.
+     * Get the last placed piece (chronologically) recorded in the game resource.
      *
      * @param fileName path or identifier of the game resource
      * @return the last recorded [Piece]
@@ -81,7 +79,7 @@ interface GDAImpl {
     fun getLatestPiece(fileName: String): Piece
 
     /**
-     * Obtain the last play type (piece or pass) from the persisted chronology.
+     * Get the last play type (piece or pass) from the persisted chronology.
      *
      * @param fileName path or identifier of the game resource
      * @return the last recorded [PieceType]

@@ -66,7 +66,7 @@ interface GameImpl {
     /**
      * Passes the current turn.
      */
-    fun pass()
+    fun pass() : GameImpl
 
     /**
      * Refreshes the game state.
@@ -78,7 +78,7 @@ interface GameImpl {
      * Returns the current board state.
      * @return The board.
      */
-    fun poopBoard(): Board
+    fun poopBoard(): Board?
 
     fun copy(
         dataAccess: GDAImpl = this.dataAccess,

@@ -1,3 +1,3 @@
 package pt.isel.reversi.core.game.exceptions
 
-class InvalidPlayException(message: String): Throwable(message)
+class InvalidPlayException(message: String): Exception(message)

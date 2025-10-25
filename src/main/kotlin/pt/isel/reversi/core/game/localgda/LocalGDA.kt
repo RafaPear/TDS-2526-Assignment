@@ -31,7 +31,7 @@ class LocalGDA : GDAImpl {
     }
 
     /**
-     * Creates or updates the persisted game file with a full snapshot (headers + board).
+     * Creates or updates the persisted game file with a full snapshot (headers and board).
      *
      * Behavior:
      * - If the target file does not exist or is empty, a new file is created and a full
@@ -61,7 +61,9 @@ class LocalGDA : GDAImpl {
 
         val (availablePieces, side) = GameFileAccess.readGameInfo(file)
 
-        if (side != game.board?.side) throw InvalidGameWriteException("Mismatched side in existing file")
+        val board = game.board ?: throw IllegalArgumentException("Game board is null")
+
+        if (side != board.side) throw InvalidGameWriteException("Mismatched side in existing file")
 
         val availablePiecesData = availablePieces.filter { it !in game.players.map { p -> p.type } }
 

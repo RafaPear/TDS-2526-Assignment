@@ -17,7 +17,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.RafaPear:KtFlag:1.4.0'
+    implementation 'com.github.RafaPear:KtFlag:1.4.1'
+    implementation 'com.squareup.okio:okio:3.16.2'
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }
 
@@ -26,7 +27,6 @@ kotlin {
 }
 
 // --- Dokka Configuration ---
-import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.Platform
 
