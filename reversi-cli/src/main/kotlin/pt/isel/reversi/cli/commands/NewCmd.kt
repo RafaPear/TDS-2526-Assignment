@@ -1,18 +1,17 @@
 package pt.isel.reversi.cli.commands
 
 import pt.isel.reversi.core.Environment
+import pt.isel.reversi.core.Environment.First_Player_TURN
 import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.game.Game
 import pt.isel.reversi.core.game.GameImpl
 import pt.isel.reversi.core.game.Player
-import pt.isel.reversi.core.Environment.First_Player_TURN
 import pt.isel.reversi.core.game.localgda.LocalGDA
 import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult
 import pt.rafap.ktflag.cmd.CommandResult.ERROR
-import kotlin.collections.plus
 
 /**
  * Command to create a new game with the specified first player.
@@ -33,9 +32,9 @@ object NewCmd : CommandImpl<GameImpl>() {
 
     override fun execute(vararg args: String, context: GameImpl?): CommandResult<GameImpl> {
         val firstPlayer = PieceType
-            .entries
-            .find { it.symbol.toString() == args[0] }
-            ?: return ERROR("First player must be one of: $pieceTypes")
+                              .entries
+                              .find { it.symbol.toString() == args[0] }
+                          ?: return ERROR("First player must be one of: $pieceTypes")
 
         val name: String? = if (args.size == 2) args[1] else null
 

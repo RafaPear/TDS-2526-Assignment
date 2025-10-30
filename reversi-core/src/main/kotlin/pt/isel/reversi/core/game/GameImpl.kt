@@ -29,6 +29,7 @@ interface GameImpl {
     val playerTurn: PieceType
 
     val countPass: Int
+
     /**
      * Plays a move at the specified row and column.
      * @param coordinate The (row, column) coordinate for the move.
@@ -63,12 +64,12 @@ interface GameImpl {
         players: List<Player>,
         firstTurn: PieceType = First_Player_TURN,
         currGameName: String? = null,
-        ): GameImpl
+    ): GameImpl
 
     /**
      * Passes the current turn.
      */
-    fun pass() : GameImpl
+    fun pass(): GameImpl
 
     /**
      * Refreshes the game state.

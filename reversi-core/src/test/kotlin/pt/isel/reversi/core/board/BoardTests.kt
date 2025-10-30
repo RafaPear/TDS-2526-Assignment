@@ -2,12 +2,10 @@ import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.Piece
 import pt.isel.reversi.core.board.PieceType
-import kotlin.collections.get
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.text.get
 
 class BoardTests {
 
@@ -19,7 +17,7 @@ class BoardTests {
 
         indexes.forEach {
             assertFailsWith<IllegalArgumentException> {
-                Board(8).run{ it.toCoordinate() }
+                Board(8).run { it.toCoordinate() }
             }
         }
     }
@@ -27,11 +25,11 @@ class BoardTests {
     @Test
     fun `toCoordinate with valid index succeeds`() {
         val indexes = listOf(0, 63)
-        val expected = listOf(Coordinate(1,1), Coordinate(8,8))
+        val expected = listOf(Coordinate(1, 1), Coordinate(8, 8))
 
         assertContentEquals(
             expected,
-            indexes.map { Board(8).run{ it.toCoordinate() } }
+            indexes.map { Board(8).run { it.toCoordinate() } }
         )
     }
 

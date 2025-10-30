@@ -14,4 +14,4 @@ package pt.isel.reversi.core.game.exceptions
  */
 class InvalidAvailablePiecesInFileException(
     override val message: String = "The availablePieces in the file is invalid"
-): Exception()
+) : Exception()

@@ -27,19 +27,16 @@ object PlayCmd : CommandImpl<GameImpl>() {
         }
 
         try {
-            val row: Int = args[0].toIntOrNull() ?:
-            return ERROR("Row must be an integer.")
+            val row: Int = args[0].toIntOrNull() ?: return ERROR("Row must be an integer.")
 
-            val col: Int = args[1].toIntOrNull() ?:
-            return ERROR("Column must be an integer.")
+            val col: Int = args[1].toIntOrNull() ?: return ERROR("Column must be an integer.")
 
             val game: GameImpl = context.play(Coordinate(row, col))
             return CommandResult.SUCCESS(
                 "Move played at ($row, $col)",
                 game
             )
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             return ERROR("Error playing move: ${e.message}")
         }
     }

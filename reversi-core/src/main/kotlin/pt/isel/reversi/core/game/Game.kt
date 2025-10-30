@@ -56,7 +56,6 @@ open class Game(
             "Game is not started yet (board is null or players are empty)."
         ) else board as Board
 
-
         //if it has only one player and is not his turn
         if (players.size == 1 && players[0].type != playerTurn) {
             throw InvalidPlayException("It's not your turn")
@@ -99,11 +98,12 @@ open class Game(
         val tempCurrGameName = currGameName
         return when {
             tempCurrGameName != null -> dataAccess.getAvailablePieces(tempCurrGameName)
-            players.size == 1 -> players.map { it.type.swap() }
-            players.isEmpty() -> PieceType.entries
-            else -> emptyList()
+            players.size == 1        -> players.map { it.type.swap() }
+            players.isEmpty()        -> PieceType.entries
+            else                     -> emptyList()
         }
     }
+
     /**
      * Sets the target mode for the game.
      * @param target True to enable target mode.
@@ -179,7 +179,6 @@ open class Game(
         )
     }
 
-
     override fun refresh(): GameImpl {
         TODO("Not yet implemented")
     }
@@ -195,11 +194,11 @@ open class Game(
 
     fun equals(other: GameImpl): Boolean {
         return this.players == other.players &&
-                this.target == other.target &&
-                this.playerTurn == other.playerTurn &&
-                this.currGameName == other.currGameName &&
-                this.board == other.board &&
-                this.countPass == other.countPass
+               this.target == other.target &&
+               this.playerTurn == other.playerTurn &&
+               this.currGameName == other.currGameName &&
+               this.board == other.board &&
+               this.countPass == other.countPass
     }
 
     /**

@@ -14,4 +14,4 @@ package pt.isel.reversi.core.game.exceptions
  */
 class InvalidSideInFileException(
     override val message: String = "The side in the file is invalid"
-): Exception()
+) : Exception()

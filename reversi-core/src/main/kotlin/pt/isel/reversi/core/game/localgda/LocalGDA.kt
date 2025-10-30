@@ -7,7 +7,6 @@ import pt.isel.reversi.core.game.GDAImpl
 import pt.isel.reversi.core.game.GameImpl
 import pt.isel.reversi.core.game.exceptions.InvalidGameWriteException
 import java.io.File
-import java.util.NoSuchElementException
 
 /**
  * Local filesystem implementation of the game data access layer.

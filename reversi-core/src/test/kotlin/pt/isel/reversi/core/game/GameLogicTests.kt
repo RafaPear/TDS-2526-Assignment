@@ -5,9 +5,7 @@ import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.Piece
 import pt.isel.reversi.core.board.PieceType.BLACK
 import pt.isel.reversi.core.board.PieceType.WHITE
-import pt.isel.reversi.core.game.GameLogic
 import pt.isel.reversi.core.game.exceptions.InvalidPlayException
-import kotlin.collections.containsAll
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
@@ -58,13 +56,13 @@ class GameLogicTests {
     }
 
     @Test
-    /*
-          1 2 3 4
-        1 B W W B
-        2 . W . .
-        3 . . W .
-        4 . . . B
-     */
+            /*
+                  1 2 3 4
+                1 B W W B
+                2 . W . .
+                3 . . W .
+                4 . . . B
+             */
     fun `getCapturablePieces should return list of capturable pieces when found`() {
         val coordinate = Coordinate(1, 1)
         var board = Board(4).addPiece(coordinate, BLACK)
@@ -146,14 +144,15 @@ class GameLogicTests {
         )
         assert(uut.isEmpty())
     }
+
     @Test
-    /*
-          1 2 3 4
-        1 B W W B
-        2 . W . .
-        3 . . B W
-        4 . . B B
-     */
+            /*
+                  1 2 3 4
+                1 B W W B
+                2 . W . .
+                3 . . B W
+                4 . . B B
+             */
     fun `findAround should return list of coordinates around myPiece that contain findThis`() {
         val coordinate = Coordinate(3, 3)
         var board = Board(4).addPiece(coordinate, BLACK)
@@ -190,15 +189,16 @@ class GameLogicTests {
         assert(uut2.size == 4)
         assert(
             uut2.containsAll(
-            listOf(
-                Coordinate(2, 3),
-                Coordinate(4, 2),
-                Coordinate(2, 4),
-                Coordinate(3, 2)
+                listOf(
+                    Coordinate(2, 3),
+                    Coordinate(4, 2),
+                    Coordinate(2, 4),
+                    Coordinate(3, 2)
                 )
             )
         )
     }
+
     @Test
     fun `findAround when myPiece is out of bounds`() {
         val board = Board(4)
@@ -208,15 +208,15 @@ class GameLogicTests {
     }
 
     @Test
-    /*
-          1 2 3 4
-        1 B W W .
-        2 . W . W
-        3 . . B W
-        4 . . B B
-     */
+            /*
+                  1 2 3 4
+                1 B W W .
+                2 . W . W
+                3 . . B W
+                4 . . B B
+             */
 
-    fun `isValidMove should return true when there are capturable pieces` () {
+    fun `isValidMove should return true when there are capturable pieces`() {
         val coordinate = Coordinate(3, 3)
         var board = Board(4).addPiece(coordinate, BLACK)
 
@@ -230,20 +230,20 @@ class GameLogicTests {
         board = board.addPiece(Coordinate(4, 4), BLACK)
 
         val piece = Piece(Coordinate(1, 4), BLACK)
-        val uut = GameLogic().isValidMove(board,piece)
+        val uut = GameLogic().isValidMove(board, piece)
 
         assert(uut)
     }
 
     @Test
-    /*
-        1 2 3 4
-      1 B W W .
-      2 . W . W
-      3 . . B W
-      4 . . B B
-   */
-    fun `isValidMove should return false when there are no capturable pieces` () {
+            /*
+                1 2 3 4
+              1 B W W .
+              2 . W . W
+              3 . . B W
+              4 . . B B
+           */
+    fun `isValidMove should return false when there are no capturable pieces`() {
         val coordinate = Coordinate(3, 3)
         var board = Board(4).addPiece(coordinate, BLACK)
 
@@ -257,19 +257,19 @@ class GameLogicTests {
         board = board.addPiece(Coordinate(4, 4), BLACK)
 
         val piece = Piece(Coordinate(1, 4), WHITE)
-        val uut = GameLogic().isValidMove(board,piece)
+        val uut = GameLogic().isValidMove(board, piece)
 
         assert(!uut)
     }
 
     @Test
-    /*
-          1 2 3 4
-        1 B W B .
-        2 . W . W
-        3 . . B W
-        4 . . B B
-     */
+            /*
+                  1 2 3 4
+                1 B W B .
+                2 . W . W
+                3 . . B W
+                4 . . B B
+             */
     fun `isValidMove should return false when myPiece have occupied position`() {
         val coordinate = Coordinate(1, 4)
         var board = Board(4).addPiece(Coordinate(3, 3), BLACK)
@@ -291,13 +291,13 @@ class GameLogicTests {
     }
 
     @Test
-    /*
-        1 2 3 4
-      1 B W W .
-      2 . W . W
-      3 . . B W
-      4 . . B B
-   */
+            /*
+                1 2 3 4
+              1 B W W .
+              2 . W . W
+              3 . . B W
+              4 . . B B
+           */
     fun `isValidMove when myPiece is out of bounds`() {
         val board = Board(4)
         assertFailsWith<IllegalArgumentException> {
@@ -306,7 +306,7 @@ class GameLogicTests {
     }
 
     @Test
-    fun `isValidMove should return false when no pieces around` () {
+    fun `isValidMove should return false when no pieces around`() {
         val board = Board(4)
 
         val uut = GameLogic().isValidMove(board, Piece(Coordinate(2, 2), BLACK))
@@ -314,17 +314,16 @@ class GameLogicTests {
         assert(!uut)
     }
 
-
     @Test
-        /*
-          1 2 3 4
-        1 . W . .
-        2 . W . W
-        3 . . . .
-        4 . . B B
-       */
-    fun `getAvailablePlays should return empty list when no moves are possible` () {
-        var board = Board(4).addPiece(Coordinate(1,2), WHITE)
+            /*
+              1 2 3 4
+            1 . W . .
+            2 . W . W
+            3 . . . .
+            4 . . B B
+           */
+    fun `getAvailablePlays should return empty list when no moves are possible`() {
+        var board = Board(4).addPiece(Coordinate(1, 2), WHITE)
         board = board.addPiece(Coordinate(2, 2), WHITE)
         board = board.addPiece(Coordinate(2, 4), WHITE)
         board = board.addPiece(Coordinate(4, 3), BLACK)
@@ -344,7 +343,7 @@ class GameLogicTests {
             3 . B . .
             4 . . B B
            */
-    fun `getAvailablePlays should return correct coordinates for both players` () {
+    fun `getAvailablePlays should return correct coordinates for both players`() {
         var board = Board(4).addPiece(Coordinate(1, 2), WHITE)
         board = board.addPiece(Coordinate(2, 2), WHITE)
         board = board.addPiece(Coordinate(2, 4), WHITE)
@@ -356,10 +355,10 @@ class GameLogicTests {
         val expectedMyPieceIsBlack = listOf(
             Coordinate(1, 3),
             Coordinate(3, 3)
-            )
+        )
         val expectedMyPieceIsWhite = listOf(
             Coordinate(4, 2)
-            )
+        )
 
         val uut = GameLogic().getAvailablePlays(board, BLACK)
         assert(uut == expectedMyPieceIsBlack)
@@ -375,7 +374,7 @@ class GameLogicTests {
             3 . B . .
             4 . . B B
            */
-    fun `play should throw InvalidPlay exception when move is invalid` () {
+    fun `play should throw InvalidPlay exception when move is invalid`() {
         var board = Board(4).addPiece(Coordinate(1, 2), WHITE)
         board = board.addPiece(Coordinate(2, 2), WHITE)
         board = board.addPiece(Coordinate(2, 4), WHITE)
@@ -399,7 +398,7 @@ class GameLogicTests {
            3 . B B .
            4 . . B B
           */
-    fun `play should throw InvalidPlay exception when position is already occupied` () {
+    fun `play should throw InvalidPlay exception when position is already occupied`() {
         var board = Board(4).addPiece(Coordinate(1, 2), WHITE)
         board = board.addPiece(Coordinate(2, 2), WHITE)
         board = board.addPiece(Coordinate(2, 4), WHITE)
@@ -412,12 +411,13 @@ class GameLogicTests {
 
         val myPiece = Piece(Coordinate(1, 1), BLACK)
 
-        board = board.addPiece(myPiece.coordinate,myPiece.value)
+        board = board.addPiece(myPiece.coordinate, myPiece.value)
 
         assertFailsWith<InvalidPlayException> {
             val uut = GameLogic().play(board, myPiece)
         }
     }
+
     @Test
             /*
               1 2 3 4
@@ -449,11 +449,12 @@ class GameLogicTests {
 
         val uut = GameLogic().play(board, myPiece)
 
-        uut.forEachIndexed { idx,piece ->
+        uut.forEachIndexed { idx, piece ->
 
             assert(piece.coordinate == correctSequence[idx])
         }
     }
+
     @Test
             /*
               1 2 3 4
@@ -462,7 +463,7 @@ class GameLogicTests {
             3 . B B .
             4 . . B B
            */
-    fun `play should return updated board when move is valid` () {
+    fun `play should return updated board when move is valid`() {
         var board = Board(4).addPiece(Coordinate(2, 2), WHITE)
         board = board.addPiece(Coordinate(2, 4), WHITE)
         board = board.addPiece(Coordinate(4, 3), BLACK)

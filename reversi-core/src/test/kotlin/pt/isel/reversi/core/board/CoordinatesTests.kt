@@ -1,5 +1,5 @@
 package pt.isel.reversi.core.board
-import  pt.isel.reversi.core.board.Coordinate
+
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
@@ -12,6 +12,7 @@ class CoordinateTests {
             Coordinate(10, '{')
         }
     }
+
     @Test
     fun `Create Coordinate with col as Char`() {
         val coord1 = Coordinate(3, 'a')

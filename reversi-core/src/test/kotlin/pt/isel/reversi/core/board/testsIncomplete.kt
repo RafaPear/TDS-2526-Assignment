@@ -1,7 +1,5 @@
 package pt.isel.reversi.core.board
 
-import kotlin.test.assertFailsWith
-
 //class testsIncomplete {
 //    @Test
 //    fun `Last Piece added is at the end of the Piece list succeeds`() {

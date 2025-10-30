@@ -31,8 +31,7 @@ object PassCmd : CommandImpl<GameImpl>() {
                 "Turn passed successfully",
                 context
             )
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             return ERROR(e.message ?: "Error passing turn")
         }
     }

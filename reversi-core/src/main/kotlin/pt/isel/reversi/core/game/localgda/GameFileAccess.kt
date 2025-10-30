@@ -182,8 +182,7 @@ object GameFileAccess {
             if (line.startsWith(PIECE_PREFIX)) {
                 val piece = parsePiece(line)
                 pieceTypes.add(piece.value)
-            }
-            else if (line.startsWith(PASS_PREFIX)) {
+            } else if (line.startsWith(PASS_PREFIX)) {
                 val symbol = line.removePrefix(PASS_PREFIX).trim().firstOrNull()
                 if (symbol != null) {
                     val type = PieceType.fromSymbol(symbol)

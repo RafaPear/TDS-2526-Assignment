@@ -18,6 +18,7 @@ data class Coordinate(val row: Int, val col: Int) {
             Coordinate(1, 1) // DOWN RIGHT
         )
     }
+
     /**
      * Creates a coordinate from a row and a column character.
      * @param row The row index (1-based).

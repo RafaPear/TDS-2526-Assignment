@@ -106,7 +106,7 @@ data class Board(
         val value = this[coordinate]?.swap() ?: throw IllegalArgumentException("No piece at position $coordinate")
 
         return this.copy(
-            pieces = pieces.map {piece -> // need preserve the original order
+            pieces = pieces.map { piece -> // need preserve the original order
                 if (piece.coordinate == coordinate)
                     Piece(coordinate, value)
                 else
@@ -125,7 +125,6 @@ data class Board(
         val coordinate = idx.toCoordinate()
         return changePiece(coordinate)
     }
-
 
     /**
      * Adds a piece to the board at the specified row and column.
@@ -155,7 +154,6 @@ data class Board(
         val coordinate = idx.toCoordinate()
         return addPiece(coordinate, value)
     }
-
 
     /**
      * Adds a piece to the board.

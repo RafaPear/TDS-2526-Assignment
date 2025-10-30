@@ -11,11 +11,9 @@ import pt.isel.reversi.core.game.exceptions.InvalidPieceInFileException
 import pt.isel.reversi.core.game.exceptions.InvalidSideInFileException
 import pt.isel.reversi.core.game.localgda.LocalGDA
 import java.io.File
-import kotlin.collections.get
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.text.get
 
 class LocalGDATests {
 

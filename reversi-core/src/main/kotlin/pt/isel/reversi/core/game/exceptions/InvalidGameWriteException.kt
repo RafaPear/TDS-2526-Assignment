@@ -14,4 +14,4 @@ package pt.isel.reversi.core.game.exceptions
  */
 class InvalidGameWriteException(
     override val message: String = "The game write is invalid"
-): Exception()
+) : Exception()

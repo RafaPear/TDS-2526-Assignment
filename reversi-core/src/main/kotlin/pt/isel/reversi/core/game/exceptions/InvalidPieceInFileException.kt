@@ -13,4 +13,4 @@ package pt.isel.reversi.core.game.exceptions
  */
 class InvalidPieceInFileException(
     override val message: String = "The piece in the file is invalid"
-): Exception()
+) : Exception()

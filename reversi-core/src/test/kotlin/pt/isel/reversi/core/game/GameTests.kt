@@ -3,8 +3,6 @@ package pt.isel.reversi.core.game
 import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.PieceType
-import pt.isel.reversi.core.game.Game
-import pt.isel.reversi.core.game.Player
 import pt.isel.reversi.core.game.exceptions.InvalidGameException
 import pt.isel.reversi.core.game.exceptions.InvalidPlayException
 import pt.isel.reversi.core.game.localgda.LocalGDA
@@ -17,10 +15,11 @@ class GameTests {
     fun `play with game not started yet`() {
         val game = Game()
 
-        assertFailsWith <InvalidGameException> {
-            game.play(Coordinate(1,1))
+        assertFailsWith<InvalidGameException> {
+            game.play(Coordinate(1, 1))
         }
     }
+
     /*
           1 2 3 4
         1 . . . .
@@ -38,7 +37,7 @@ class GameTests {
         )
 
         assertFailsWith<InvalidPlayException> {
-            uut.play(Coordinate(1,2))
+            uut.play(Coordinate(1, 2))
         }
     }
 
@@ -52,8 +51,8 @@ class GameTests {
     @Test
     fun `play with 1 player in local game and is your turn succeeds`() {
         val expectedBoard = Board(4).startPieces()
-            .addPiece(Coordinate(1,2), PieceType.BLACK)
-            .changePiece(Coordinate(2,2))
+            .addPiece(Coordinate(1, 2), PieceType.BLACK)
+            .changePiece(Coordinate(2, 2))
 
         val uut = Game().startNewGame(
             side = 4,
@@ -62,7 +61,7 @@ class GameTests {
             currGameName = null,
         )
 
-        assert(expectedBoard == uut.play(Coordinate(1,2)).board)
+        assert(expectedBoard == uut.play(Coordinate(1, 2)).board)
     }
 
     @Test
@@ -75,16 +74,16 @@ class GameTests {
             */
     fun `play in local game with 2 players succeeds`() {
         val expectedBoard = Board(4).startPieces()
-            .addPiece(Coordinate(1,2), PieceType.BLACK)
-            .changePiece(Coordinate(2,2))
+            .addPiece(Coordinate(1, 2), PieceType.BLACK)
+            .changePiece(Coordinate(2, 2))
 
         val expectedGame = Game(
             dataAccess = LocalGDA(),
             board = expectedBoard,
             target = false,
             players = listOf(
-                Player(PieceType.BLACK,4),
-                Player(PieceType.WHITE,1)
+                Player(PieceType.BLACK, 4),
+                Player(PieceType.WHITE, 1)
             ),
             playerTurn = PieceType.WHITE,
             currGameName = null,
@@ -95,7 +94,7 @@ class GameTests {
             players = listOf(Player(PieceType.BLACK), Player(PieceType.WHITE)),
             firstTurn = PieceType.BLACK,
             currGameName = null,
-        ).play(Coordinate(1,2))
+        ).play(Coordinate(1, 2))
 
         assert(expectedGame.equals(uut))
     }
@@ -119,8 +118,8 @@ class GameTests {
             firstTurn = PieceType.BLACK,
             currGameName = null,
         )
-            .play(Coordinate(3,4))
-            .play(Coordinate(2,4))
+            .play(Coordinate(3, 4))
+            .play(Coordinate(2, 4))
 
         assertEquals(expectedBlackPoints, uut.players.find { it.type == PieceType.BLACK }!!.points)
         assertEquals(expectedWhitePoints, uut.players.find { it.type == PieceType.WHITE }!!.points)
@@ -137,7 +136,7 @@ class GameTests {
         )
 
         assertFailsWith<InvalidGameException> {
-            uut.play(Coordinate(1,2))
+            uut.play(Coordinate(1, 2))
         }
     }
 
