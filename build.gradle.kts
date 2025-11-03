@@ -30,9 +30,9 @@ allprojects {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "com.github.johnrengelman.shadow")
 
-    tasks.withType<Test>().configureEach {
+    /*tasks.withType<Test>().configureEach {
         ignoreFailures = true
-    }
+    }*/
 
     tasks.withType<DokkaTaskPartial>().configureEach {
         dokkaSourceSets {
