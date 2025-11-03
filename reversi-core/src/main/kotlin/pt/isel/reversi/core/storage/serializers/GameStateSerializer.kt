@@ -15,9 +15,9 @@ class GameStateSerializer : Serializer<GameState, String> {
     private val boardSerializer = BoardSerializer()
     private val playerSerializer = PlayerSerializer()
 
-    val playersLine = 0
-    val lastPlayerLine = 1
-    val boardStartLine = 2
+    private val playersLine = 0
+    private val lastPlayerLine = 1
+    private val boardStartLine = 2
 
     override fun serialize(obj: GameState): String {
         requireNotNull(obj.lastPlayer) { "lastPlayer cannot be null" }
