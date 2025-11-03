@@ -1,6 +1,7 @@
 package pt.isel.reversi.cli
 
 import pt.isel.reversi.cli.commands.*
+import pt.isel.reversi.core.board.PieceType
 import pt.rafap.ktflag.cmd.args.CommandArg
 import pt.rafap.ktflag.cmd.args.CommandArgsParser
 
@@ -23,7 +24,15 @@ val allCommands = arrayOf(
     ExitCmd,
     ShowCmd,
     RefreshCmd,
+    TargetCmd
 )
+
+val debugCommands = arrayOf(
+    DebugCmd,
+    ListGamesCmd
+)
+
+val pieceTypes = PieceType.entries.joinToString("|") { it.symbol.toString() }
 
 /**
  * Main entry point for the Reversi CLI application. It configures the available commands
@@ -39,8 +48,9 @@ fun main(args: Array<String>) {
     val debug = parsed[debugArg] != null
 
     val cli = CLI(
-        allCommands,
-        debug
+        commands = allCommands,
+        debug = debug,
+        debugCommands = debugCommands,
     )
     cli.startLoop()
 }

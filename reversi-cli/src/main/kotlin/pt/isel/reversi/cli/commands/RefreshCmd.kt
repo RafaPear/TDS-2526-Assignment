@@ -15,7 +15,7 @@ object RefreshCmd : CommandImpl<Game>() {
         description = "Refreshes and displays the current game state.",
         longDescription = "Refreshes the game state and displays the current board. \n" +
                           "Requires an initialized game context to function properly.",
-        aliases = listOf("refresh"),
+        aliases = listOf("r", "refresh"),
         usage = "refresh",
         minArgs = 0,
         maxArgs = 0
@@ -30,10 +30,10 @@ object RefreshCmd : CommandImpl<Game>() {
 
         val refreshed = context.refresh()
 
-        ShowCmd.executeWrapper(context = refreshed)
+        val show = ShowCmd.executeWrapper(context = refreshed).message
 
         return CommandResult.SUCCESS(
-            "Refreshed Game State Successfully",
+            "Refreshed Game State Successfully\n$show",
             refreshed
         )
     }

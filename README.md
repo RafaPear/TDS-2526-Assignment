@@ -18,6 +18,10 @@ separation of concerns, explicit domain modeling, and pluggable persistence.
 A full HTML version of the generated documentation is available online:  
 [Reversi Documentation](https://isel-leic-tds.github.io/32d-2526i-g01-muyloco/)
 
+## Module Structure
+
+![Module Structure](images/Module_Structure.png)
+
 ## Quick Start
 
 For the CLI version Run:
@@ -38,6 +42,8 @@ java -jar build/libs/reversi-cli-v*.*.*.jar
 
 The project is split in three modules (core, storage and cli). See the `reversi-core`, `reversi-storage` and
 `reversi-cli` folders for implementation details and tests.
+
+![Project Structure](images/UML_Structure.png)
 
 ## Testing
 

@@ -7,7 +7,7 @@ import kotlin.test.assertFails
 class FileStorageTest {
     data class MockData(val id: Int, val name: String)
 
-    class TestSerializer: Serializer<MockData, String> {
+    class TestSerializer : Serializer<MockData, String> {
         override fun serialize(obj: MockData): String {
             return "${obj.id},${obj.name}"
         }

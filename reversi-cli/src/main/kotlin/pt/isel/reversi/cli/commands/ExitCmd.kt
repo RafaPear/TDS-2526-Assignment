@@ -19,8 +19,20 @@ object ExitCmd : CommandImpl<Game>() {
         maxArgs = 0
     )
 
+    fun askNameToSave(): String? {
+        print("Enter a name to save the current game (or leave empty to not save): ")
+        val input = readln()
+        return input.ifBlank { null }
+    }
+
     override fun execute(vararg args: String, context: Game?): CommandResult<Game> {
-        context?.saveGame()
+        if (context != null) {
+            val saveName = context.currGameName ?: askNameToSave()
+            if (saveName != null) {
+                println("Saving game as '$saveName' before exit...")
+                context.copy(currGameName = saveName).saveGame()
+            }
+        }
         println("By byyyy")
         exitProcess(0)
     }

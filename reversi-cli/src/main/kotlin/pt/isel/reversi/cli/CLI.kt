@@ -2,9 +2,9 @@ package pt.isel.reversi.cli
 
 import pt.isel.reversi.core.Game
 import pt.rafap.ktflag.CommandParser
+import pt.rafap.ktflag.ParserConfig
 import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandResultType
-import pt.rafap.ktflag.style.Colors
 import pt.rafap.ktflag.style.Colors.colorText
 
 /**
@@ -16,14 +16,26 @@ import pt.rafap.ktflag.style.Colors.colorText
 class CLI(
     val commands: Array<CommandImpl<Game>>,
     val debug: Boolean = false,
-    val welcomeMessage: String = "Welcome to Reversi CLI!",
     debugCommands: Array<CommandImpl<Game>> = arrayOf(),
 ) {
-    private fun logDebug(message: String) {
-        if (debug) println(colorText("[DEBUG] $message", Colors.YELLOW))
+    private fun log(message: String) {
+        println(colorText(message))
     }
 
-    val parser = CommandParser(*(commands + debugCommands))
+    val finalCommands = commands + if (debug) debugCommands else arrayOf()
+
+    val parserConfig = ParserConfig<Game>(
+        prompt = PROMPT,
+        promptColor = PROMPT_COLOR,
+        errorColor = ERROR_COLOR,
+        warningColor = WARNING_COLOR,
+        infoColor = INFO_COLOR,
+        helpUsageColor = HELP_USAGE_COLOR,
+        helpAliasColor = HELP_ALIAS_COLOR,
+        helpDescColor = HELP_DESC_COLOR,
+    )
+
+    val parser = CommandParser(*finalCommands, config = parserConfig)
 
     /**
      * Entry point for the CLI version of the Reversi game.
@@ -35,7 +47,7 @@ class CLI(
          */
         var game: Game? = null
 
-        println(colorText(welcomeMessage, Colors.INFO_COLOR))
+        println(colorText(WELCOME_MESSAGE, TEXT_COLOR))
         while (true) {
             val input = parser.readInput()
             game = parseInput(input, game)
@@ -48,19 +60,22 @@ class CLI(
         val result = parser.parseInputToResult(input, game)
 
         if (result == null) {
-            println(colorText("[ERROR] Unknown command", Colors.RED))
+            println(colorText("[ERROR] Unknown command", ERROR_COLOR))
             return game
         }
 
         when {
             result.type == CommandResultType.UNKNOWN_COMMAND  -> parser.printUnknownCommandError(input, result)
 
-            result.type != CommandResultType.SUCCESS          -> result.printError()
+            result.type != CommandResultType.SUCCESS          -> result.printError(parserConfig)
 
-            result.type == CommandResultType.SUCCESS && debug -> logDebug(result.message)
+            result.type == CommandResultType.SUCCESS && debug -> {
+                log(result.message); game = result.result
+            }
 
-            result.result != null                             -> game = result.result!!
+            result.result != null                             -> game = result.result
         }
+
         return game
     }
 }

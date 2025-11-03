@@ -23,7 +23,7 @@ object PlayCmd : CommandImpl<Game>() {
 
     override fun execute(vararg args: String, context: Game?): CommandResult<Game> {
         if (context == null) {
-            return ERROR("Game is not defined. Cannot join a game.")
+            return ERROR("Game is not defined. Cannot play.")
         }
 
         try {

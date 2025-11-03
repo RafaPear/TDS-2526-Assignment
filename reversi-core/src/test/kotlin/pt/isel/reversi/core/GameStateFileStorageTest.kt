@@ -3,6 +3,7 @@ package pt.isel.reversi.core
 import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.storage.GameState
+import pt.isel.reversi.utils.CONFIG_FOLDER
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertFails
@@ -21,7 +22,9 @@ class GameStateFileStorageTest {
 
     fun cleanup(func: () -> Unit) {
         File("test-saves").deleteRecursively()
+        File(CONFIG_FOLDER).deleteRecursively()
         func()
+        File(CONFIG_FOLDER).deleteRecursively()
         File("test-saves").deleteRecursively()
     }
 

@@ -215,7 +215,8 @@ class GameTests {
                 players = listOf(
                     Player(PieceType.BLACK),
                 ),
-                currGameName = "testGame"
+                currGameName = "testGame",
+                firstTurn = PieceType.BLACK,
             ).copy(
                 gameState = GameState(
                     players = listOf(
@@ -253,7 +254,7 @@ class GameTests {
             val expectedBoard = Board(4).startPieces()
             val expectedLastPlayer = PieceType.WHITE
 
-            val initialGame = startNewGame(
+            startNewGame(
                 side = 4,
                 players = listOf(Player(PieceType.BLACK)),
                 firstTurn = PieceType.BLACK,

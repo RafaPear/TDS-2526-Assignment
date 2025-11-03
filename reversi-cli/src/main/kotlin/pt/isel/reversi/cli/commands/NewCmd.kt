@@ -1,5 +1,6 @@
 package pt.isel.reversi.cli.commands
 
+import pt.isel.reversi.cli.pieceTypes
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
@@ -13,8 +14,6 @@ import pt.rafap.ktflag.cmd.CommandResult.ERROR
  * Command to create a new game with the specified first player.
  */
 object NewCmd : CommandImpl<Game>() {
-
-    private val pieceTypes = PieceType.entries.joinToString("|") { it.symbol.toString() }
 
     override val info: CommandInfo = CommandInfo(
         title = "New",
