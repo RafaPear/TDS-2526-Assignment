@@ -454,4 +454,51 @@ class GameTests {
             assertEquals(expectedPlayerTurn, uutB.gameState?.lastPlayer)
         }
     }
+
+    @Test
+    fun `pass in local game with available plays fails`() {
+        val uut = startNewGame(
+            side = 4,
+            players = listOf(
+                Player(PieceType.BLACK),
+                Player(PieceType.WHITE)
+            ),
+            firstTurn = PieceType.BLACK,
+            currGameName = null,
+        )
+
+        assertFailsWith<InvalidPlayException> {
+            uut.pass()
+        }
+
+        assertEquals(PieceType.WHITE, uut.gameState?.lastPlayer)
+    }
+
+    @Test
+    fun `pass in not local game with available plays fails`() {
+        cleanup {
+            var uutB = startNewGame(
+                side = 4,
+                players = listOf(Player(PieceType.BLACK)),
+                firstTurn = PieceType.BLACK,
+                currGameName = "testGame",
+            )
+
+            var uutW = loadGame("testGame")
+
+            uutB = uutB.refresh()
+            assertFailsWith<InvalidPlayException> {
+                uutB.pass()
+            }
+
+            assertEquals(PieceType.WHITE, uutB.gameState?.lastPlayer)
+
+            uutW = uutW.refresh()
+            assertFailsWith<InvalidPlayException> {
+                uutW.pass()
+            }
+
+            assertEquals(PieceType.WHITE, uutW.gameState?.lastPlayer)
+        }
+    }
 }

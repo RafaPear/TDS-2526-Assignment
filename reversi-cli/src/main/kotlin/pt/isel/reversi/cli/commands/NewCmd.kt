@@ -35,9 +35,9 @@ object NewCmd : CommandImpl<Game>() {
 
         val game: Game =
             if (name != null) {
-                startNewGame(players = listOf(player), currGameName = name)
+                startNewGame(players = listOf(player), currGameName = name, firstTurn = playerType)
             } else {
-                startNewGame(players = listOf(player, player.swap()))
+                startNewGame(players = listOf(player, player.swap()), firstTurn = playerType)
             }
 
         return CommandResult.SUCCESS("Game created Successfully", game)

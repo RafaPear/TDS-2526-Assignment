@@ -139,6 +139,9 @@ data class Game(
 
         checkTurnOnNotLocalGame(gs)
 
+        if (GameLogic.getAvailablePlays(board = gs.board, myPieceType = gs.lastPlayer.swap()).isNotEmpty())
+            throw InvalidPlayException("There are available plays, cannot pass the turn")
+
         if (countPass >= 1) {
             throw EndGameException(
                 message = "Both players have passed consecutively. The game has ended."
