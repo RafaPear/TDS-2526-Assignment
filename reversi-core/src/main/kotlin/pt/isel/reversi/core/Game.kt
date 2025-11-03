@@ -1,11 +1,10 @@
 package pt.isel.reversi.core
 
+import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.Piece
-import pt.isel.reversi.core.exceptions.EndGameException
-import pt.isel.reversi.core.exceptions.InvalidFileException
-import pt.isel.reversi.core.exceptions.InvalidGameException
-import pt.isel.reversi.core.exceptions.InvalidPlayException
+import pt.isel.reversi.core.board.PieceType
+import pt.isel.reversi.core.exceptions.*
 import pt.isel.reversi.core.storage.GameState
 import pt.isel.reversi.storage.Storage
 
@@ -19,7 +18,7 @@ import pt.isel.reversi.storage.Storage
  * Note: This class is intentionally minimal and not suitable for exercising game logic.
  */
 @Suppress("unused")
-class Game(
+data class Game(
     private val storage: Storage<String, GameState, String> = STORAGE,
     val target: Boolean,
     val currGameName: String?,
@@ -96,6 +95,7 @@ class Game(
         )
     }
 
+
     /**
      * Sets the target mode for the game.
      * @param target True to enable target mode.
@@ -114,7 +114,7 @@ class Game(
 
         try {
             checkTurnOnNotLocalGame(gs)
-        } catch (_: Exception) {
+        } catch (_: EndGameException) {
             return emptyList()
         }
 
@@ -261,38 +261,123 @@ class Game(
             )
         )
     }
+}
 
-    fun copy(
-        target: Boolean = this.target,
-        currGameName: String? = this.currGameName,
-        gameState: GameState? = this.gameState,
-        countPass: Int = this.countPass,
-    ) : Game = Game(
-        storage = storage,
-        target = target,
-        currGameName = currGameName,
-        gameState = gameState,
-        countPass = countPass,
+
+/**
+ * Starts a new game.
+ * It is recommended to use this method only to create a not local game.
+ * If is not a local game makes available the opponent player in storage for future loads.
+ * @param side The side length of the board.
+ * @param players The list of players.
+ * @param firstTurn The piece type of the player who goes first can omit to use the default.
+ * @param currGameName The current game name can omit to create a local game.
+ * @return The new game state.
+ * @throws InvalidGameException if no players are provided.
+ * @throws Exception if already exists a game with the same name in storage.
+ */
+fun startNewGame(
+    side: Int = BOARD_SIDE,
+    players: List<Player>,
+    firstTurn: PieceType = First_Player_TURN,
+    currGameName: String? = null,
+): Game {
+    if (players.isEmpty())
+        throw InvalidGameException(
+            "Need minimum one player to start the game"
+        )
+
+    val board = Board(side).startPieces()
+
+    val gs = GameState(
+        board = board,
+        players = players.map { it.refresh(board) },
+        lastPlayer = firstTurn.swap()
     )
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Game) return false
+    if (currGameName != null && gs.players.size == 1) {
+        val newGS = gs.copy(
+            players = listOf(gs.players[0].swap().refresh(board)),
+        )
 
-        if (target != other.target) return false
-        if (currGameName != other.currGameName) return false
-        if (gameState != other.gameState) return false
-        if (countPass != other.countPass) return false
+        STORAGE.new(currGameName) { newGS }
 
-        return true
+        return Game(
+            target = false,
+            gameState = gs,
+            currGameName = currGameName,
+        )
     }
 
-    override fun hashCode(): Int {
-        var result = target.hashCode()
-        result = 31 * result + countPass
-        result = 31 * result + storage.hashCode()
-        result = 31 * result + (currGameName?.hashCode() ?: 0)
-        result = 31 * result + (gameState?.hashCode() ?: 0)
-        return result
-    }
+    return Game(
+        target = false,
+        gameState = gs,
+        currGameName = currGameName,
+    )
 }
+
+/**
+ * Loads an existing game from storage.
+ * It is recommended to use this method only connecting to a not local game.
+ * Ensures that the player with the specified piece type is included in the loaded game.
+ * Removes the player from storage to avoid conflicts in future loads.
+ * @param gameName The name of the game to load.
+ * @return The loaded game state.
+ * @throws InvalidFileException if there is an error loading the game state.
+ * @throws InvalidPieceInFileException if the specified piece type is not found in the loaded game.
+ */
+fun loadGame(
+    gameName: String
+): Game {
+    val storage = STORAGE
+    val loadedState = storage.load(gameName)
+        ?: throw InvalidFileException(
+            message = "$gameName does not exist"
+        )
+
+    val myPieceType =
+        if (loadedState.players.isNotEmpty())
+            loadedState.players[0].type
+        else
+            throw InvalidPieceInFileException(
+                message = "No players available in the loaded game: $gameName.",
+            )
+
+    val gs = loadedState.copy(
+        players = loadedState.players.find { it.type == myPieceType }?.let {
+            listOf(it)
+        } ?: throw InvalidPieceInFileException(
+            message = "Player with piece type $myPieceType is not available in the loaded game: $gameName.",
+        ),
+    )
+
+    storage.save(
+        id = gameName,
+        obj = gs.copy(
+            players = loadedState.players - gs.players[0]
+        )
+    )
+
+    return Game(
+        target = false,
+        gameState = gs.copy(
+            players = gs.players.map { it.refresh(gs.board) }
+        ),
+        currGameName = gameName,
+    )
+}
+
+fun newGameForTest(
+    board: Board,
+    players: List<Player>,
+    lastPlayer: PieceType,
+    currGameName: String? = null,
+): Game = Game(
+    target = false,
+    currGameName = currGameName,
+    gameState = GameState(
+        board = board,
+        players = players,
+        lastPlayer = lastPlayer
+    )
+)
