@@ -297,7 +297,7 @@ fun startNewGame(
 
     if (currGameName != null && gs.players.size == 1) {
         val newGS = gs.copy(
-            players = listOf(gs.players[0].swap()),
+            players = listOf(gs.players[0].swap().refresh(board)),
         )
 
         STORAGE.new(currGameName) { newGS }
@@ -360,7 +360,9 @@ fun loadGame(
 
     return Game(
         target = false,
-        gameState = gs,
+        gameState = gs.copy(
+            players = gs.players.map { it.refresh(gs.board) }
+        ),
         currGameName = gameName,
     )
 }
