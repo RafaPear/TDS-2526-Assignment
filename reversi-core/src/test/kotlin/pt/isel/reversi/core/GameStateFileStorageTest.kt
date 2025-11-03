@@ -8,7 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertFails
 
 class GameStateFileStorageTest {
-    val storage = FILE_DATA_ACCESS.copy(folder = "test-saves")
+    val storage = STORAGE.copy(folder = "test-saves")
 
     val defaultGameState = GameState(
         players = listOf(

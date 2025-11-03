@@ -19,7 +19,7 @@ const val SIDE_MAX = 26
  * Default file-based storage used by the simple demo runner and tests. The folder is relative to the working
  * directory and defaults to `saves`.
  */
-val FILE_DATA_ACCESS = FileStorage(
+val STORAGE = FileStorage(
     folder = "saves",
     serializer = GameStateSerializer()
 )

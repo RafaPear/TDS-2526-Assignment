@@ -26,7 +26,7 @@ data class Game(
 ) {
 
     constructor() : this(
-        storage = FILE_DATA_ACCESS,
+        storage = STORAGE,
         target = false,
         currGameName = null,
         gameState = null,
@@ -269,7 +269,6 @@ data class Game(
  * @param players The list of players.
  * @param firstTurn The piece type of the player who goes first can omit to use the default.
  * @param currGameName The current game name can omit to create a local game.
- * @param storage The storage to use for saving/loading game state.
  * @return The new game state.
  * @throws InvalidGameException if no players are provided.
  * @throws InvalidFileException if there is an error saving the game state.
@@ -279,7 +278,6 @@ fun startNewGame(
     players: List<Player>,
     firstTurn: PieceType = First_Player_TURN,
     currGameName: String? = null,
-    storage: Storage<String, GameState, String> = FILE_DATA_ACCESS,
 ): Game {
     if (players.isEmpty())
         throw InvalidGameException(
@@ -299,14 +297,14 @@ fun startNewGame(
             players = listOf(gs.players[0].swap()),
         )
         return Game(
-            storage = storage,
+            storage = STORAGE,
             target = false,
             gameState =
                 try {
-                    storage.new(currGameName) { newGS }
+                    STORAGE.new(currGameName) { newGS }
                     gs
                 } catch (_: Exception) {
-                    storage.save(currGameName, newGS)
+                    STORAGE.save(currGameName, newGS)
                     gs
                 },
             currGameName = currGameName,
@@ -314,7 +312,7 @@ fun startNewGame(
     }
 
     return Game(
-        storage = FILE_DATA_ACCESS,
+        storage = STORAGE,
         target = false,
         gameState = gs,
         currGameName = currGameName,
@@ -327,16 +325,14 @@ fun startNewGame(
  * Ensures that the player with the specified piece type is included in the loaded game.
  * Removes the player from storage to avoid conflicts in future loads.
  * @param gameName The name of the game to load.
- * @param myPieceType The piece type of the player loading the game.
- * @param storage The storage to use for loading/saving game state.
  * @return The loaded game state.
  * @throws InvalidFileException if there is an error loading the game state.
  * @throws InvalidPieceInFileException if the specified piece type is not found in the loaded game.
  */
 fun loadGame(
-    gameName: String,
-    storage: Storage<String, GameState, String> = FILE_DATA_ACCESS,
+    gameName: String
 ): Game {
+    val storage = STORAGE
     val loadedState = storage.load(gameName)
         ?: throw InvalidFileException(
             message = "Failed to load game state from storage: $gameName"

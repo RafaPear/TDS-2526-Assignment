@@ -21,7 +21,8 @@ val allCommands = arrayOf(
     NewCmd,
     JoinCmd,
     ExitCmd,
-    ShowCmd
+    ShowCmd,
+    RefreshCmd,
 )
 
 /**

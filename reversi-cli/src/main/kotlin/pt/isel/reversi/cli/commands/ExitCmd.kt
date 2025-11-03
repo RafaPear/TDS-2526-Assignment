@@ -20,6 +20,7 @@ object ExitCmd : CommandImpl<Game>() {
     )
 
     override fun execute(vararg args: String, context: Game?): CommandResult<Game> {
+        context?.saveGame()
         println("By byyyy")
         exitProcess(0)
     }

@@ -1,6 +1,9 @@
 package pt.isel.reversi.cli
 
 import pt.isel.reversi.core.Game
+import pt.isel.reversi.core.Player
+import pt.isel.reversi.core.board.PieceType
+import pt.isel.reversi.core.startNewGame
 import kotlin.test.Test
 
 // Using the functions parseInput and parseStringToResult
@@ -20,7 +23,7 @@ class CLITest {
     fun `Test MockCommand execution with valid game context`() {
         val cli = CLI(arrayOf(MockCommand))
         val initialGame = Game()
-        val expectedGame = initialGame.startNewGame()
+        val expectedGame = startNewGame(players = listOf(Player(PieceType.BLACK)))
         val result = cli.parseInput("mock", initialGame) // should execute MockCommand and return new game context
         assert(result != null && result != initialGame && result == expectedGame) {
             "Expected a new game context, but got: $result"

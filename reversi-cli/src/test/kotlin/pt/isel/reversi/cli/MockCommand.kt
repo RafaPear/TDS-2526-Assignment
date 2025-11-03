@@ -1,6 +1,9 @@
 package pt.isel.reversi.cli
 
 import pt.isel.reversi.core.Game
+import pt.isel.reversi.core.Player
+import pt.isel.reversi.core.board.PieceType
+import pt.isel.reversi.core.startNewGame
 import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult
@@ -20,10 +23,7 @@ object MockCommand: CommandImpl<Game>() {
         vararg args: String,
         context: Game?
     ): CommandResult<Game> {
-        val newContext = context?.startNewGame() ?:
-        return CommandResult.ERROR(
-            message = "No game context available to pass."
-        )
+        val newContext = startNewGame(players = listOf(Player(PieceType.BLACK)))
         return CommandResult.SUCCESS(
             result = newContext,
             message = "Mock command executed. New context: $newContext"

@@ -1,6 +1,8 @@
 package pt.isel.reversi.cli.commands
 
-import pt.isel.reversi.core.Game
+import pt.isel.reversi.core.Player
+import pt.isel.reversi.core.board.PieceType
+import pt.isel.reversi.core.startNewGame
 import pt.rafap.ktflag.cmd.CommandResultType
 import kotlin.test.Test
 
@@ -10,7 +12,7 @@ class PlayCmdTest {
     fun `Test PlayCmd execution`() {
         val result = PlayCmd.executeWrapper(
             "3", "4",
-            context = Game().startNewGame()
+            context = startNewGame(players = listOf(Player(PieceType.BLACK)))
         )
         assert(result.type == CommandResultType.SUCCESS) {
             "Expected SUCCESS but got ${result.type} with message: ${result.message}"

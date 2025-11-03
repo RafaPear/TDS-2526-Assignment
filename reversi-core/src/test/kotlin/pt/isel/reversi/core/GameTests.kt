@@ -16,13 +16,11 @@ import kotlin.test.assertFailsWith
 
 class GameTests {
 
-
     fun cleanup(func: () -> Unit) {
-        File("test-saves").deleteRecursively()
+        File("saves").deleteRecursively()
         func()
-        File("test-saves").deleteRecursively()
+        File("saves").deleteRecursively()
     }
-
 
     @Test
     fun `play with game not started yet`() {
@@ -91,7 +89,7 @@ class GameTests {
             .changePiece(Coordinate(2, 2))
 
         val expectedGame = Game(
-            storage = FILE_DATA_ACCESS,
+            storage = STORAGE,
             gameState = GameState(
                 lastPlayer = PieceType.BLACK,
                 board = expectedBoard,
@@ -144,7 +142,7 @@ class GameTests {
     @Test
     fun `play with players empty fails`() {
         val uut = Game(
-            storage = FILE_DATA_ACCESS,
+            storage = STORAGE,
             target = false,
             gameState = GameState(
                 players = emptyList(),
@@ -162,7 +160,7 @@ class GameTests {
     @Test
     fun `pass in localGame when no availablePlays succeeds`() {
         val uut = Game(
-            storage = FILE_DATA_ACCESS,
+            storage = STORAGE,
             target = false,
             gameState = GameState(
                 players = listOf(
@@ -199,7 +197,7 @@ class GameTests {
     @Test
     fun `pass with players empty fails`() {
         val uut = Game(
-            storage = FILE_DATA_ACCESS,
+            storage = STORAGE,
             target = false,
             gameState = GameState(
                 players = emptyList(),
@@ -217,8 +215,13 @@ class GameTests {
     @Test
     fun `pass no local game with 2 players succeeds`() {
         cleanup {
-            val uut = Game(
-                storage = FILE_DATA_ACCESS,
+            val uut = startNewGame(
+                players = listOf(
+                    Player(PieceType.BLACK),
+                ),
+                currGameName = "testGame"
+            ).copy(
+                storage = STORAGE,
                 gameState = GameState(
                     players = listOf(
                         Player(PieceType.BLACK)
@@ -229,7 +232,6 @@ class GameTests {
                         .addPiece(Piece(Coordinate(1, 2), PieceType.BLACK))
                 ),
                 target = false,
-                currGameName = "testGame",
             )
 
             uut.copy(
@@ -266,9 +268,9 @@ class GameTests {
             gameName = "existingGame"
         )
 
-        val loadedGame = FILE_DATA_ACCESS.load("existingGame")?.let {
+        val loadedGame = STORAGE.load("existingGame")?.let {
             Game(
-                storage = FILE_DATA_ACCESS,
+                storage = STORAGE,
                 target = false,
                 gameState = it,
                 currGameName = "existingGame",
