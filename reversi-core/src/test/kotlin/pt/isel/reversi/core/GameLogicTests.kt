@@ -16,7 +16,7 @@ class GameLogicTests {
         repeat(3) {
             board = board.addPiece(Coordinate(1, it + 2), WHITE)
         }
-        val uut = GameLogic().getCapturablePieces(
+        val uut = GameLogic.getCapturablePieces(
             board,
             Piece(Coordinate(1, 1), BLACK),
             Coordinate(0, 1)
@@ -27,7 +27,7 @@ class GameLogicTests {
         board = board.addPiece(Coordinate(2, 2), WHITE)
         board = board.addPiece(Coordinate(2, 4), BLACK)
 
-        val uut2 = GameLogic().getCapturablePieces(
+        val uut2 = GameLogic.getCapturablePieces(
             board,
             Piece(Coordinate(2, 1), BLACK),
             Coordinate(0, 1)
@@ -39,14 +39,14 @@ class GameLogicTests {
         board = board.addPiece(Coordinate(3, 3), WHITE)
         board = board.addPiece(Coordinate(3, 4), BLACK)
 
-        val uut3 = GameLogic().getCapturablePieces(
+        val uut3 = GameLogic.getCapturablePieces(
             board,
             Piece(Coordinate(3, 1), BLACK),
             Coordinate(0, 1)
         )
         assert(uut2.isEmpty())
 
-        val uut4 = GameLogic().getCapturablePieces(
+        val uut4 = GameLogic.getCapturablePieces(
             board,
             Piece(Coordinate(1, 1), BLACK),
             Coordinate(1, 1)
@@ -74,7 +74,7 @@ class GameLogicTests {
         board = board.addPiece(Coordinate(3, 3), WHITE)
         board = board.addPiece(Coordinate(4, 4), BLACK)
 
-        val uut = GameLogic().getCapturablePieces(
+        val uut = GameLogic.getCapturablePieces(
             board,
             Piece(coordinate, BLACK),
             Coordinate(1, 1)
@@ -89,7 +89,7 @@ class GameLogicTests {
             )
         )
 
-        val uut2 = GameLogic().getCapturablePieces(
+        val uut2 = GameLogic.getCapturablePieces(
             board,
             Piece(coordinate, BLACK),
             Coordinate(0, 1)
@@ -113,7 +113,7 @@ class GameLogicTests {
         board = board.addPiece(Coordinate(1, 2), BLACK)
 
         assertFailsWith<IllegalArgumentException> {
-            val uut = GameLogic().getCapturablePieces(
+            val uut = GameLogic.getCapturablePieces(
                 board,
                 Piece(Coordinate(0, 0), BLACK),
                 Coordinate(0, 1)
@@ -125,7 +125,7 @@ class GameLogicTests {
     fun `getCapturablePieces when myPiece is out of bounds`() {
         val board = Board(4)
         assertFailsWith<IllegalArgumentException> {
-            GameLogic().getCapturablePieces(board, Piece(Coordinate(0, 5), BLACK), Coordinate(0, 1))
+            GameLogic.getCapturablePieces(board, Piece(Coordinate(0, 5), BLACK), Coordinate(0, 1))
         }
     }
 
@@ -137,7 +137,7 @@ class GameLogicTests {
         board = board.addPiece(Coordinate(3, 3), WHITE)
         board = board.addPiece(Coordinate(4, 4), BLACK)
 
-        val uut = GameLogic().getCapturablePieces(
+        val uut = GameLogic.getCapturablePieces(
             board,
             Piece(Coordinate(1, 1), BLACK),
             Coordinate(-1, -1)
@@ -166,7 +166,7 @@ class GameLogicTests {
         board = board.addPiece(Coordinate(4, 3), BLACK)
         board = board.addPiece(Coordinate(4, 4), BLACK)
 
-        val uut = GameLogic().findAround(
+        val uut = GameLogic.findAround(
             board,
             Piece(coordinate, BLACK),
             WHITE
@@ -181,7 +181,7 @@ class GameLogicTests {
             )
         )
 
-        val uut2 = GameLogic().findAround(
+        val uut2 = GameLogic.findAround(
             board,
             Piece(coordinate, BLACK),
             null
@@ -203,7 +203,7 @@ class GameLogicTests {
     fun `findAround when myPiece is out of bounds`() {
         val board = Board(4)
         assertFailsWith<IllegalArgumentException> {
-            GameLogic().findAround(board, Piece(Coordinate(0, 5), BLACK), WHITE)
+            GameLogic.findAround(board, Piece(Coordinate(0, 5), BLACK), WHITE)
         }
     }
 
@@ -230,7 +230,7 @@ class GameLogicTests {
         board = board.addPiece(Coordinate(4, 4), BLACK)
 
         val piece = Piece(Coordinate(1, 4), BLACK)
-        val uut = GameLogic().isValidMove(board, piece)
+        val uut = GameLogic.isValidMove(board, piece)
 
         assert(uut)
     }
@@ -257,7 +257,7 @@ class GameLogicTests {
         board = board.addPiece(Coordinate(4, 4), BLACK)
 
         val piece = Piece(Coordinate(1, 4), WHITE)
-        val uut = GameLogic().isValidMove(board, piece)
+        val uut = GameLogic.isValidMove(board, piece)
 
         assert(!uut)
     }
@@ -284,9 +284,9 @@ class GameLogicTests {
         board = board.addPiece(Coordinate(4, 4), BLACK)
         board = board.addPiece(Coordinate(1, 4), BLACK)
 
-        val uut = GameLogic().isValidMove(board, Piece(coordinate, BLACK))
+        val uut = GameLogic.isValidMove(board, Piece(coordinate, BLACK))
         assert(!uut)
-        val uut2 = GameLogic().isValidMove(board, Piece(coordinate, WHITE))
+        val uut2 = GameLogic.isValidMove(board, Piece(coordinate, WHITE))
         assert(!uut2)
     }
 
@@ -301,7 +301,7 @@ class GameLogicTests {
     fun `isValidMove when myPiece is out of bounds`() {
         val board = Board(4)
         assertFailsWith<IllegalArgumentException> {
-            GameLogic().isValidMove(board, Piece(Coordinate(10, 10), BLACK))
+            GameLogic.isValidMove(board, Piece(Coordinate(10, 10), BLACK))
         }
     }
 
@@ -309,7 +309,7 @@ class GameLogicTests {
     fun `isValidMove should return false when no pieces around`() {
         val board = Board(4)
 
-        val uut = GameLogic().isValidMove(board, Piece(Coordinate(2, 2), BLACK))
+        val uut = GameLogic.isValidMove(board, Piece(Coordinate(2, 2), BLACK))
 
         assert(!uut)
     }
@@ -329,9 +329,9 @@ class GameLogicTests {
         board = board.addPiece(Coordinate(4, 3), BLACK)
         board = board.addPiece(Coordinate(4, 4), BLACK)
 
-        val uut = GameLogic().getAvailablePlays(board, WHITE)
+        val uut = GameLogic.getAvailablePlays(board, WHITE)
         assert(uut == emptyList<Coordinate>())
-        val uut2 = GameLogic().getAvailablePlays(board, BLACK)
+        val uut2 = GameLogic.getAvailablePlays(board, BLACK)
         assert(uut2 == emptyList<Coordinate>())
     }
 
@@ -360,9 +360,9 @@ class GameLogicTests {
             Coordinate(4, 2)
         )
 
-        val uut = GameLogic().getAvailablePlays(board, BLACK)
+        val uut = GameLogic.getAvailablePlays(board, BLACK)
         assert(uut == expectedMyPieceIsBlack)
-        val uut2 = GameLogic().getAvailablePlays(board, WHITE)
+        val uut2 = GameLogic.getAvailablePlays(board, WHITE)
         assert(uut2 == expectedMyPieceIsWhite)
     }
 
@@ -385,8 +385,8 @@ class GameLogicTests {
 
 
         assertFailsWith<InvalidPlayException> {
-            val uut = GameLogic().play(board, Piece(Coordinate(3, 3), WHITE))
-            val uut2 = GameLogic().play(board, Piece(Coordinate(1, 4), BLACK))
+            val uut = GameLogic.play(board, Piece(Coordinate(3, 3), WHITE))
+            val uut2 = GameLogic.play(board, Piece(Coordinate(1, 4), BLACK))
         }
     }
 
@@ -414,7 +414,7 @@ class GameLogicTests {
         board = board.addPiece(myPiece.coordinate, myPiece.value)
 
         assertFailsWith<InvalidPlayException> {
-            val uut = GameLogic().play(board, myPiece)
+            val uut = GameLogic.play(board, myPiece)
         }
     }
 
@@ -447,7 +447,7 @@ class GameLogicTests {
             board = board.addPiece(correctSequence[it], BLACK)
         }
 
-        val uut = GameLogic().play(board, myPiece)
+        val uut = GameLogic.play(board, myPiece)
 
         uut.forEachIndexed { idx, piece ->
 
@@ -481,7 +481,7 @@ class GameLogicTests {
         expectedBoard = expectedBoard.changePiece(Coordinate(2, 2))
         expectedBoard = expectedBoard.addPiece(myPiece.coordinate, myPiece.value)
 
-        val uut = GameLogic().play(board, myPiece)
+        val uut = GameLogic.play(board, myPiece)
 
         assert(uut == expectedBoard)
     }

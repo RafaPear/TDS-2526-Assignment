@@ -3,6 +3,7 @@ package pt.isel.reversi.cli.commands
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
+import pt.isel.reversi.core.startNewGame
 import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult
@@ -34,9 +35,9 @@ object NewCmd : CommandImpl<Game>() {
 
         val game: Game =
             if (name != null) {
-                Game().startNewGame(players = listOf(player), currGameName = name)
+                startNewGame(players = listOf(player), currGameName = name)
             } else {
-                Game().startNewGame(players = listOf(player, player.swap()))
+                startNewGame(players = listOf(player, player.swap()))
             }
 
         return CommandResult.SUCCESS("Game created Successfully", game)

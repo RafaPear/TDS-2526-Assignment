@@ -1,5 +1,8 @@
 package pt.isel.reversi.core.board
 
+import pt.isel.reversi.core.SIDE_MAX
+import pt.isel.reversi.core.SIDE_MIN
+
 /**
  * Represents a board game grid.
  * @property pieces The list of pieces on the board.
@@ -12,16 +15,15 @@ data class Board(
 ) : Iterable<Piece> {
     private val totalBlackPieces: Int
     private val totalWhitePieces: Int
-    private val sideMin = 4
-    private val sideMax = 26
+
 
     /**
      * Initializes the board and validates its properties.
      * Initializes the total number of black and white pieces on the board.
      */
     init {
-        require(side in sideMin..sideMax) {
-            "Side must be between $sideMin and $sideMax"
+        require(side in SIDE_MIN..SIDE_MAX) {
+            "Side must be between $SIDE_MIN and $SIDE_MAX"
         }
         require(side % 2 == 0) {
             "Side must be even"

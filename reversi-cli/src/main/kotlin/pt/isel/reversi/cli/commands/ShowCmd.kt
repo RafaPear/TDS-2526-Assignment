@@ -24,12 +24,12 @@ object ShowCmd : CommandImpl<Game>() {
         if (context == null)
             return CommandResult.ERROR("Game is not defined. Cannot show game state.")
 
-        val board = context.board
-        val players = context.players
+        val gs = context.gameState ?: return CommandResult.ERROR("Game is not initialized.")
 
-        if (board == null) {
-            return CommandResult.ERROR("Board is not initialized.")
-        }
+
+        val board = gs.board
+        val players = gs.players
+
 
         val builder = StringBuilder()
         builder.appendLine("Current Game State:")

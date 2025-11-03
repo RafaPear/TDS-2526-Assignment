@@ -29,35 +29,38 @@ object JoinCmd : CommandImpl<Game>() {
             return ERROR("Game is not defined. Cannot join a game.")
         }
 
-        try {
-            val firstPlayerTurn = context.players.firstOrNull()?.type ?: First_Player_TURN
-            var game: Game = context.startNewGame(
-                currGameName = name,
-                firstTurn = firstPlayerTurn
-            )
+            TODO("pieceOptions deleted from Game class")
+//        try {
+//            val firstPlayerTurn = context.players.firstOrNull()?.type ?: First_Player_TURN
+//            var game: Game = context.startNewGame(
+//                currGameName = name,
+//                firstTurn = firstPlayerTurn
+//            )
 
-            val pieces = game.pieceOptions()
 
-            if (pieces.isEmpty())
-                return ERROR("No available pieces to join the game.")
 
-            val piece: PieceType =
-                if (pieces.size > 1) {
-                    println("Available pieces to join the game: ${pieces.joinToString(", ") { it.symbol.toString() }}")
-                    print("Choose your piece: ")
-                    val input = readlnOrNull()?.trim()
-                    val selectedPiece = pieces.find { it.symbol.toString() == input }
-                    if (selectedPiece == null) {
-                        return ERROR("Invalid piece selected. Please choose one of: ${pieces.joinToString(", ") { it.symbol.toString() }}")
-                    }
-                    selectedPiece
-                } else pieces.first()
-
-            game = game.startNewGame(players = listOf(Player(piece))).refresh()
-
-            return CommandResult.SUCCESS("Game created Successfully", game)
-        } catch (e: Exception) {
-            return ERROR("Error joining game: ${e.message}")
-        }
+//            val pieces = game.pieceOptions()
+//
+//            if (pieces.isEmpty())
+//                return ERROR("No available pieces to join the game.")
+//
+//            val piece: PieceType =
+//                if (pieces.size > 1) {
+//                    println("Available pieces to join the game: ${pieces.joinToString(", ") { it.symbol.toString() }}")
+//                    print("Choose your piece: ")
+//                    val input = readlnOrNull()?.trim()
+//                    val selectedPiece = pieces.find { it.symbol.toString() == input }
+//                    if (selectedPiece == null) {
+//                        return ERROR("Invalid piece selected. Please choose one of: ${pieces.joinToString(", ") { it.symbol.toString() }}")
+//                    }
+//                    selectedPiece
+//                } else pieces.first()
+//
+//            game = game.startNewGame(players = listOf(Player(piece))).refresh()
+//
+//            return CommandResult.SUCCESS("Game created Successfully", game)
+//        } catch (e: Exception) {
+//            return ERROR("Error joining game: ${e.message}")
+//        }
     }
 }
