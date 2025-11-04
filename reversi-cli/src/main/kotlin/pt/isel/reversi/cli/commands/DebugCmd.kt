@@ -51,6 +51,7 @@ object DebugCmd : CommandImpl<Game>() {
             } else {
                 sb.appendLine(colorText("    State: Initialized", Colors.GREEN))
                 sb.appendLine("    Last play: ${state.lastPlayer.symbol}")
+                sb.appendLine("    Winner: ${state.winner?.type?.symbol ?: "None"}")
                 sb.appendLine("    Players:")
                 state.players.forEach { player ->
                     sb.appendLine("         - Player ${player.type.symbol}: ${player.points} points")
