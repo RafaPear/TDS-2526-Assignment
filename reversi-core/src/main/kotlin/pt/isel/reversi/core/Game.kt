@@ -2,6 +2,7 @@ package pt.isel.reversi.core
 
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.Piece
+import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.exceptions.EndGameException
 import pt.isel.reversi.core.exceptions.InvalidFileException
 import pt.isel.reversi.core.exceptions.InvalidGameException
@@ -161,6 +162,15 @@ data class Game(
             throw InvalidPlayException("There are available plays, cannot pass the turn")
 
         if (countPass >= 1) {
+            gs = gs.copy(
+                winner = when {
+                    gs.board.totalBlackPieces > gs.board.totalWhitePieces ->
+                        Player(PieceType.BLACK, gs.board.totalBlackPieces)
+                    gs.board.totalWhitePieces > gs.board.totalBlackPieces ->
+                        Player(PieceType.WHITE, gs.board.totalWhitePieces)
+                    else -> throw EndGameException("The game has ended in a draw.")
+                }
+            )
             throw EndGameException(
                 message = "Both players have passed consecutively. The game has ended."
             )

@@ -36,7 +36,8 @@ fun startNewGame(
     val gs = GameState(
         board = board,
         players = players.map { it.refresh(board) },
-        lastPlayer = firstTurn.swap()
+        lastPlayer = firstTurn.swap(),
+        winner = null
     )
 
     if (currGameName != null && gs.players.size == 1) {
@@ -149,6 +150,7 @@ fun newGameForTest(
     gameState = GameState(
         board = board,
         players = players,
-        lastPlayer = lastPlayer
+        lastPlayer = lastPlayer,
+        winner = null
     )
 )

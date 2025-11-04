@@ -13,6 +13,6 @@ data class GameState(
     val players: List<Player>,
     val lastPlayer: PieceType,
     val board: Board,
-    val winner: Player? = null,
+    val winner: Player?,
 )
 
