@@ -171,9 +171,6 @@ data class Game(
                     else -> throw EndGameException("The game has ended in a draw.")
                 }
             )
-            throw EndGameException(
-                message = "Both players have passed consecutively. The game has ended."
-            )
         }
 
         gs = gs.copy(

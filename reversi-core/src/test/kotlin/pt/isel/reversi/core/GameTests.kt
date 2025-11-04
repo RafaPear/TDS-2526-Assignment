@@ -157,7 +157,7 @@ class GameTests {
 
     @Test
     fun `pass in localGame when no availablePlays succeeds`() {
-        val uut = Game(
+        var uut = Game(
             target = false,
             gameState = GameState(
                 players = listOf(
@@ -177,9 +177,11 @@ class GameTests {
         assertEquals(expectedCountPass, uut.countPass)
         assertEquals(expectedPlayerTurn, uut.gameState?.lastPlayer)
 
-        assertFailsWith<EndGameException> {
-            uut.pass()
-        }
+
+        uut = uut.pass()
+
+
+        assertEquals(Player(PieceType.BLACK,2), uut.gameState?.winner)
     }
 
     @Test
@@ -211,7 +213,7 @@ class GameTests {
     @Test
     fun `pass no local game with 2 players succeeds`() {
         cleanup {
-            val uut = startNewGame(
+            var uut = startNewGame(
                 players = listOf(
                     Player(PieceType.BLACK),
                 ),
@@ -241,9 +243,14 @@ class GameTests {
             uut.pass()
             uut2 = uut2.refresh()
 
-            assertFailsWith<EndGameException> {
-                uut2.pass()
-            }
+
+            uut2 = uut2.pass()
+
+            assertEquals(Player(PieceType.BLACK, 2), uut2.gameState?.winner)
+
+            uut = uut.refresh()
+
+            assertEquals(Player(PieceType.BLACK, 2), uut.gameState?.winner)
         }
     }
 
