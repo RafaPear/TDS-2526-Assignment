@@ -76,9 +76,9 @@ fun loadGame(
 ): Game {
     val storage = STORAGE
     val loadedState = storage.load(gameName)
-                      ?: throw InvalidFileException(
-                          message = "$gameName does not exist"
-                      )
+        ?: throw InvalidFileException(
+            message = "$gameName does not exist"
+        )
 
     val myPieceType =
         if (loadedState.players.isNotEmpty())
@@ -123,9 +123,9 @@ fun Game.stringifyBoard(): String {
             val cords = Coordinate(row, col)
             when {
                 row == 0 && col == 0 -> sb.append("  ")
-                row == 0             -> sb.append("$col ")
-                col == 0             -> sb.append("$row ")
-                else                 -> sb.append(
+                row == 0 -> sb.append("$col ")
+                col == 0 -> sb.append("$row ")
+                else -> sb.append(
                     when (useTarget && cords in availablePlays) {
                         true -> "$TARGET_CHAR "
                         false -> (board[cords]?.symbol ?: EMPTY_CHAR) + " "

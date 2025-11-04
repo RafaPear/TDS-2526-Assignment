@@ -62,6 +62,14 @@ data class Game(
         }
     }
 
+    private fun gameEnded() {
+        val gs = requireStartedGame()
+        if (gs.winner != null) {
+            throw EndGameException(
+                "The game has already ended. The winner is ${gs.winner.type.symbol} with ${gs.winner.points} points."
+            )
+        }
+    }
     /**
      * Plays a move at the specified coordinate.
      * Saves the piece to data access if the game is not local.
@@ -73,9 +81,11 @@ data class Game(
      * @throws IllegalArgumentException if the position is out of bounds.
      * @throws InvalidGameException if the game is not started yet (board or players are null,empty).
      * @throws InvalidFileException if there is an error saving the game state.
+     * @throws EndGameException if the game has already ended.
      */
     fun play(coordinate: Coordinate): Game {
         val gs = requireStartedGame()
+        gameEnded()
 
         checkTurnOnNotLocalGame(gs)
 
@@ -137,9 +147,12 @@ data class Game(
      * @throws EndGameException if both players have passed consecutively, ending the game.
      * @throws InvalidGameException if the game is not started yet (board or players are null,empty).
      * @throws InvalidFileException if there is an error saving the game state.
+     * @throws InvalidPlayException if there are available plays and passing is not allowed.
+     * @throws EndGameException if the game has already ended.
      */
     fun pass(): Game {
         var gs = requireStartedGame()
+        gameEnded()
 
         checkTurnOnNotLocalGame(gs)
 
