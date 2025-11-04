@@ -27,7 +27,6 @@ object TargetCmd : CommandImpl<Game>() {
         if (context == null)
             return CommandResult.ERROR("No game context available.")
 
-
         val arg = args.getOrNull(0)?.lowercase()
         val newGame = when {
             trueAlias.contains(arg)  -> context.setTargetMode(true)

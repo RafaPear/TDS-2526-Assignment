@@ -29,8 +29,8 @@ object NewCmd : CommandImpl<Game>() {
         if (context != null && context.currGameName != null)
             context.saveGame()
 
-        val playerType = PieceType.entries.find { it.symbol.toString() == args[0] } ?:
-        return ERROR("First player must be one of: $pieceTypes")
+        val playerType = PieceType.entries.find { it.symbol.toString() == args[0] }
+                         ?: return ERROR("First player must be one of: $pieceTypes")
         val player = Player(playerType)
 
         val name: String? = if (args.size == 2) args[1] else null

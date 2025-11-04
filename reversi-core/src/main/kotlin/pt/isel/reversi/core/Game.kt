@@ -71,6 +71,7 @@ data class Game(
             )
         }
     }
+
     /**
      * Plays a move at the specified coordinate.
      * Saves the piece to data access if the game is not local.
@@ -166,9 +167,11 @@ data class Game(
                 winner = when {
                     gs.board.totalBlackPieces > gs.board.totalWhitePieces ->
                         Player(PieceType.BLACK, gs.board.totalBlackPieces)
+
                     gs.board.totalWhitePieces > gs.board.totalBlackPieces ->
                         Player(PieceType.WHITE, gs.board.totalWhitePieces)
-                    else -> throw EndGameException("The game has ended in a draw.")
+
+                    else                                                  -> throw EndGameException("The game has ended in a draw.")
                 }
             )
         }

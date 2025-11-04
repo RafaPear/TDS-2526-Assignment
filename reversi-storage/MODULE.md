@@ -15,11 +15,13 @@ simple: domain objects are converted to a textual representation via `Serializer
 This approach favors human-readable saves that are easy to debug and test.
 
 ### Responsibilities
+
 - Reading and writing game snapshots to local text files (FileStorage)
 - Providing `Serializer` implementations to (de)serialize domain types to strings
 - Validating file structure and reporting errors when the persisted data is malformed
 
 ### Notes
+
 - The concrete serializers for core types live in `reversi-core` under `core.storage.serializers` and are composed by
   `FileStorage` through the `Storage` contract.
 - Default folder used by the project is `saves` (see `Environment.kt` in core).

@@ -4,7 +4,6 @@ import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.Piece
 import pt.isel.reversi.core.board.PieceType
-import pt.isel.reversi.core.exceptions.EndGameException
 import pt.isel.reversi.core.exceptions.InvalidFileException
 import pt.isel.reversi.core.exceptions.InvalidGameException
 import pt.isel.reversi.core.exceptions.InvalidPlayException
@@ -181,7 +180,7 @@ class GameTests {
         uut = uut.pass()
 
 
-        assertEquals(Player(PieceType.BLACK,2), uut.gameState?.winner)
+        assertEquals(Player(PieceType.BLACK, 2), uut.gameState?.winner)
     }
 
     @Test
@@ -573,7 +572,7 @@ class GameTests {
         cleanup {
             val uut = newGameForTest(
                 board = Board(4),
-                players = listOf(Player(PieceType.BLACK),Player(PieceType.WHITE)),
+                players = listOf(Player(PieceType.BLACK), Player(PieceType.WHITE)),
                 lastPlayer = PieceType.WHITE,
                 currGameName = "testGame",
             )
@@ -583,7 +582,7 @@ class GameTests {
             val loadedGameState = STORAGE.load("testGame")
 
             val expectedGameState = uut.gameState?.copy(
-                players = listOf(Player(PieceType.BLACK),Player(PieceType.WHITE)),
+                players = listOf(Player(PieceType.BLACK), Player(PieceType.WHITE)),
             )
 
             assertEquals(expectedGameState, loadedGameState)
@@ -595,7 +594,7 @@ class GameTests {
         cleanup {
             val uut = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK),Player(PieceType.WHITE)),
+                players = listOf(Player(PieceType.BLACK), Player(PieceType.WHITE)),
                 firstTurn = PieceType.BLACK,
                 currGameName = "testGame",
             )

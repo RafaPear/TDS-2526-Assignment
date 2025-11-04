@@ -8,7 +8,7 @@ import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult
 
-object MockCommand: CommandImpl<Game>() {
+object MockCommand : CommandImpl<Game>() {
     override val info: CommandInfo = CommandInfo(
         title = "mock",
         description = "A mock command for testing purposes",

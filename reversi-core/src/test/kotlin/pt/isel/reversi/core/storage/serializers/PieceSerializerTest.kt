@@ -7,7 +7,7 @@ import kotlin.test.Test
 import kotlin.test.assertFails
 
 class PieceSerializerTest {
-    val testUnit = SerializerTestUnit(PieceSerializer()){
+    val testUnit = SerializerTestUnit(PieceSerializer()) {
         val list = mutableListOf<Piece>()
         for (i in 1..50) {
             for (j in 1..50) {

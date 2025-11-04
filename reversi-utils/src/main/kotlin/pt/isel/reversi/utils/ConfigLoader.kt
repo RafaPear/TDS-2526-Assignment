@@ -7,7 +7,7 @@ import java.util.*
  * Configuration loader.
  * Loads configuration from a properties file and validates expected entries.
  */
-class ConfigLoader<U: Config>(
+class ConfigLoader<U : Config>(
     val path: String,
     val factory: (Map<String, String>) -> U,
 ) {

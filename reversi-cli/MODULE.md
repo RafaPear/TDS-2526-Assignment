@@ -20,6 +20,7 @@ Contains concrete command handlers used by the CLI. Each command is implemented 
 `CommandImpl<Game>` contract provided by `KtFlag`.
 
 ### Commands implemented
+
 - NewCmd — create a new game (specify first player and optional name)
 - JoinCmd — join an existing named game
 - PlayCmd — play a move at (row, col)

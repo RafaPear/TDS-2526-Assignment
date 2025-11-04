@@ -2,7 +2,7 @@ package pt.isel.reversi.core
 
 import pt.isel.reversi.utils.Config
 
-class CoreConfig(override val map: Map<String, String>): Config {
+class CoreConfig(override val map: Map<String, String>) : Config {
     /** Side length of the game board. */
     val BOARD_SIDE = map["BOARD_SIDE"]?.toIntOrNull() ?: 8
 

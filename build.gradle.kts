@@ -17,7 +17,7 @@ buildscript {
 }
 
 group = "pt.isel.reversi"
-version = "v0.1.0"
+version = "v1.0.0"
 
 allprojects {
     repositories {

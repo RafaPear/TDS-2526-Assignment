@@ -7,7 +7,7 @@ import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult
 import java.io.File
 
-object ListGamesCmd: CommandImpl<Game>() {
+object ListGamesCmd : CommandImpl<Game>() {
     override val info: CommandInfo =
         CommandInfo(
             title = "List Games",

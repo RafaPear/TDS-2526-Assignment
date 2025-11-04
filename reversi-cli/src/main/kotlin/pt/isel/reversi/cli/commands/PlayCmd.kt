@@ -30,7 +30,7 @@ object PlayCmd : CommandImpl<Game>() {
 
         val arg = args.joinToString("").trim()
 
-        when  {
+        when {
             arg.length >= 2 -> {
                 val colChar = arg.getOrNull(1) ?: return null
                 val row = arg.getOrNull(0).toString().toIntOrNull() ?: return null
@@ -39,9 +39,10 @@ object PlayCmd : CommandImpl<Game>() {
                     val col = colChar.toString().toIntOrNull() ?: return null
                     return Coordinate(row, col)
                 } else if (colChar.isLetter()) return Coordinate(row, colChar)
-                 else return null
+                else return null
             }
-            else -> return null
+
+            else            -> return null
         }
     }
 

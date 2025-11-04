@@ -2,7 +2,7 @@ name: Release Workflow
 
 on:
   release:
-    types: [created]
+    types: [ created ]
 
 permissions:
   contents: write  # necessário para upload do artefacto

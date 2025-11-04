@@ -2,16 +2,17 @@
 
 [![Release Tests](https://github.com/isel-leic-tds/32d-2526i-g01-muyloco/actions/workflows/release-tests.yml/badge.svg)](https://github.com/isel-leic-tds/32d-2526i-g01-muyloco/actions/workflows/release-tests.yml)
 
-
 A modular, test-friendly implementation of the Reversi board game written in Kotlin (JVM). The project emphasizes clean
 separation of concerns, explicit domain modeling, and pluggable persistence.
 
 ![Reversi Board](images/Reversi_Board_CLI.png)
 
 ## Modules
+
 - `reversi-core` — immutable core domain model, game logic and serializers
 - `reversi-storage` — simple local filesystem storage implementation (text files)
 - `reversi-cli` — small command-line client to play the game
+- `reversi-utils` —  utility functions and extensions used by other modules
 
 ## Documentation Site
 
@@ -27,7 +28,7 @@ A full HTML version of the generated documentation is available online:
 For the CLI version Run:
 
 ```bash
-./gradlew reversiCliJar
+./gradlew build
 ```
 
 Then, run the produced module jar (paths vary depending on build):
@@ -40,7 +41,7 @@ java -jar build/libs/reversi-cli-v*.*.*.jar
 
 ## Project Structure
 
-The project is split in three modules (core, storage and cli). See the `reversi-core`, `reversi-storage` and
+The project is split in four modules (core, utils, storage and cli). See the `reversi-core`, `reversi-utils`, `reversi-storage` and
 `reversi-cli` folders for implementation details and tests.
 
 ![Project Structure](images/UML_Structure.png)

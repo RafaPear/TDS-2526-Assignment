@@ -33,7 +33,6 @@ class BoardSerializerTest {
             }
         }.trimEnd()
 
-
     @Test
     fun `Test serialize and deserialize`() {
         testUnit.runTest()
@@ -41,12 +40,14 @@ class BoardSerializerTest {
 
     @Test
     fun `Test serialize`() {
-        val board = Board(4, listOf(
-            Piece(Coordinate(0, 0), PieceType.BLACK),
-            Piece(Coordinate(0, 1), PieceType.WHITE),
-            Piece(Coordinate(1, 0), PieceType.WHITE),
-            Piece(Coordinate(1, 1), PieceType.BLACK)
-        ))
+        val board = Board(
+            4, listOf(
+                Piece(Coordinate(0, 0), PieceType.BLACK),
+                Piece(Coordinate(0, 1), PieceType.WHITE),
+                Piece(Coordinate(1, 0), PieceType.WHITE),
+                Piece(Coordinate(1, 1), PieceType.BLACK)
+            )
+        )
         val serialized = BoardSerializer().serialize(board)
         val expected = buildStringFromBoard(board)
 
@@ -65,12 +66,14 @@ class BoardSerializerTest {
             1,1,#
         """.trimIndent()
         val deserialized = BoardSerializer().deserialize(data)
-        val expected = Board(4, listOf(
-            Piece(Coordinate(0, 0), PieceType.BLACK),
-            Piece(Coordinate(0, 1), PieceType.WHITE),
-            Piece(Coordinate(1, 0), PieceType.WHITE),
-            Piece(Coordinate(1, 1), PieceType.BLACK)
-        ))
+        val expected = Board(
+            4, listOf(
+                Piece(Coordinate(0, 0), PieceType.BLACK),
+                Piece(Coordinate(0, 1), PieceType.WHITE),
+                Piece(Coordinate(1, 0), PieceType.WHITE),
+                Piece(Coordinate(1, 1), PieceType.BLACK)
+            )
+        )
 
         assert(deserialized == expected) {
             "Deserialization failed. Expected: $expected, got: $deserialized"

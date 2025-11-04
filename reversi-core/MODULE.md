@@ -14,11 +14,13 @@ board, pieces, players and the game orchestration. It is intentionally free of a
 CLI, GUI or test code without modification.
 
 ### Key classes
+
 - Game — lightweight, immutable carrier for a game session. Orchestrates moves, passes and state transitions.
 - GameLogic — pure logic that validates moves, computes captures and available plays.
 - Player — represents a player and provides helper methods to refresh points and swap piece type.
 
 ### Responsibilities
+
 - Representing the board, pieces, coordinates and piece types as immutable data types
 - Enforcing move validation and piece capture rules (Reversi)
 - Providing deterministic, testable transformations that return new board/game instances
@@ -31,11 +33,13 @@ CLI, GUI or test code without modification.
 Contains the board model and related primitives used to represent the game grid and pieces.
 
 ### Notable types
+
 - Board — immutable board representation with safe transformation methods (add/change pieces, iterate pieces)
 - Coordinate — row/column pair with helper arithmetic and boundary checks
 - Piece / PieceType — piece value and utilities (symbols, swaps)
 
 ### Responsibilities
+
 - Coordinate and bounds validation
 - Legal move evaluation and piece flipping helpers (used by GameLogic)
 - Producing the initial board setup and iterating existing pieces
@@ -56,6 +60,7 @@ board or piece entries). These exceptions are thrown by the core logic or by the
 invalid data.
 
 ### Examples
+
 - InvalidPlayException — thrown when attempting to play an invalid move
 - InvalidGameException — thrown when game operations are invoked on an unstarted game
 - InvalidPieceInFileException / InvalidSideInFileException — thrown when a persisted file is malformed
