@@ -28,7 +28,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build Reversi CLI JAR (sem testes)
-        run: ./gradlew clean reversiCliJar -x test --no-daemon
+        run: ./gradlew clean build -x test --no-daemon
 
       - name: Rename JAR with release tag
         run: |
@@ -40,6 +40,6 @@ jobs:
       - name: Upload JAR to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: build/libs/reversi-*.jar
+          files: '**/*.jar'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
