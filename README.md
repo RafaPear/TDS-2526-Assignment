@@ -5,7 +5,17 @@
 A modular, test-friendly implementation of the Reversi board game written in Kotlin (JVM). The project emphasizes clean
 separation of concerns, explicit domain modeling, and pluggable persistence.
 
+## Made By
+
+| Ian Frunze                                                 | Rafael Pereira                                            | Tito Silva                                                 |
+|------------------------------------------------------------|-----------------------------------------------------------|------------------------------------------------------------|
+| <img src="https://github.com/IanFrunze.png" width="100" /> | <img src="https://github.com/RafaPear.png" width="100" /> | <img src="https://github.com/cr4zy5000.png" width="100" /> |
+| 52867                                                      | 52880                                                     | 53118                                                      |
+
+## Pictures
+
 ![Reversi Board](images/Reversi_Board_CLI.png)
+![Reversi Board Debug](images/Reversi_Board_CLI_debug.png)
 
 ## Modules
 
@@ -37,7 +47,6 @@ To use the debug commands for testing use the `--debug` or `-d` flag:
 ```bash
 java -jar build/libs/reversi-cli-v*.*.*.jar
 ```
-
 
 
 > Note: change `v*.*.*` to the actual version number.
