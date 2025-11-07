@@ -2,7 +2,6 @@ import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 
-
 plugins {
     alias(libs.plugins.dokka)
     alias(libs.plugins.shadow) apply false

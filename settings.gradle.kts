@@ -1,4 +1,4 @@
-@file:Suppress("UnstableApiUsage")
+@file:Suppress("UnstableApiUsage", "UNUSED_VARIABLE", "UNUSED_PARAMETER")
 
 rootProject.name = "reversi"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
