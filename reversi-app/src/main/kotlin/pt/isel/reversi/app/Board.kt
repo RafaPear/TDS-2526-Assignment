@@ -11,7 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
@@ -52,13 +54,15 @@ fun Grid() {
             modifier = Modifier
                 .size(GRID_SIZE),
         ) {
-            DrawGrid(8)
+            Canvas(modifier = Modifier.size(GRID_SIZE)) {
+                drawGrid(8, this)
+            }
         }
     }
 }
 
-@Composable
-fun DrawGrid(side: Int) = Canvas(modifier = Modifier.size(GRID_SIZE)) {
+
+fun drawGrid(side: Int, drawScope: DrawScope) = with(drawScope) {
     val padding = (GRID_SIZE / side).toPx()
 
     for (x in 1 until side) {
