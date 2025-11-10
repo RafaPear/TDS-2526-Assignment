@@ -18,61 +18,32 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowPosition
-import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberWindowState
 import pt.isel.reversi.core.BOARD_SIDE
-
 
 val WINDOW_MIN_SIZE = java.awt.Dimension(600, 500)
 
 val padding = 20.dp
 
-val WoodBackground = Color(0xFFB8860B)      // Fundo geral de madeira
-val PanelBackground = Color(0xFFD2A679)     // Painel superior
-val BoardGreen = Color(0xFF4CAF50)          // Verde principal do tabuleiro
-val BoardLine = Color(0xFF3E8E41)           // Linhas da grade
-val DiscBlack = Color(0xFF000000)           // Peça preta
-val DiscWhite = Color(0xFFFFFFFF)           // Peça branca
-val ButtonGreen = Color(0xFF4CAF50)         // Botões inferiores
-val TextBlack = Color(0xFF000000)           // Texto (pontuação)
+// Main Color Definitions
+val TEXT_COLOR = Color.Black           // Texto (pontuação)
 
 // Board configuration constants
-object BoardConfig {
-    const val HEIGHT_FRACTION = 0.8f
-    const val WIDTH_FRACTION = 0.6f
-    val COLOR = BoardGreen
+const val BOARD_HEIGHT_FRACTION = 0.8f
+const val BOARD_WIDTH_FRACTION = 0.6f
+const val BOARD_LINE_STROKE_WIDTH = 4f
+val BOARD_BACKGROUND_COLOR = Color(0xFFB8860B)      // Fundo geral de madeira
+val BOARD_SIDE_COLOR = Color(0xFFD2A679)     // Painel superior
+val BOARD_MAIN_COLOR = Color(0xFF4CAF50)          // Verde principal do tabuleiro
+val BOARD_LINE_COLOR = Color(0xFF3E8E41)           // Linhas da grade
 
-    val LINE_COLOR = BoardLine
-    const val LINE_STROKE_WIDTH = 4f
-}
-
-
-object ButtonConfig {
-    const val HEIGHT_FRACTION = 0.6f
-    const val WIDTH_FRACTION = 0.2f
-    val CONTAINER_COLOR = ButtonGreen
-    val CONTENT_COLOR = Color.White
-
-    //Text
-    val MIN_FONT_SIZE = 12.sp
-    val MAX_FONT_SIZE = 40.sp
-
-    val COLOR = TextBlack
-}
-
-fun main() = application {
-    val windowState = rememberWindowState(position = WindowPosition.PlatformDefault)
-
-    Window(
-        onCloseRequest = ::exitApplication,
-        state = windowState,
-    ) {
-        this.window.minimumSize = WINDOW_MIN_SIZE
-        Board()
-    }
-}
+// Button configuration constants
+const val BUTTON_HEIGHT_FRACTION = 0.6f
+const val BUTTON_WIDTH_FRACTION = 0.2f
+val BUTTON_CONTENT_COLOR = Color.White
+val BUTTON_MIN_FONT_SIZE = 12.sp
+val BUTTON_MAX_FONT_SIZE = 40.sp
+val BUTTON_TEXT_COLOR = TEXT_COLOR
+val BUTTON_MAIN_COLOR = Color(0xFF4CAF50)
 
 /** Main composable displaying the board and buttons */
 @Preview
@@ -83,7 +54,7 @@ fun Board() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(WoodBackground),
+            .background(BOARD_BACKGROUND_COLOR),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -111,11 +82,11 @@ fun Board() {
 fun GameButton(label: String, onClick: () -> Unit) {
     Button(
         modifier = Modifier
-            .fillMaxHeight(ButtonConfig.HEIGHT_FRACTION)
-            .fillMaxWidth(ButtonConfig.WIDTH_FRACTION),
+            .fillMaxHeight(BUTTON_HEIGHT_FRACTION)
+            .fillMaxWidth(BUTTON_WIDTH_FRACTION),
         colors = buttonColors(
-            containerColor = ButtonConfig.CONTAINER_COLOR,
-            contentColor = ButtonConfig.CONTENT_COLOR
+            containerColor = BUTTON_MAIN_COLOR,
+            contentColor = BUTTON_CONTENT_COLOR
         ),
         onClick = onClick
     ) {
@@ -125,10 +96,10 @@ fun GameButton(label: String, onClick: () -> Unit) {
             softWrap = false,
             textAlign = TextAlign.Center,
             autoSize = TextAutoSize.StepBased(
-                minFontSize = ButtonConfig.MIN_FONT_SIZE,
-                maxFontSize = ButtonConfig.MAX_FONT_SIZE
+                minFontSize = BUTTON_MIN_FONT_SIZE,
+                maxFontSize = BUTTON_MAX_FONT_SIZE
             ),
-            color = ButtonConfig.COLOR
+            color = BUTTON_TEXT_COLOR
         )
     }
 }
@@ -138,20 +109,19 @@ fun GameButton(label: String, onClick: () -> Unit) {
 fun Grid() {
     Box(
         modifier = Modifier
-            .fillMaxHeight(BoardConfig.HEIGHT_FRACTION)
-            .fillMaxWidth(BoardConfig.WIDTH_FRACTION)
-            .background(PanelBackground, shape = RoundedCornerShape(12.dp)),
+            .fillMaxHeight(BOARD_HEIGHT_FRACTION)
+            .fillMaxWidth(BOARD_WIDTH_FRACTION)
+            .background(BOARD_SIDE_COLOR, shape = RoundedCornerShape(12.dp)),
         contentAlignment = Alignment.Center
     ) {
         Canvas(modifier = Modifier.fillMaxSize(0.96f)) {
             drawRoundRect(
-                color = BoardConfig.COLOR,
+                color = BOARD_MAIN_COLOR,
             )
             drawGrid(BOARD_SIDE, this)
         }
     }
 }
-
 
 /**
  * Draws the grid on the given DrawScope
@@ -165,8 +135,8 @@ fun drawGrid(side: Int, drawScope: DrawScope) = with(drawScope) {
     // Vertical lines
     for (x in 1 until side) {
         drawLine(
-            color = BoardConfig.LINE_COLOR,
-            strokeWidth = BoardConfig.LINE_STROKE_WIDTH,
+            color = BOARD_LINE_COLOR,
+            strokeWidth = BOARD_LINE_STROKE_WIDTH,
             start = Offset(x * cellWidth, 0f),
             end = Offset(x * cellWidth, size.height)
         )
@@ -175,8 +145,8 @@ fun drawGrid(side: Int, drawScope: DrawScope) = with(drawScope) {
     // Horizontal lines
     for (y in 1 until side) {
         drawLine(
-            color = BoardConfig.LINE_COLOR,
-            strokeWidth = BoardConfig.LINE_STROKE_WIDTH,
+            color = BOARD_LINE_COLOR,
+            strokeWidth = BOARD_LINE_STROKE_WIDTH,
             start = Offset(0f, y * cellHeight),
             end = Offset(size.width, y * cellHeight)
         )
