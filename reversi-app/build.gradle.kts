@@ -32,8 +32,8 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "Reversi"
-            packageVersion = "1.0.1"
+            packageName = rootProject.name
+            packageVersion = rootProject.version.toString()
         }
     }
 }

@@ -22,8 +22,8 @@ tasks.register<Jar>("fatJar") {
     description = "Assembles a fat jar including all dependencies."
 
     // Nome final
-    archiveBaseName.set("reversi-cli")
-    archiveVersion.set("v1.0.1")
+    archiveBaseName.set(project.name)
+    archiveVersion.set(rootProject.version.toString())
     archiveClassifier.set("") // sem "-all" → substitui o jar padrão
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE

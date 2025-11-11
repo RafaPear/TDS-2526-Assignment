@@ -1,8 +1,8 @@
 package pt.isel.reversi.app
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.TextAutoSize
@@ -12,13 +12,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.isel.reversi.core.BOARD_SIDE
+import pt.isel.reversi.core.Game
+import pt.isel.reversi.core.board.Board
+import pt.isel.reversi.core.board.Coordinate
+import pt.isel.reversi.core.board.PieceType
 
 val WINDOW_MIN_SIZE = java.awt.Dimension(600, 500)
 
@@ -28,8 +33,6 @@ val padding = 20.dp
 val TEXT_COLOR = Color.Black           // Texto (pontuação)
 
 // Board configuration constants
-const val BOARD_HEIGHT_FRACTION = 0.8f
-const val BOARD_WIDTH_FRACTION = 0.6f
 const val BOARD_LINE_STROKE_WIDTH = 4f
 val BOARD_BACKGROUND_COLOR = Color(0xFFB8860B)      // Fundo geral de madeira
 val BOARD_SIDE_COLOR = Color(0xFFD2A679)     // Painel superior
@@ -37,8 +40,6 @@ val BOARD_MAIN_COLOR = Color(0xFF4CAF50)          // Verde principal do tabuleir
 val BOARD_LINE_COLOR = Color(0xFF3E8E41)           // Linhas da grade
 
 // Button configuration constants
-const val BUTTON_HEIGHT_FRACTION = 0.6f
-const val BUTTON_WIDTH_FRACTION = 0.2f
 val BUTTON_CONTENT_COLOR = Color.White
 val BUTTON_MIN_FONT_SIZE = 12.sp
 val BUTTON_MAX_FONT_SIZE = 40.sp
@@ -48,31 +49,49 @@ val BUTTON_MAIN_COLOR = Color(0xFF4CAF50)
 /** Main composable displaying the board and buttons */
 @Preview
 @Composable
-fun Board() {
-    var target by remember { mutableStateOf("On") }
-
+fun Board(game: MutableState<Game>, onCellClick: (x: Int, y: Int) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BOARD_BACKGROUND_COLOR),
+            .background(BOARD_BACKGROUND_COLOR)
+            .padding(20.dp)
+            .wrapContentSize(Alignment.Center),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Grid()
+        var target by remember { mutableStateOf(
+            if (game.value.target) "On" else "Off"
+        ) }
+        Row(
+            modifier = Modifier
+                .aspectRatio(1f)
+                .weight(5f),
+        ) {
+            val state = game.value.gameState
+
+            if (state != null)
+                Grid(game.value) { x, y -> onCellClick(x, y) }
+        }
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = padding),
-            horizontalArrangement = Arrangement.Center
+                .weight(1f),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             // Button to toggle the target state
-            GameButton("Target $target") { target = if (target == "On") "Off" else "On" }
+            GameButton("Target $target") {
+                game.value = game.value.setTargetMode(!game.value.target)
+                target = if (game.value.target) "On" else "Off"
+            }
 
             Spacer(modifier = Modifier.width(padding))
 
             // Main action button
-            GameButton("PLAY") { /* button action */ }
+            GameButton("Update") {
+                game.value = game.value.refresh()
+            }
         }
     }
 }
@@ -81,14 +100,12 @@ fun Board() {
 @Composable
 fun GameButton(label: String, onClick: () -> Unit) {
     Button(
-        modifier = Modifier
-            .fillMaxHeight(BUTTON_HEIGHT_FRACTION)
-            .fillMaxWidth(BUTTON_WIDTH_FRACTION),
         colors = buttonColors(
             containerColor = BUTTON_MAIN_COLOR,
             contentColor = BUTTON_CONTENT_COLOR
         ),
-        onClick = onClick
+        onClick = onClick,
+        shape = RoundedCornerShape(10.dp)
     ) {
         Text(
             text = label,
@@ -106,19 +123,72 @@ fun GameButton(label: String, onClick: () -> Unit) {
 
 /** Composable that draws the board grid */
 @Composable
-fun Grid() {
+fun Grid(
+    game: Game,
+    onCellClick: (x: Int, y: Int) -> Unit
+) {
+    val board: Board = game.gameState?.board ?: return
+    val side = board.side
+    val target = game.target
     Box(
         modifier = Modifier
-            .fillMaxHeight(BOARD_HEIGHT_FRACTION)
-            .fillMaxWidth(BOARD_WIDTH_FRACTION)
-            .background(BOARD_SIDE_COLOR, shape = RoundedCornerShape(12.dp)),
-        contentAlignment = Alignment.Center
+            .fillMaxSize()
+            .background(BOARD_SIDE_COLOR, shape = RoundedCornerShape(12.dp))
+            .padding(10.dp)
     ) {
-        Canvas(modifier = Modifier.fillMaxSize(0.96f)) {
-            drawRoundRect(
-                color = BOARD_MAIN_COLOR,
-            )
-            drawGrid(BOARD_SIDE, this)
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            repeat(side) { y ->
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    repeat(side) { x ->
+                        val coordinate = Coordinate(x+1, y+1)
+                        val cellValue = board[coordinate]
+                        val isTargetCell = target && game.getAvailablePlays().contains(coordinate)
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .aspectRatio(1f)
+                                .padding(2.dp)
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(BOARD_MAIN_COLOR)
+                                .clickable { onCellClick(x+1, y+1) },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (cellValue != null) {
+                                when (cellValue) {
+                                    PieceType.BLACK -> Text(
+                                        text = "⚫",
+                                        color = Color.Black,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 32.sp
+                                    )
+                                    PieceType.WHITE -> Text(
+                                        text = "⚪",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 32.sp
+                                    )
+                                }
+                            }
+                            else if (isTargetCell) {
+                                Text(
+                                    text = "CAN",
+                                    color = Color.Gray,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -153,3 +223,30 @@ fun drawGrid(side: Int, drawScope: DrawScope) = with(drawScope) {
     }
 }
 
+@Composable
+@Preview
+fun RowWithColumnDemo() {
+    Column(
+        modifier = Modifier
+            .background(BOARD_BACKGROUND_COLOR)
+            .padding(100.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        GameButton("Teste") {}
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Button to toggle the target state
+            GameButton("Target") { }
+
+            Spacer(modifier = Modifier.width(padding))
+
+            // Main action button
+            GameButton("PLAY") { /* button action */ }
+        }
+    }
+}
