@@ -30,6 +30,7 @@ data class Game(
     val currGameName: String?,
     val gameState: GameState?,
     val countPass: Int = 0,
+    val myPiece: PieceType? = null
 ) {
     private val storage: Storage<String, GameState, String> = STORAGE
 
@@ -38,6 +39,9 @@ data class Game(
         currGameName = null,
         gameState = null,
     )
+
+    fun changeMyPiece(newType: PieceType): Game = this.copy(myPiece = newType)
+
 
     /**
      * Ensures that the game has started by checking if the game state and players are initialized.
@@ -171,7 +175,7 @@ data class Game(
                     gs.board.totalWhitePieces > gs.board.totalBlackPieces ->
                         Player(PieceType.WHITE, gs.board.totalWhitePieces)
 
-                    else                                                  -> throw EndGameException("The game has ended in a draw.")
+                    else -> throw EndGameException("The game has ended in a draw.")
                 }
             )
         }

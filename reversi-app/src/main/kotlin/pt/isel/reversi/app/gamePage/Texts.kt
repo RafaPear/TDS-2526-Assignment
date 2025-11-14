@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,8 +18,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.isel.reversi.app.ErrorDialog
-import pt.isel.reversi.app.Page
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.storage.GameState
@@ -28,9 +25,6 @@ import pt.isel.reversi.core.storage.GameState
 @Composable
 fun TextPlayersScore(
     state: GameState?,
-    page: MutableState<Page>,
-    isError: MutableState<Boolean>,
-    errorMessage: MutableState<String>
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -92,12 +86,6 @@ fun TextPlayersScore(
                     fontWeight = FontWeight.Bold,
                     autoSize = TextAutoSize.StepBased()
                 )
-            }
-        }
-
-        if (isError.value) {
-            ErrorDialog(page = page, errorMessage = errorMessage.value, newPage = Page.GAME) {
-                isError.value = false
             }
         }
     }

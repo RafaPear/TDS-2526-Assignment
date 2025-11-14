@@ -6,13 +6,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 /** Composable button with auto-sizing text */
 @Composable
-fun GameButton(label: String, onClick: () -> Unit) {
+fun GameButton(label: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Button(
+        modifier = modifier,
         colors = buttonColors(
             containerColor = BUTTON_MAIN_COLOR,
             contentColor = BUTTON_CONTENT_COLOR

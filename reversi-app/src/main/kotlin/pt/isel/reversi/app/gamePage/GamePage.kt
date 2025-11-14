@@ -7,27 +7,21 @@ import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.isel.reversi.app.Page
-import pt.isel.reversi.core.Game
+import pt.isel.reversi.app.AppState
+import pt.isel.reversi.app.setGame
+import pt.isel.reversi.app.setToastMessage
 import pt.isel.reversi.core.board.Coordinate
 
 @Composable
-fun GamePage(page: MutableState<Page>, game: MutableState<Game>) {
-    val isError = remember { mutableStateOf(false) }
-    val errorMessage = remember { mutableStateOf("") }
-
-
-
+fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(BOARD_BACKGROUND_COLOR)
             .padding(10.dp),
@@ -36,9 +30,9 @@ fun GamePage(page: MutableState<Page>, game: MutableState<Game>) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
         ) {
-            if (game.value.currGameName != null)
+            if (appState.value.game.currGameName != null)
                 Text(
-                    text = "Game: ${game.value.currGameName}",
+                    text = "Game: ${appState.value.game.currGameName}",
                     color = TEXT_COLOR,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
@@ -61,12 +55,14 @@ fun GamePage(page: MutableState<Page>, game: MutableState<Game>) {
                     .background(BOARD_SIDE_COLOR, shape = RoundedCornerShape(12.dp))
                     .padding(10.dp),
             ) {
-                DrawBoard(game) { x, y ->
+                DrawBoard(appState.value.game) { x, y ->
                     try {
-                        game.value = game.value.play(Coordinate(x, y))
+                        appState.value = setGame(
+                            appState,
+                            game = appState.value.game.play(Coordinate(x, y))
+                        )
                     } catch (e: Exception) {
-                        isError.value = true
-                        errorMessage.value = e.message ?: "Erro desconhecido"
+                        appState.value = setToastMessage(appState, message = e.message ?: "Erro desconhecido")
                     }
                 }
             }
@@ -79,33 +75,32 @@ fun GamePage(page: MutableState<Page>, game: MutableState<Game>) {
             ) {
 
                 TextPlayersScore(
-                    state = game.value.gameState,
-                    page = page,
-                    isError = isError,
-                    errorMessage = errorMessage
+                    state = appState.value.game.gameState,
                 )
 
                 Spacer(modifier = Modifier.height(padding))
 
-                val target = if (game.value.target) "On" else "Off"
+                val target = if (appState.value.game.target) "On" else "Off"
 
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
-                ){// Button to toggle the target state
+                ) {// Button to toggle the target state
                     GameButton("Target $target") {
-                        game.value = game.value.setTargetMode(!game.value.target)
+                        appState.value = setGame(
+                            appState,
+                            game = appState.value.game.setTargetMode(!appState.value.game.target)
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(padding))
 
                     // Main action button
                     GameButton("Update") {
-                        game.value = game.value.refresh()
+                        appState.value = setGame(appState, appState.value.game.refresh())
                     }
                 }
-
             }
         }
     }
