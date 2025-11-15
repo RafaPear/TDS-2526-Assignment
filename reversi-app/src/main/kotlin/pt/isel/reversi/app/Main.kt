@@ -1,6 +1,6 @@
 package pt.isel.reversi.app
 
-import ReversiException
+import pt.isel.reversi.core.exceptions.ReversiException
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -25,6 +25,12 @@ import pt.isel.reversi.core.board.PieceType
 import reversi.reversi_app.generated.resources.Res
 import reversi.reversi_app.generated.resources.reversi
 
+/**
+ * State of the application.
+ * @param game The current game state.
+ * @param page The current page being displayed.
+ * @param error The current error, for remove error on display set to null.
+ */
 data class AppState(
     val game: Game,
     val page: Page,
@@ -121,6 +127,7 @@ fun main() = application {
             Page.SAVE_GAME -> SaveGamePage(appState)
         }
 
+        // Show error dialog if there is an error
         appState.value.error?.let { ErrorMessage(appState) }
     }
 }

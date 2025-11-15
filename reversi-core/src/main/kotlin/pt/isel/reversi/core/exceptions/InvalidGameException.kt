@@ -1,7 +1,5 @@
 package pt.isel.reversi.core.exceptions
 
-import ReversiException
-
 /**
  * Thrown when an operation is invoked on an invalid or uninitialized game.
  * Examples: calling `play` or `pass` when the game has not been started.

@@ -1,6 +1,6 @@
 package pt.isel.reversi.app.gamePage
 
-import ReversiException
+import pt.isel.reversi.core.exceptions.ReversiException
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape

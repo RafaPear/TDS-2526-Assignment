@@ -16,8 +16,14 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import pt.isel.reversi.core.exceptions.ErrorType
 
+/**
+ * Composable that displays an error message based on the error type in the app state.
+ * @param appState Mutable state of the application containing the current error information.
+ * @param modifier Optional modifier for styling the composable.
+ */
 @Composable
 fun ErrorMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
+    //TODO: Differentiate error types with different UI elements
     when (appState.value.error?.type) {
         ErrorType.INFO -> ToastMessage(appState, modifier)
         ErrorType.WARNING -> ToastMessage(appState, modifier)
@@ -27,6 +33,12 @@ fun ErrorMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier
     }
 }
 
+/**
+ * Composable that shows a toast message for errors.
+ * The message is displayed for 2 seconds before being cleared.
+ * @param appState Mutable state of the application containing the current error information.
+ * @param modifier Optional modifier for styling the composable.
+ */
 @Composable
 fun ToastMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
     Box(

@@ -1,7 +1,5 @@
 package pt.isel.reversi.core.exceptions
 
-import ReversiException
-
 /**
  * Thrown when the board representation in the persisted game file is malformed or contains
  * values that cannot be converted into a valid [pt.isel.reversi.core.board.Board].

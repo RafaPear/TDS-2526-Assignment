@@ -1,7 +1,5 @@
 package pt.isel.reversi.core.exceptions
 
-import ReversiException
-
 /**
  * Thrown when a game state in the persisted game file is malformed or contains
  * values that cannot be converted into a valid game state.

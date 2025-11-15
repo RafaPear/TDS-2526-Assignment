@@ -1,6 +1,6 @@
 package pt.isel.reversi.app.mainMenu
 
-import ReversiException
+import pt.isel.reversi.core.exceptions.ReversiException
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
