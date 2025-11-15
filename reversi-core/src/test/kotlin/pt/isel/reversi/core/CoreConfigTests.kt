@@ -11,7 +11,7 @@ class CoreConfigTests {
         assert(cfg.BOARD_SIDE == 8)
         assert(cfg.TARGET_CHAR == '*')
         assert(cfg.EMPTY_CHAR == '.')
-        assert(cfg.SAVES_FOLDER == "saves")
+        assert(cfg.SAVES_FOLDER == "data/saves")
     }
 
     @Test

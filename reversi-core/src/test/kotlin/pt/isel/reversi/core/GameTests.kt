@@ -11,6 +11,7 @@ import pt.isel.reversi.core.storage.GameState
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 
 class GameTests {
@@ -60,11 +61,7 @@ class GameTests {
         4 . . . .
      */
     @Test
-    fun `play with 1 player in local game and is your turn succeeds`() {
-        val expectedBoard = Board(4).startPieces()
-            .addPiece(Coordinate(1, 2), PieceType.BLACK)
-            .changePiece(Coordinate(2, 2))
-
+    fun `play with 1 player in local game fails`() {
         val uut = startNewGame(
             side = 4,
             players = listOf(Player(PieceType.BLACK)),
@@ -72,7 +69,7 @@ class GameTests {
             currGameName = null,
         )
 
-        assert(expectedBoard == uut.play(Coordinate(1, 2)).gameState?.board)
+        assertFails { (uut.play(Coordinate(1, 2))) }
     }
 
     @Test
@@ -409,6 +406,8 @@ class GameTests {
                 firstTurn = PieceType.BLACK,
                 currGameName = "testGame",
             )
+
+            val otherUut = loadGame("testGame")
 
             val expectedBoard = Board(4).startPieces()
                 .addPiece(Coordinate(1, 2), PieceType.BLACK)

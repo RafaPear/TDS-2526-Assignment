@@ -14,7 +14,7 @@ class PlayCmdTest {
         cleanup {
             val result = PlayCmd.executeWrapper(
                 "3", "4",
-                context = startNewGame(players = listOf(Player(PieceType.BLACK)), firstTurn = PieceType.BLACK)
+                context = startNewGame(players = listOf(Player(PieceType.BLACK), Player(PieceType.WHITE)), firstTurn = PieceType.BLACK)
             )
             assert(result.type == CommandResultType.SUCCESS) {
                 "Expected SUCCESS but got ${result.type} with message: ${result.message}"
