@@ -36,12 +36,12 @@ val BUTTON_TEXT_COLOR = TEXT_COLOR
 val BUTTON_MAIN_COLOR = Color(0xFF4CAF50)
 
 @Composable
-fun DrawBoard(game: Game, modifier: Modifier = Modifier, onCellClick: (x: Int, y: Int) -> Unit) {
+fun DrawBoard(game: Game, modifier: Modifier = Modifier,freeze: Boolean = false, onCellClick: (x: Int, y: Int) -> Unit) {
 
     val state = game.gameState
 
     if (state != null)
-        Grid(game, modifier) { x, y -> onCellClick(x, y) }
+        Grid(game, modifier, freeze) { x, y -> onCellClick(x, y) }
 }
 
 /** Composable that draws the board grid */
@@ -49,6 +49,7 @@ fun DrawBoard(game: Game, modifier: Modifier = Modifier, onCellClick: (x: Int, y
 fun Grid(
     game: Game,
     modifier: Modifier = Modifier,
+    freeze: Boolean = false,
     onCellClick: (x: Int, y: Int) -> Unit
 ) {
     val board: Board = game.gameState?.board ?: return
@@ -83,7 +84,7 @@ fun Grid(
                             .padding(2.dp)
                             .clip(RoundedCornerShape(6.dp))
                             .background(BOARD_MAIN_COLOR)
-                            .clickable(enabled = cellValue == null) { onCellClick(x + 1, y + 1) },
+                            .clickable(enabled = (cellValue == null && !freeze)) { onCellClick(x + 1, y + 1) },
                         contentAlignment = Alignment.Center
                     ) {
                         Canvas(

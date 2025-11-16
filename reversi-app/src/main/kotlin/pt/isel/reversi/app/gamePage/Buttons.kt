@@ -12,13 +12,14 @@ import androidx.compose.ui.unit.dp
 
 /** Composable button with auto-sizing text */
 @Composable
-fun GameButton(label: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun GameButton(label: String, modifier: Modifier = Modifier,freeze: Boolean, onClick: () -> Unit) {
     Button(
         modifier = modifier,
         colors = buttonColors(
             containerColor = BUTTON_MAIN_COLOR,
             contentColor = BUTTON_CONTENT_COLOR
         ),
+        enabled = !freeze,
         onClick = onClick,
         shape = RoundedCornerShape(20.dp)
     ) {

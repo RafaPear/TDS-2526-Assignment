@@ -23,7 +23,7 @@ import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.utils.LOGGER
 
 @Composable
-fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
+fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier, freeze: Boolean = false) {
     val coroutineAppScope = rememberCoroutineScope()
     // Launch the game refresh coroutine
     coroutineAppScope.launchGameRefreshCoroutine(1000L, appState)
@@ -40,7 +40,7 @@ fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
         ) {
-            if (appState.value.game.currGameName != null)
+            if (appState.value.game.currGameName != null && !freeze)
                 Text(
                     text = "Game: ${appState.value.game.currGameName}",
                     color = TEXT_COLOR,
@@ -65,7 +65,7 @@ fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
                     .background(BOARD_SIDE_COLOR, shape = RoundedCornerShape(12.dp))
                     .padding(10.dp),
             ) {
-                DrawBoard(appState.value.game) { x, y ->
+                DrawBoard(appState.value.game, freeze = freeze) { x, y ->
                     try {
                         appState.value = setGame(
                             appState,
@@ -97,7 +97,7 @@ fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {// Button to toggle the target state
-                    GameButton("Target $target") {
+                    GameButton("Target $target", freeze = freeze) {
                         appState.value = setGame(
                             appState,
                             game = appState.value.game.setTargetMode(!appState.value.game.target)
@@ -107,7 +107,7 @@ fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
                     Spacer(modifier = Modifier.height(padding))
 
                     // Main action button
-                    GameButton("Update") {
+                    GameButton("Update", freeze = freeze) {
                         appState.value = setGame(appState, appState.value.game.refresh())
                     }
                 }
