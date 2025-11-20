@@ -2,7 +2,6 @@ package pt.isel.reversi.app.gamePage
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -62,21 +61,14 @@ fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier, fr
             Box(
                 modifier = modifier.weight(0.7f),
             ) {
-                Box(
-                    modifier = modifier
-                        .aspectRatio(1f)
-                        .background(BOARD_SIDE_COLOR, shape = RoundedCornerShape(12.dp))
-                        .padding(10.dp)
-                ) {
-                    DrawBoard(appState.value.game, freeze = freeze) { coordinate ->
-                        try {
-                            appState.value = setGame(
-                                appState,
-                                game = appState.value.game.play(coordinate)
-                            )
-                        } catch (e: ReversiException) {
-                            appState.value = setError(appState, error = e)
-                        }
+                DrawBoard(appState.value.game, freeze = freeze) { coordinate ->
+                    try {
+                        appState.value = setGame(
+                            appState,
+                            game = appState.value.game.play(coordinate)
+                        )
+                    } catch (e: ReversiException) {
+                        appState.value = setError(appState, error = e)
                     }
                 }
             }

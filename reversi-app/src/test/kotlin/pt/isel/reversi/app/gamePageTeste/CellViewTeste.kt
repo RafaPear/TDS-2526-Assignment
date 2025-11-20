@@ -102,4 +102,46 @@ class CellViewTeste {
         onNodeWithTag(testTag = cellViewTag, useUnmergedTree = true)
             .assertIsNotEnabled()
     }
+
+    @Test
+    fun `cellView with empty cell and freeze true expect not clickable`() = runComposeUiTest {
+        val expectedCoordinates = Coordinate(1, 1)
+        setContent {
+            cellView(
+                coordinate = expectedCoordinates,
+                cellValue = null,
+                ghostPiece = null,
+                freeze = true,
+                onClick = { fail("onClick should not be called") }
+            )
+        }
+
+        val cellViewTag = getCellViewTestTag(coordinate = expectedCoordinates)
+        onNodeWithTag(testTag = cellViewTag, useUnmergedTree = true)
+            .assertIsNotEnabled()
+    }
+
+
+    @Test
+    fun `cellView with ghostPiece and freeze true expect not clickable`() = runComposeUiTest {
+        val expectedCoordinates = Coordinate(1, 1)
+        val expectedValue = PieceType.BLACK
+        setContent {
+            cellView(
+                coordinate = expectedCoordinates,
+                cellValue = null,
+                ghostPiece = expectedValue,
+                freeze = true,
+                onClick = { fail("onClick should not be called") }
+            )
+        }
+
+        val pieceTag = getPieceTestTag(coordinate = expectedCoordinates, type = expectedValue)
+        onNodeWithTag(testTag = pieceTag, useUnmergedTree = true)
+            .assertExists()
+
+        val cellViewTag = getCellViewTestTag(coordinate = expectedCoordinates)
+        onNodeWithTag(testTag = cellViewTag, useUnmergedTree = true)
+            .assertIsNotEnabled()
+    }
 }

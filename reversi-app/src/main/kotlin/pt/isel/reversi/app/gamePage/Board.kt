@@ -40,6 +40,8 @@ val BUTTON_MAIN_COLOR = Color(0xFF4CAF50)
 
 const val GHOST_PIECE_ALPHA = 0.3f
 
+fun getBoardTestTag() = "ReversiBoard"
+
 @Composable
 fun DrawBoard(
     game: Game,
@@ -47,10 +49,18 @@ fun DrawBoard(
     freeze: Boolean = false,
     onCellClick: (coordinate: Coordinate) -> Unit
 ) {
-    val state = game.gameState
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .background(BOARD_SIDE_COLOR, shape = RoundedCornerShape(12.dp))
+            .padding(all = 10.dp)
+            .testTag(tag = getBoardTestTag())
+    ) {
+        val state = game.gameState
 
-    if (state != null)
-        Grid(game, modifier, freeze) { coordinate -> onCellClick(coordinate) }
+        if (state != null)
+            Grid(game, modifier, freeze) { coordinate -> onCellClick(coordinate) }
+    }
 }
 
 /** Composable that draws the board grid */
@@ -65,7 +75,6 @@ fun Grid(
     val side = board.side
     val target = game.target
     val playerTurn = game.gameState?.lastPlayer?.swap()
-
 
     Column(
         modifier = modifier,
