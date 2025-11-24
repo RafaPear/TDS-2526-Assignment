@@ -7,10 +7,10 @@ separation of concerns, explicit domain modeling, and pluggable persistence.
 
 ## Made By
 
-| Ian Frunze                                                 | Rafael Pereira                                            | Tito Silva                                                 |
-|------------------------------------------------------------|-----------------------------------------------------------|------------------------------------------------------------|
-| <img src="https://github.com/IanFrunze.png" width="100" /> | <img src="https://github.com/RafaPear.png" width="100" /> | <img src="https://github.com/cr4zy5000.png" width="100" /> |
-| 52867                                                      | 52880                                                     | 53118                                                      |
+| Ian Frunze                                                 | Rafael Pereira                                            | Tito Silva                                                     |
+|------------------------------------------------------------|-----------------------------------------------------------|----------------------------------------------------------------|
+| <img src="https://github.com/IanFrunze.png" width="100" /> | <img src="https://github.com/RafaPear.png" width="100" /> | <img src="https://github.com/TitoSilva5000.png" width="100" /> |
+| 52867                                                      | 52880                                                     | 53118                                                          |
 
 ## Pictures
 
