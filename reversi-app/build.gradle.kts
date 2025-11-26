@@ -19,6 +19,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtimeCompose)
     @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
     implementation(compose.uiTest)
+    implementation(compose.materialIconsExtended)
     // REVERSI MODULES
     implementation(project(":reversi-core"))
     implementation(project(":reversi-utils"))
