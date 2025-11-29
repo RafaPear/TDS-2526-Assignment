@@ -122,4 +122,36 @@ class FileStorageTest {
         }
     }
 
+    @Test
+    fun `Test lastModified returns correct timestamp`() {
+        cleanup {
+            val beforeCreation = System.currentTimeMillis()
+            fileStorage.new(1.toString()) { MockData(1, "Test1") }
+            val afterCreation = System.currentTimeMillis()
+
+            val lastModified = fileStorage.lastModified(1.toString())
+            assert(lastModified != null)
+            assert(lastModified!! in beforeCreation..afterCreation)
+
+            Thread.sleep(10) // Ensure timestamp difference
+
+            val beforeSave = System.currentTimeMillis()
+            val updatedData = MockData(1, "UpdatedTest1")
+            fileStorage.save(1.toString(), updatedData)
+            val afterSave = System.currentTimeMillis()
+
+            val lastModifiedAfterSave = fileStorage.lastModified(1.toString())
+            assert(lastModifiedAfterSave != null)
+            assert(lastModifiedAfterSave!! in beforeSave..afterSave)
+            assert(lastModifiedAfterSave > lastModified)
+        }
+    }
+
+    @Test
+    fun `Test lastModified on non existing id returns null`() {
+        cleanup {
+            val lastModified = fileStorage.lastModified(1.toString())
+            assert(lastModified == null)
+        }
+    }
 }

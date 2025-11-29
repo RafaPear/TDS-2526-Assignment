@@ -33,9 +33,6 @@ jobs:
       - name: Build Project
         run: ./gradlew build --no-daemon -x test
 
-      - name: Build Dokka docs
-        run: ./gradlew dokkaHtmlMultiModule -x test
-
       - name: Debug Dokka output
         run: |
           echo "=== Conteúdo de build/dokka/html ==="

@@ -5,6 +5,7 @@ plugins {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(libs.ktflag)
+    implementation(libs.coroutines)
     implementation(project(":reversi-core"))
     implementation(project(":reversi-utils"))
     testImplementation(kotlin("test"))

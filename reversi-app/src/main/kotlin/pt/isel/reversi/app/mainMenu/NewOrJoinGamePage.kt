@@ -12,6 +12,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import pt.isel.reversi.app.PreviousPage
 import pt.isel.reversi.app.ScaffoldView
+import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
+import pt.isel.reversi.app.HIT_SOUND
 import pt.isel.reversi.app.exceptions.NoPieceSelected
 import pt.isel.reversi.app.exceptions.TextBoxIsEmpty
 import pt.isel.reversi.app.state.*
@@ -24,72 +27,82 @@ import pt.isel.reversi.core.loadGame
 import pt.isel.reversi.core.startNewGame
 import pt.isel.reversi.utils.LOGGER
 
-
 @Composable
 fun NewGamePage(
     appState: MutableState<AppState>,
     modifier: Modifier = Modifier,
-) = newOrJoinGamePage(appState, modifier, "Novo Jogo", onClick = { game ->
-    val currGameName = game.currGameName
+) {
+    val coroutineAppScope = rememberCoroutineScope()
+    newOrJoinGamePage(appState, modifier, "Novo Jogo") { game ->
+        val currGameName = game.currGameName
 
-    val myPiece: PieceType = game.myPiece ?: run {
-        appState.value = setError(appState, error = NoPieceSelected())
-        return@newOrJoinGamePage
-    }
-
-    try {
-        val newGame = if (currGameName.isNullOrBlank()) {
-            startNewGame(
-                players = listOf(
-                    Player(PieceType.BLACK),
-                    Player(PieceType.WHITE)
-                ),
-                firstTurn = myPiece,
-            )
-        } else {
-            startNewGame(
-                players = listOf(
-                    Player(myPiece)
-                ),
-                firstTurn = myPiece,
-                currGameName = currGameName.trim()
-            )
-
+        val myPiece: PieceType = game.myPiece ?: run {
+            appState.value = setError(appState, error = NoPieceSelected())
+            return@newOrJoinGamePage
         }
-        LOGGER.info("Novo jogo '${currGameName?.ifBlank { "(local)" } ?: "(local)"} ' iniciado.")
-        appState.value = setAppState(appState, newGame, Page.GAME)
-    } catch (e: ReversiException) {
-        appState.value = setError(appState, e)
+
+        coroutineAppScope.launch {
+            try {
+                val newGame = if (currGameName.isNullOrBlank()) {
+                    startNewGame(
+                        players = listOf(
+                            Player(PieceType.BLACK),
+                            Player(PieceType.WHITE)
+                        ),
+                        firstTurn = myPiece,
+                    )
+                } else {
+                    startNewGame(
+                        players = listOf(
+                            Player(myPiece)
+                        ),
+                        firstTurn = myPiece,
+                        currGameName = currGameName.trim()
+                    )
+                }
+
+                LOGGER.info("Novo jogo '${currGameName?.ifBlank { "(local)" } ?: "(local)"} ' iniciado.")
+                appState.value = setAppState(appState, newGame, Page.GAME)
+                getStateAudioPool(appState).play(HIT_SOUND)
+            } catch (e: ReversiException) {
+                appState.value = setError(appState, e)
+            }
+        }
     }
-})
+}
 
 @Composable
 fun JoinGamePage(
     appState: MutableState<AppState>,
     modifier: Modifier = Modifier,
-) = newOrJoinGamePage(appState, modifier, "Entrar num Jogo", onClick = { game ->
-    val currGameName = game.currGameName
-    if (currGameName.isNullOrBlank()) {
-        appState.value = setError(
-            appState,
-            error = TextBoxIsEmpty(
-                message = "Insira um nome do jogo.",
-                type = ErrorType.INFO
+) {
+    val coroutineAppScope = rememberCoroutineScope()
+    newOrJoinGamePage(appState, modifier, "Entrar num Jogo") { game ->
+        val currGameName = game.currGameName
+        if (currGameName.isNullOrBlank()) {
+            appState.value = setError(
+                appState,
+                error = TextBoxIsEmpty(
+                    message = "Insira um nome do jogo.",
+                    type = ErrorType.INFO
+                )
             )
-        )
-        return@newOrJoinGamePage
+            return@newOrJoinGamePage
+        }
+        coroutineAppScope.launch {
+            try {
+                val loadedGame = loadGame(
+                    gameName = currGameName.trim(),
+                    desiredType = game.myPiece
+                )
+                LOGGER.info("Ligado ao jogo '$loadedGame'.")
+                appState.value = setAppState(appState, loadedGame, Page.GAME)
+            } catch (e: ReversiException) {
+                appState.value = setError(appState, e)
+            }
+        }
     }
-    try {
-        val loadedGame = loadGame(
-            gameName = currGameName.trim(),
-            desiredType = game.myPiece
-        )
-        LOGGER.info("Ligado ao jogo '$loadedGame'.")
-        appState.value = setAppState(appState, loadedGame, Page.GAME)
-    } catch (e: ReversiException) {
-        appState.value = setError(appState, e)
-    }
-})
+}
 
 @Composable
 private fun newOrJoinGamePage(

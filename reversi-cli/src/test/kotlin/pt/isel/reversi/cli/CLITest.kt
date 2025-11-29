@@ -38,8 +38,8 @@ class CLITest {
             val result = cli.parseInput("mock", initialGame) // should execute MockCommand and return new game context
             assert(
                 result != null
-                        && result.gameState != initialGame.gameState
-                        && result.gameState == expectedGame.gameState
+                && result.gameState != initialGame.gameState
+                && result.gameState == expectedGame.gameState
             ) {
                 "Expected a new game context, but got: $result"
             }

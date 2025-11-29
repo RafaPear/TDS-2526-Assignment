@@ -25,7 +25,7 @@ dependencies {
     implementation(project(":reversi-core"))
     implementation(project(":reversi-utils"))
     implementation(libs.ktflag)
-    implementation(libs.corroutines)
+    implementation(libs.coroutines)
 
     // TEST MODULE
     testImplementation(libs.kotlin.test)

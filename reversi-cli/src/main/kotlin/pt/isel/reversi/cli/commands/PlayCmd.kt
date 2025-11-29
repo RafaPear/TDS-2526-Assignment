@@ -1,5 +1,6 @@
 package pt.isel.reversi.cli.commands
 
+import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.board.Coordinate
 import pt.rafap.ktflag.cmd.CommandImpl
@@ -54,7 +55,7 @@ object PlayCmd : CommandImpl<Game>() {
         try {
             val coordinate = parseCoordinateArgs(args.toList()) ?: return ERROR("Invalid coordinates provided.")
 
-            val game: Game = context.play(coordinate)
+            val game: Game = runBlocking { context.play(coordinate) }
 
             println(ShowCmd.executeWrapper(context = game).message)
 

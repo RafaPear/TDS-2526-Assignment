@@ -1,5 +1,6 @@
 package pt.isel.reversi.cli
 
+import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
@@ -23,7 +24,7 @@ object MockCommand : CommandImpl<Game>() {
         vararg args: String,
         context: Game?
     ): CommandResult<Game> {
-        val newContext = startNewGame(players = listOf(Player(PieceType.BLACK)), firstTurn = PieceType.BLACK)
+        val newContext = runBlocking { startNewGame(players = listOf(Player(PieceType.BLACK)), firstTurn = PieceType.BLACK) }
         return CommandResult.SUCCESS(
             result = newContext,
             message = "Mock command executed. New context: $newContext"

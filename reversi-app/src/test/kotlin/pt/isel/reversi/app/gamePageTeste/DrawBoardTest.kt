@@ -1,6 +1,7 @@
 package pt.isel.reversi.app.gamePageTeste
 
 import androidx.compose.ui.test.*
+import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.app.gamePage.DrawBoard
 import pt.isel.reversi.app.gamePage.testTagBoard
 import pt.isel.reversi.app.gamePage.testTagCellView
@@ -16,12 +17,14 @@ class DrawBoardTest {
     fun `DrawBoard test if all cells are displayed`() = runComposeUiTest {
         val expectedSide = 4
         setContent {
-            val game = startNewGame(
-                side = expectedSide,
-                players = listOf(Player(type = PieceType.BLACK)),
-                firstTurn = PieceType.BLACK,
-                currGameName = null
-            )
+            val game = runBlocking {
+                startNewGame(
+                    side = expectedSide,
+                    players = listOf(Player(type = PieceType.BLACK)),
+                    firstTurn = PieceType.BLACK,
+                    currGameName = null
+                )
+            }
             DrawBoard(
                 game = game,
                 onCellClick = { fail("onCellClick should not be called during this test") }

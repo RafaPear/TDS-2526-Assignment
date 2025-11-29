@@ -2,7 +2,7 @@ package pt.isel.reversi.app.state
 
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.exceptions.ReversiException
-
+import pt.isel.reversi.utils.audio.AudioPool
 
 /**
  * State of the application.
@@ -15,4 +15,5 @@ data class AppState(
     val page: Page,
     val error: ReversiException?,
     val backPage: Page = Page.MAIN_MENU,
+    val audioPool: AudioPool,
 )

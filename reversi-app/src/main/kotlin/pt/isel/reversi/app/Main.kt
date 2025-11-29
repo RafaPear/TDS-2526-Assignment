@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -11,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.painterResource
 import pt.isel.reversi.app.exceptions.GameNotStartedYet
 import pt.isel.reversi.app.gamePage.GamePage
@@ -23,12 +26,8 @@ import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.core.stringifyBoard
 import pt.isel.reversi.utils.LOGGER
-import pt.isel.reversi.utils.setLoggerFilePath
-import pt.rafap.ktflag.cmd.args.CommandArg
-import pt.rafap.ktflag.cmd.args.CommandArgsParser
 import reversi.reversi_app.generated.resources.Res
 import reversi.reversi_app.generated.resources.reversi
-
 
 val logArg = CommandArg(
     name = "log",
@@ -40,6 +39,8 @@ val logArg = CommandArg(
 val argsParser = CommandArgsParser(logArg)
 
 fun main(args: Array<String>) {
+    val initializedArgs = initializeAppArgs(args) ?: return
+    val (audioPool) = initializedArgs
 
     application {
         val windowState = rememberWindowState(
@@ -47,16 +48,13 @@ fun main(args: Array<String>) {
             position = WindowPosition.PlatformDefault
         )
 
-        val parsedArgs = argsParser.parseArgs(*args)
-        val logToFileName = parsedArgs[logArg]
-        if (logToFileName != null) setLoggerFilePath()
-
         val appState = remember {
             mutableStateOf(
                 AppState(
                     game = Game(),
                     page = Page.MAIN_MENU,
-                    error = null
+                    error = null,
+                    audioPool = audioPool
                 )
             )
         }
@@ -66,6 +64,7 @@ fun main(args: Array<String>) {
 
             try {
                 appState.value.game.saveEndGame()
+                getStateAudioPool(appState).destroy()
             } catch (e: ReversiException) {
                 LOGGER.warning("Failed to save game on exit: ${e.message}")
             }
@@ -121,6 +120,7 @@ fun SaveGamePage(appState: MutableState<AppState>) {
     }
 
     var gameName by remember { mutableStateOf(game.currGameName) }
+    val coroutineAppScope = rememberCoroutineScope()
 
     GamePage(appState = appState, freeze = true)
 
@@ -156,14 +156,16 @@ fun SaveGamePage(appState: MutableState<AppState>) {
                         appState,
                         game.copy(currGameName = gameName?.trim() ?: return@Button)
                     )
-                    try {
-                        appState.value.game.saveOnlyBoard(gameState = appState.value.game.gameState)
-                        appState.value = setPage(appState, Page.GAME)
-                    } catch (e: ReversiException) {
-                        appState.value = setAppState(
-                            appState, error = e,
-                            game = game.copy(currGameName = null)
-                        )
+                    coroutineAppScope.launch {
+                        try {
+                            appState.value.game.saveOnlyBoard(gameState = appState.value.game.gameState)
+                            appState.value = setPage(appState, Page.GAME)
+                        } catch (e: ReversiException) {
+                            appState.value = setAppState(
+                                appState, error = e,
+                                game = game.copy(currGameName = null)
+                            )
+                        }
                     }
                 }
             ) {
@@ -190,8 +192,42 @@ fun SettingsPage(appState: MutableState<AppState>, modifier: Modifier = Modifier
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text("Opções futuras: som, tema, rede, etc.")
+            val currentMasterVolume = getStateAudioPool(appState).getMasterVolume()
+            if (currentMasterVolume == null) LOGGER.warning("Master volume is null, using 0f as default")
+            var volume by remember { mutableStateOf(currentMasterVolume ?: 0f) }
+
+            // Convert volume in dB [-20, 0] to percentage [0, 100]
+            val number = if (volume == 0f) " (Default)" else if (volume == -20f) " (disabled)" else " (${volumeDbToPercent(volume, 20f, 0f)}%)"
+
+            Text("Master Volume: $number",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Slider(value = volume, valueRange = -20f..0f, onValueChange = {
+                volume = it
+                val audioPool = getStateAudioPool(appState)
+                if (volume == -20f) {
+                    audioPool.mute(true)
+                } else {
+                    audioPool.mute(false)
+                    audioPool.setMasterVolume(volume)
+                }
+            })
+
         }
     }
+}
+
+/**
+ * Converts a volume in decibels to a percentage string representation (0-100).
+ * @param volume The volume in decibels.
+ * @param min The minimum volume in decibels, defining the lower bound of the conversion range (default -20f).
+ * @param max The maximum volume in decibels, defining the upper bound of the conversion range (default 0f).
+ * @return A string representation of the volume as a percentage (0-100).
+ */
+fun volumeDbToPercent(volume: Float, min: Float, max: Float): String {
+    val percent = ((volume - min) / (max - min)) * 100
+    return percent.toInt().toString()
 }
 
 @Composable

@@ -3,11 +3,7 @@ package pt.isel.reversi.core
 import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.PieceType
-import pt.isel.reversi.core.exceptions.ErrorType
-import pt.isel.reversi.core.exceptions.InvalidFileException
-import pt.isel.reversi.core.exceptions.InvalidGameException
-import pt.isel.reversi.core.exceptions.InvalidNameAlreadyExists
-import pt.isel.reversi.core.exceptions.InvalidPieceInFileException
+import pt.isel.reversi.core.exceptions.*
 import pt.isel.reversi.core.storage.GameState
 
 /**
@@ -22,7 +18,7 @@ import pt.isel.reversi.core.storage.GameState
  * @throws InvalidGameException if no players are provided.
  * @throws Exception if already exists a game with the same name in storage.
  */
-fun startNewGame(
+suspend fun startNewGame(
     side: Int = loadCoreConfig().BOARD_SIDE,
     players: List<Player>,
     firstTurn: PieceType,
@@ -43,13 +39,13 @@ fun startNewGame(
         winner = null
     )
 
-    if (currGameName != null && gs.players.size == 1) {
+    return if (currGameName != null && gs.players.size == 1) {
         val newGS = gs.copy(
             players = listOf(gs.players[0].swap().refresh(board)),
         )
 
         try {
-            return Game(
+            Game(
                 target = false,
                 gameState = gs,
                 currGameName = currGameName,
@@ -61,12 +57,13 @@ fun startNewGame(
             )
         }
     }
-
-    return Game(
-        target = false,
-        gameState = gs,
-        currGameName = currGameName,
-    )
+    else {
+        Game(
+            target = false,
+            gameState = gs,
+            currGameName = currGameName,
+        )
+    }
 }
 
 /**
@@ -79,17 +76,17 @@ fun startNewGame(
  * @throws InvalidFileException if there is an error loading the game state.
  * @throws InvalidPieceInFileException if the specified piece type is not found in the loaded game.
  */
-fun loadGame(
+suspend fun loadGame(
     gameName: String,
     desiredType: PieceType? = null,
 ): Game {
     val conf = loadCoreConfig()
     val storage = conf.STORAGE_TYPE.storage(conf.SAVES_FOLDER)
     val loadedState = storage.load(gameName)
-        ?: throw InvalidFileException(
-            message = "$gameName does not exist",
-            type = ErrorType.ERROR
-        )
+                      ?: throw InvalidFileException(
+                          message = "$gameName does not exist",
+                          type = ErrorType.ERROR
+                      )
 
     val myPieceType =
         if (loadedState.players.isNotEmpty())
@@ -138,9 +135,9 @@ fun Game.stringifyBoard(): String {
             val cords = Coordinate(row, col)
             when {
                 row == 0 && col == 0 -> sb.append("  ")
-                row == 0 -> sb.append("$col ")
-                col == 0 -> sb.append("$row ")
-                else -> sb.append(
+                row == 0             -> sb.append("$col ")
+                col == 0             -> sb.append("$row ")
+                else                 -> sb.append(
                     when (useTarget && cords in availablePlays) {
                         true -> "${this.config.TARGET_CHAR} "
                         false -> (board[cords]?.symbol ?: this.config.EMPTY_CHAR) + " "

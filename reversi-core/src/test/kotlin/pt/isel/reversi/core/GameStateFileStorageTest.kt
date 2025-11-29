@@ -1,5 +1,6 @@
 package pt.isel.reversi.core
 
+import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.storage.GameState
@@ -21,10 +22,10 @@ class GameStateFileStorageTest {
         board = Board(8).startPieces()
     )
 
-    fun cleanup(func: () -> Unit) {
+    fun cleanup(func: suspend () -> Unit) {
         File("test-saves").deleteRecursively()
         File(CONFIG_FOLDER).deleteRecursively()
-        func()
+        runBlocking { func() }
         File(CONFIG_FOLDER).deleteRecursively()
         File("test-saves").deleteRecursively()
     }

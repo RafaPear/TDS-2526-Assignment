@@ -1,5 +1,6 @@
 package pt.isel.reversi.cli.commands
 
+import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.cli.pieceTypes
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.board.PieceType
@@ -23,8 +24,11 @@ object JoinCmd : CommandImpl<Game>() {
     )
 
     override fun execute(vararg args: String, context: Game?): CommandResult<Game> {
-        if (context != null && context.currGameName != null)
-            context.saveEndGame()
+        if (context != null && context.currGameName != null) {
+            runBlocking {
+                context.saveEndGame()
+            }
+        }
 
         val name = args[0]
         val pTypeArg = args.getOrNull(1)?.firstOrNull()
@@ -34,7 +38,7 @@ object JoinCmd : CommandImpl<Game>() {
         if (pTypeArg != null && pType == null)
             return CommandResult.ERROR("Invalid piece type symbol provided: '$pTypeArg'.")
 
-        val game = loadGame(name, pType)
+        val game = runBlocking { loadGame(name, pType) }
 
         println(ShowCmd.executeWrapper(context = game).message)
 

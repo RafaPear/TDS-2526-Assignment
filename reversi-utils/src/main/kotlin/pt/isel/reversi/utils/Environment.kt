@@ -12,9 +12,9 @@ const val APP_CONFIG_FILE = "$CONFIG_FOLDER/reversi-app.properties"
 
 val BASE_LOG_FILE_NAME = makePathString("logs/reversi-app")
 
-val LOGGER = Logger.getGlobal().also {
-    val consoleHandler = ConsoleHandler().also {
-        it.formatter = PlainFormatter()
+val LOGGER: Logger = Logger.getGlobal().also {
+    val consoleHandler = ConsoleHandler().also { handler ->
+        handler.formatter = PlainFormatter()
     }
     it.addHandler(consoleHandler)
     it.useParentHandlers = false

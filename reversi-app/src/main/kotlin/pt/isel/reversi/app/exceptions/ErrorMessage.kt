@@ -100,7 +100,7 @@ fun WarningMessage(appState: MutableState<AppState>, modifier: Modifier = Modifi
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Ícone de Aviso
+
             Icon(
                 imageVector = Icons.Default.Warning,
                 contentDescription = "Warning",
@@ -145,59 +145,54 @@ fun WarningMessage(appState: MutableState<AppState>, modifier: Modifier = Modifi
 @Composable
 fun ToastMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
     val offsetY = remember { Animatable(-100f) }
-    val message = appState.value.error?.message
+    val error = appState.value.error
+    val message = error?.message
 
-    // Constantes de Animação e Tempo
-    val slideDuration = 300 // Tempo de deslize para entrar/sair
-    val displayDuration = 2000L // Tempo de permanência na tela (aumentei para 2 segundos)
+
+    val slideDuration = 300
+    val displayDuration = 2000L
 
     val infoBackgroundColor = Color(0xFFFF5722)
 
     val infoTextColor = Color.White.copy(alpha = 0.8f)
 
-    // Corrigi o padding: a Box exterior deve garantir o espaço, o Text usa um Box interno
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 16.dp), // Espaço a partir do topo
+            .padding(top = 16.dp),
         contentAlignment = Alignment.TopCenter
     ) {
-        // O Box interno contém a animação e a mensagem em si
         Box(
             modifier = Modifier
                 .offset { IntOffset(x = 0, y = offsetY.value.toInt()) }
-                .shadow(elevation = 6.dp, shape = RoundedCornerShape(20.dp)) // Adicionar sombra
-                .clip(RoundedCornerShape(20.dp)) // Arredondar cantos
-                .background(infoBackgroundColor) // Cor de INFO (Azul)
-                .height(IntrinsicSize.Min) // Garante que a altura se ajusta ao conteúdo
+                .shadow(elevation = 6.dp, shape = RoundedCornerShape(20.dp))
+                .clip(RoundedCornerShape(20.dp))
+                .background(infoBackgroundColor)
+                .height(IntrinsicSize.Min)
         ) {
             Text(
                 text = message ?: return@Box,
                 color = infoTextColor,
-                fontWeight = FontWeight.Bold, // Negrito para maior impacto
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 10.dp) // Mais padding interno
+                    .padding(horizontal = 20.dp, vertical = 10.dp)
             )
         }
     }
 
-    LaunchedEffect(message) {
-        if (message == null) return@LaunchedEffect
+    LaunchedEffect(error, message) {
+        if (error == null) return@LaunchedEffect
 
-        // Slide in
         offsetY.animateTo(
             targetValue = 1f,
             animationSpec = tween(durationMillis = slideDuration)
         )
-        // Permanecer na tela
         delay(displayDuration)
 
-        // Slide out
         offsetY.animateTo(
             targetValue = -100f,
             animationSpec = tween(durationMillis = slideDuration)
         )
-        // Limpar o erro no estado
         appState.value = setError(appState, error = null)
     }
 }
