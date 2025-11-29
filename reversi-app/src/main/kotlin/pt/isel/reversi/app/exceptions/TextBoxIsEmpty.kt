@@ -6,4 +6,4 @@ import pt.isel.reversi.core.exceptions.ReversiException
 class TextBoxIsEmpty(
     message: String = "Text box is empty",
     type: ErrorType = ErrorType.INFO
-): ReversiException(message, type)
+) : ReversiException(message, type)

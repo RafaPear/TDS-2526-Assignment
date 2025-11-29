@@ -25,7 +25,6 @@ import pt.isel.reversi.core.loadGame
 import pt.isel.reversi.core.startNewGame
 import pt.isel.reversi.utils.LOGGER
 
-
 @Composable
 fun NewGamePage(
     appState: MutableState<AppState>,

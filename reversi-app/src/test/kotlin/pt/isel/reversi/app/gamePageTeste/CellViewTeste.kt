@@ -9,7 +9,6 @@ import pt.isel.reversi.core.board.PieceType
 import kotlin.test.Test
 import kotlin.test.fail
 
-
 /**
  * Tests for the CellView composable function.
  * Have 3 possible states:
@@ -61,47 +60,49 @@ class CellViewTeste {
     }
 
     @Test
-    fun `cellView with ghostPiece != null and pieceType null expect existing piece and clickable (ghostPiece)`() = runComposeUiTest {
-        val expectedCoordinates = Coordinate(1, 1)
-        val expectedValue = PieceType.BLACK
-        setContent {
-            cellView(
-                coordinate = expectedCoordinates,
-                cellValue = null,
-                ghostPiece = expectedValue,
-                onClick = { fail("onClick should not be called") }
-            )
-        }
-        val pieceTag = getPieceTestTag(coordinate = expectedCoordinates, type = expectedValue)
-        onNodeWithTag(testTag = pieceTag, useUnmergedTree = true)
-            .assertExists()
+    fun `cellView with ghostPiece != null and pieceType null expect existing piece and clickable (ghostPiece)`() =
+        runComposeUiTest {
+            val expectedCoordinates = Coordinate(1, 1)
+            val expectedValue = PieceType.BLACK
+            setContent {
+                cellView(
+                    coordinate = expectedCoordinates,
+                    cellValue = null,
+                    ghostPiece = expectedValue,
+                    onClick = { fail("onClick should not be called") }
+                )
+            }
+            val pieceTag = getPieceTestTag(coordinate = expectedCoordinates, type = expectedValue)
+            onNodeWithTag(testTag = pieceTag, useUnmergedTree = true)
+                .assertExists()
 
-        val cellViewTag = getCellViewTestTag(coordinate = expectedCoordinates)
-        onNodeWithTag(testTag = cellViewTag, useUnmergedTree = true)
-            .assertIsEnabled()
-    }
+            val cellViewTag = getCellViewTestTag(coordinate = expectedCoordinates)
+            onNodeWithTag(testTag = cellViewTag, useUnmergedTree = true)
+                .assertIsEnabled()
+        }
 
     @Test
-    fun `cellView with both cellValue and ghostPiece not null expect existing piece and not clickable (Piece)`() = runComposeUiTest {
-        val expectedCoordinates = Coordinate(1, 1)
-        val cellValue = PieceType.WHITE
-        val ghostPiece = PieceType.BLACK
-        setContent {
-            cellView(
-                coordinate = expectedCoordinates,
-                cellValue = cellValue,
-                ghostPiece = ghostPiece,
-                onClick = { fail("onClick should not be called") }
-            )
-        }
-        val pieceTag = getPieceTestTag(coordinate = expectedCoordinates, type = cellValue)
-        onNodeWithTag(testTag = pieceTag, useUnmergedTree = true)
-            .assertExists()
+    fun `cellView with both cellValue and ghostPiece not null expect existing piece and not clickable (Piece)`() =
+        runComposeUiTest {
+            val expectedCoordinates = Coordinate(1, 1)
+            val cellValue = PieceType.WHITE
+            val ghostPiece = PieceType.BLACK
+            setContent {
+                cellView(
+                    coordinate = expectedCoordinates,
+                    cellValue = cellValue,
+                    ghostPiece = ghostPiece,
+                    onClick = { fail("onClick should not be called") }
+                )
+            }
+            val pieceTag = getPieceTestTag(coordinate = expectedCoordinates, type = cellValue)
+            onNodeWithTag(testTag = pieceTag, useUnmergedTree = true)
+                .assertExists()
 
-        val cellViewTag = getCellViewTestTag(coordinate = expectedCoordinates)
-        onNodeWithTag(testTag = cellViewTag, useUnmergedTree = true)
-            .assertIsNotEnabled()
-    }
+            val cellViewTag = getCellViewTestTag(coordinate = expectedCoordinates)
+            onNodeWithTag(testTag = cellViewTag, useUnmergedTree = true)
+                .assertIsNotEnabled()
+        }
 
     @Test
     fun `cellView with empty cell and freeze true expect not clickable`() = runComposeUiTest {
@@ -120,7 +121,6 @@ class CellViewTeste {
         onNodeWithTag(testTag = cellViewTag, useUnmergedTree = true)
             .assertIsNotEnabled()
     }
-
 
     @Test
     fun `cellView with ghostPiece and freeze true expect not clickable`() = runComposeUiTest {

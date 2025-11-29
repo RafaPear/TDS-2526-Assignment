@@ -48,8 +48,7 @@ data class AudioWrapper(
             if (modifier.loop) {
                 clip.setLoopPoints(loopStart, loopEnd)
                 clip.loop(Clip.LOOP_CONTINUOUSLY)
-            }
-            else clip.start()
+            } else clip.start()
         }
     }
 

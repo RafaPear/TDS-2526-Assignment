@@ -24,8 +24,7 @@ fun loadGameAudioPool(): AudioPool {
                     AudioModifier().setToLoop()
                 )
             else loadAudio(name, it.toURI().toURL())
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             LOGGER.warning("Failed to load audio $name: ${e.message}")
             null
         }

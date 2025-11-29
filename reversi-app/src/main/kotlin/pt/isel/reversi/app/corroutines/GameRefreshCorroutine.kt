@@ -14,7 +14,7 @@ import pt.isel.reversi.utils.LOGGER
 fun CoroutineScope.launchGameRefreshCoroutine(
     refreshIntervalMs: Long,
     appState: MutableState<AppState>,
-){
+) {
     this.launch(Dispatchers.Default) {
         while (isActive) {
             try {

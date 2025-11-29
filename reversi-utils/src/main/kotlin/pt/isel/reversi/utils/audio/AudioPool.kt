@@ -1,8 +1,6 @@
 package pt.isel.reversi.utils.audio
 
 import pt.isel.reversi.utils.LOGGER
-import kotlin.collections.all
-import kotlin.collections.find
 
 /**
  * Represents a pool of audio tracks that can be managed together.
@@ -52,7 +50,9 @@ data class AudioPool(val pool: List<AudioWrapper>) {
     /**
      * Plays all audio tracks in the pool.
      */
-    fun playAll() { pool.forEach { it.play() } }
+    fun playAll() {
+        pool.forEach { it.play() }
+    }
 
     /**
      * Stops all audio tracks in the pool.

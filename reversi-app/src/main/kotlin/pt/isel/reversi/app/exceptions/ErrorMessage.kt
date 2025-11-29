@@ -28,23 +28,27 @@ import pt.isel.reversi.utils.LOGGER
 fun ErrorMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
     //TODO: Differentiate error types with different UI elements
     when (appState.value.error?.type) {
-        ErrorType.INFO -> {
+        ErrorType.INFO     -> {
             LOGGER.info("${appState.value.error?.message}")
             ToastMessage(appState, modifier)
         }
-        ErrorType.WARNING -> {
+
+        ErrorType.WARNING  -> {
             LOGGER.warning("${appState.value.error?.message}")
             ToastMessage(appState, modifier)
         }
-        ErrorType.ERROR -> {
+
+        ErrorType.ERROR    -> {
             LOGGER.severe("${appState.value.error?.message}")
             ToastMessage(appState, modifier)
         }
+
         ErrorType.CRITICAL -> {
             LOGGER.severe("Critical ${appState.value.error?.message}")
             ToastMessage(appState, modifier)
         }
-        null -> return
+
+        null               -> return
     }
 }
 

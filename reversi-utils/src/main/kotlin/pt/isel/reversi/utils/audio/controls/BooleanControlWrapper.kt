@@ -26,13 +26,16 @@ abstract class BooleanControlWrapper(clip: Clip, controlType: BooleanControl.Typ
      *
      * @param value The new value to set for the control.
      */
-    fun updateValue(value: Boolean) { control.value = value }
+    fun updateValue(value: Boolean) {
+        control.value = value
+    }
 
     /**
      * Resets the control to its default value.
      */
-    fun resetValue() { control.value = defaultValue }
+    fun resetValue() {
+        control.value = defaultValue
+    }
 
     class MuteControl(clip: Clip) : BooleanControlWrapper(clip, BooleanControl.Type.MUTE)
-    class ReverbControl(clip: Clip) : BooleanControlWrapper(clip, BooleanControl.Type.APPLY_REVERB)
 }

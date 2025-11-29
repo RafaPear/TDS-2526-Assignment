@@ -15,7 +15,7 @@ fun makePathString(vararg parts: String): String =
  * Sets the logger to log to a file with a name based on the current date.
  * If a file with the same name already exists, a counter is added to the name.
  */
-fun setLoggerFilePath(){
+fun setLoggerFilePath() {
     val date = LocalDate.now()
     var name = "${BASE_LOG_FILE_NAME}-$date.log"
     var count = 1
@@ -41,6 +41,6 @@ fun setLoggerFilePath(){
 fun loadResource(path: String): File {
     val classloader = Thread.currentThread().getContextClassLoader()
     val resource = classloader.getResource(path)
-        ?: throw IllegalArgumentException("Resource '$path' not found")
+                   ?: throw IllegalArgumentException("Resource '$path' not found")
     return File(resource.toURI())
 }

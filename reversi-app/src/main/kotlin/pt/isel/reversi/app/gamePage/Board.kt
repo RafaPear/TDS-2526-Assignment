@@ -1,11 +1,6 @@
 package pt.isel.reversi.app.gamePage
 
-import androidx.compose.animation.core.CubicBezierEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -145,7 +140,7 @@ fun getPieceTestTag(coordinate: Coordinate, type: PieceType?): String {
     val value = when (type) {
         PieceType.BLACK -> "BLACK"
         PieceType.WHITE -> "WHITE"
-        null -> ""
+        null            -> ""
     }
     return "Piece_${getCellViewTestTag(coordinate)}_${value}"
 }
@@ -194,17 +189,16 @@ fun cellView(
                         PieceType.WHITE -> Color.White
                     }
                     drawCircle(
-                        color  = color.copy(alpha = GHOST_PIECE_ALPHA),
+                        color = color.copy(alpha = GHOST_PIECE_ALPHA),
                         radius = radius * radiusModifier,
                         center = center,
-                        alpha  = alphaModifier,
+                        alpha = alphaModifier,
                     )
                 }
             }
         }
     }
 }
-
 
 private fun drawPiece(
     radius: Float,

@@ -6,12 +6,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,7 +31,6 @@ import pt.rafap.ktflag.cmd.args.CommandArg
 import pt.rafap.ktflag.cmd.args.CommandArgsParser
 import reversi.reversi_app.generated.resources.Res
 import reversi.reversi_app.generated.resources.reversi
-
 
 val logArg = CommandArg(
     name = "log",
@@ -97,11 +91,11 @@ fun main(args: Array<String>) {
 
             when (appState.value.page) {
                 Page.MAIN_MENU -> MainMenu(appState)
-                Page.GAME -> GamePage(appState)
-                Page.SETTINGS -> SettingsPage(appState)
-                Page.ABOUT -> AboutPage(appState)
+                Page.GAME      -> GamePage(appState)
+                Page.SETTINGS  -> SettingsPage(appState)
+                Page.ABOUT     -> AboutPage(appState)
                 Page.JOIN_GAME -> JoinGamePage(appState)
-                Page.NEW_GAME -> NewGamePage(appState)
+                Page.NEW_GAME  -> NewGamePage(appState)
                 Page.SAVE_GAME -> SaveGamePage(appState)
             }
 
@@ -166,7 +160,6 @@ fun SaveGamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier
     }
 }
 
-
 @Composable
 fun SettingsPage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
     Column(
@@ -182,16 +175,16 @@ fun SettingsPage(appState: MutableState<AppState>, modifier: Modifier = Modifier
         // volume in percentage -20 (muted) to 0 (max)
         val number = if (volume == 0f) " (Default)" else if (volume == -20f) " (disabled)" else " (${(volume + 20).toInt() * 5}%)"
 
-        Text("Master Volume: $number",
-             fontSize = 20.sp,
-             fontWeight = FontWeight.Medium
+        Text(
+            "Master Volume: $number",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Medium
         )
         Slider(value = volume, valueRange = -20f..0f, onValueChange = {
             volume = it
             if (volume == -20f) {
                 getStateAudioPool(appState).mute(true)
-            }
-            else {
+            } else {
                 getStateAudioPool(appState).mute(false)
                 getStateAudioPool(appState).setMasterVolume(volume)
             }
@@ -227,7 +220,6 @@ fun AboutPage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
         }
     }
 }
-
 
 fun Game.printDebugState() {
     LOGGER.info("========== ESTADO ATUAL DO JOGO ==========")

@@ -6,11 +6,11 @@ import pt.isel.reversi.storage.Storage
 
 enum class GameStorageType(val storage: (String) -> Storage<String, GameState, String>) {
     FILE_STORAGE({ folder ->
-        FileStorage(
-            folder = folder,
-            serializer = GameStateSerializer()
-        )
-    });
+                     FileStorage(
+                         folder = folder,
+                         serializer = GameStateSerializer()
+                     )
+                 });
 
     companion object {
         fun fromConfigValue(value: String): GameStorageType =

@@ -25,24 +25,27 @@ abstract class FloatControlWrapper(clip: Clip, controlType: FloatControl.Type) {
      *
      * @param value The new value to set for the control.
      */
-    fun updateValue(value: Float) { control.value = value.coerceIn(minimumValue, maximumValue) }
+    fun updateValue(value: Float) {
+        control.value = value.coerceIn(minimumValue, maximumValue)
+    }
 
     /**
      * Adds a delta to the current value of the control.
      *
      * @param delta The amount to add to the current value.
      */
-    fun addValue(delta: Float) { updateValue(control.value + delta) }
+    fun addValue(delta: Float) {
+        updateValue(control.value + delta)
+    }
 
     /**
      * Resets the control to its default value.
      */
-    fun resetValue() { control.value = defaultValue }
-
+    fun resetValue() {
+        control.value = defaultValue
+    }
 
     class MasterVolumeControl(clip: Clip) : FloatControlWrapper(clip, FloatControl.Type.MASTER_GAIN)
     class PanControl(clip: Clip) : FloatControlWrapper(clip, FloatControl.Type.PAN)
     class BalanceControl(clip: Clip) : FloatControlWrapper(clip, FloatControl.Type.BALANCE)
-    class ReverbSendControl(clip: Clip) : FloatControlWrapper(clip, FloatControl.Type.REVERB_SEND)
-    class ReverbReturnControl(clip: Clip) : FloatControlWrapper(clip, FloatControl.Type.REVERB_RETURN)
 }

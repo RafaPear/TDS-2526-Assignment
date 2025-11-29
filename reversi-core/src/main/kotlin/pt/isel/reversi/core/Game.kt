@@ -214,7 +214,7 @@ data class Game(
                     gs.board.totalWhitePieces > gs.board.totalBlackPieces ->
                         Player(PieceType.WHITE, gs.board.totalWhitePieces)
 
-                    else -> throw EndGameException(
+                    else                                                  -> throw EndGameException(
                         message = "The game has ended in a draw.",
                         type = ErrorType.INFO
                     )
