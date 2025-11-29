@@ -6,7 +6,6 @@ import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.exceptions.*
 import pt.isel.reversi.core.storage.GameState
 import pt.isel.reversi.storage.AsyncStorage
-import pt.isel.reversi.storage.Storage
 
 /**
  * Represents a Reversi game, managing the game state, player turns, and interactions with storage.
@@ -352,5 +351,9 @@ data class Game(
                 players = ls.players
             )
         )
+    }
+
+    suspend fun getAllSavedGames(): List<String> {
+        return storage.loadAllIds()
     }
 }

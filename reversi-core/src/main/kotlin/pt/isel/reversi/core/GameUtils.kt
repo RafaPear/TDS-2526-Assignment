@@ -6,6 +6,12 @@ import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.exceptions.*
 import pt.isel.reversi.core.storage.GameState
 
+fun loadStorageFromConfig() =
+    loadCoreConfig().let { conf ->
+        conf.STORAGE_TYPE.storage(conf.SAVES_FOLDER)
+    }
+
+
 /**
  * Starts a new game.
  * It is recommended to use this method only to create a not local game.
@@ -79,8 +85,7 @@ suspend fun loadGame(
     gameName: String,
     desiredType: PieceType? = null,
 ): Game {
-    val conf = loadCoreConfig()
-    val storage = conf.STORAGE_TYPE.storage(conf.SAVES_FOLDER)
+    val storage = loadStorageFromConfig()
     val loadedState = storage.load(gameName)
                       ?: throw InvalidFileException(
                           message = "$gameName does not exist",
@@ -164,3 +169,8 @@ fun newGameForTest(
         winner = null
     )
 )
+
+suspend fun getAllGameNames(): List<String> {
+    val storage = loadStorageFromConfig()
+    return storage.loadAllIds()
+}
