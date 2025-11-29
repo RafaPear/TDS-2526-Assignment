@@ -5,7 +5,11 @@ import javax.sound.sampled.FloatControl
 
 /**
  * Generic interface for audio controls.
- *
+ * @constructor Creates a FloatControlWrapper for the specified control type.
+ * @param clip The Clip containing the control.
+ * @param controlType The type of FloatControl to wrap.
+ * @throws IllegalArgumentException if the specified control type is not supported by the Clip.
+ * @throws ClassCastException if the control retrieved is not a FloatControl.
  */
 abstract class FloatControlWrapper(clip: Clip, controlType: FloatControl.Type) {
     protected val control: FloatControl = clip.getControl(controlType) as FloatControl

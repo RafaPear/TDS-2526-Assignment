@@ -186,10 +186,10 @@ fun SettingsPage(appState: MutableState<AppState>, modifier: Modifier = Modifier
         Text("Definições", fontSize = 30.sp, fontWeight = FontWeight.Bold)
 
         Text("Opções futuras: som, tema, rede, etc.")
-        var volume by remember { mutableStateOf(0f) }
+        var volume by remember { mutableStateOf(getStateAudioPool(appState).getMasterVolume() ?: 0f) }
 
-        // volume in percentage -20 (muted) to 0 (max)
-        val number = if (volume == 0f) " (Default)" else if (volume == -20f) " (disabled)" else " (${(volume + 20).toInt() * 5}%)"
+        // Convert volume in dB [-20, 0] to percentage [0, 100]
+        val number = if (volume == 0f) " (Default)" else if (volume == -20f) " (disabled)" else " (${volumeDbToPercent(volume)}%)"
 
         Text("Master Volume: $number",
              fontSize = 20.sp,
@@ -212,6 +212,11 @@ fun SettingsPage(appState: MutableState<AppState>, modifier: Modifier = Modifier
             Text("Voltar")
         }
     }
+}
+
+private fun volumeDbToPercent(volume: Float): String {
+    val percent = ((volume + 20) / 20 * 100).toInt()
+    return percent.toString()
 }
 
 @Composable

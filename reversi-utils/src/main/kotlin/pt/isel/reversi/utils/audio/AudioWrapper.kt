@@ -25,8 +25,8 @@ data class AudioWrapper(
     val balanceControl = FloatControlWrapper.BalanceControl(clip)
     val muteControl = BooleanControlWrapper.MuteControl(clip)
 
-    val loopStart = modifier.loopStartPosition?.coerceIn(0, clip.frameLength - 1) ?: 0
-    val loopEnd = modifier.loopEndPosition?.coerceIn(-1, clip.frameLength - 1) ?: -1
+    private val loopStart = modifier.loopStartPosition?.coerceIn(0, clip.frameLength - 1) ?: 0
+    private val loopEnd = modifier.loopEndPosition?.coerceIn(-1, clip.frameLength - 1) ?: -1
 
     init {
         clip.framePosition = modifier.startPosition?.coerceIn(0, clip.frameLength - 1) ?: 0
@@ -76,6 +76,7 @@ data class AudioWrapper(
          * @param url The URL of the audio resource.
          * @param modifier The AudioModifier containing playback settings.
          * @return An AudioWrapper instance containing the loaded audio clip.
+         * @throws Exception if there is an error loading the audio.
          */
         fun loadAudio(name: String, url: URL, modifier: AudioModifier = AudioModifier()): AudioWrapper {
             val original = AudioSystem.getAudioInputStream(url)

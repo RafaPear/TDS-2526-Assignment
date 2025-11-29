@@ -21,7 +21,7 @@ fun loadGameAudioPool(): AudioPool {
                 loadAudio(
                     name,
                     it.toURI().toURL(),
-                    AudioModifier().setToLoop()
+                    AudioModifier().setToLoopInfinitely()
                 )
             else loadAudio(name, it.toURI().toURL())
         } catch (e: Exception) {
