@@ -13,21 +13,26 @@ import pt.isel.reversi.utils.loadResource
  * Loads the game's audio pool from the resources.
  * @return An AudioPool containing all loaded audio tracks.
  */
-fun loadGameAudioPool(): AudioPool {
-    val audioPaths = loadResource("audios/").listFiles()?.mapNotNull {
-        val name = it.name.substringBeforeLast('.')
-        try {
-            if (name in setOf(BACKGROUND_MUSIC, MEGALOVANIA))
-                loadAudio(
-                    name,
-                    it.toURI().toURL(),
-                    AudioModifier().setToLoopInfinitely()
-                )
-            else loadAudio(name, it.toURI().toURL())
-        } catch (e: Exception) {
-            LOGGER.warning("Failed to load audio $name: ${e.message}")
-            null
-        }
-    } ?: emptyList()
+fun loadGameAudioPool(mainFolder: String = "audios/"): AudioPool {
+    val audioPaths = try {
+        loadResource(mainFolder).listFiles()?.mapNotNull {
+            val name = it.name.substringBeforeLast('.')
+            try {
+                if (name in setOf(BACKGROUND_MUSIC, MEGALOVANIA))
+                    loadAudio(
+                        name,
+                        it.toURI().toURL(),
+                        AudioModifier().setToLoopInfinitely()
+                    )
+                else loadAudio(name, it.toURI().toURL())
+            } catch (e: Exception) {
+                LOGGER.warning("Failed to load audio $name: ${e.message}")
+                null
+            }
+        } ?: emptyList()
+    } catch (e: IllegalArgumentException) {
+        LOGGER.warning("Audio resource directory missing: ${e.message}")
+        emptyList()
+    }
     return buildAudioPool { for (audio in audioPaths) add(audio) }
 }

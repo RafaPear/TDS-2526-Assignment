@@ -4,7 +4,7 @@ import javax.sound.sampled.Clip
 import javax.sound.sampled.FloatControl
 
 /**
- * Generic interface for audio controls.
+ * A wrapper class for managing FloatControl types in audio Clips.
  * @constructor Creates a FloatControlWrapper for the specified control type.
  * @param clip The Clip containing the control.
  * @param controlType The type of FloatControl to wrap.

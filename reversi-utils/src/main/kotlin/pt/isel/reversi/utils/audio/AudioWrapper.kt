@@ -14,10 +14,16 @@ import javax.sound.sampled.Clip
  * @property id The identifier for the audio clip.
  * @property clip The Clip object representing the audio data.
  * @property modifier The AudioModifier containing playback settings.
+ * @constructor Creates an AudioWrapper with the specified id, clip, and modifier.
+ *
+ * @throws IllegalArgumentException if the clip cannot be opened.
+ *
+ *
+ * @see AudioModifier
  */
 data class AudioWrapper(
     val id: String,
-    val clip: Clip,
+    private val clip: Clip,
     val modifier: AudioModifier = AudioModifier()
 ) {
     // Audio controls

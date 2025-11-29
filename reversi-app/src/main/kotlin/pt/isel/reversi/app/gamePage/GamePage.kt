@@ -27,7 +27,7 @@ import pt.isel.reversi.core.exceptions.ReversiException
 @Composable
 fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier, freeze: Boolean = false) {
     // Launch the game refresh coroutine
-    LaunchedEffect(Unit) {
+    LaunchedEffect(appState.value.page) {
         val game = appState.value.game
         if (game.currGameName != null && game.gameState?.players?.size != 2) {
             launchGameRefreshCoroutine(250L, appState)

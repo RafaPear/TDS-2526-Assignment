@@ -36,7 +36,7 @@ val MAIN_MENU_AUTO_SIZE_TITLE_TEXT = TextAutoSize.StepBased(
 
 @Composable
 fun MainMenu(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(appState.value.page) {
         val audioPool = getStateAudioPool(appState)
         if (!audioPool.isPlaying(BACKGROUND_MUSIC)) {
             LOGGER.info("Playing background music")

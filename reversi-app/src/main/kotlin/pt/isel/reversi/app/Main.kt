@@ -73,17 +73,16 @@ fun main(args: Array<String>) {
 
             MakeMenuBar(appState, ::safeExitApplication)
 
-            when (appState.value.page) {
-                Page.MAIN_MENU -> MainMenu(appState)
-                Page.GAME -> GamePage(appState)
-                Page.SETTINGS -> SettingsPage(appState)
-                Page.ABOUT -> AboutPage(appState)
-                Page.JOIN_GAME -> JoinGamePage(appState)
-                Page.NEW_GAME -> NewGamePage(appState)
-                Page.SAVE_GAME -> SaveGamePage(appState)
-            }
-
             Box(modifier = Modifier.fillMaxSize()) {
+                when (appState.value.page) {
+                    Page.MAIN_MENU -> MainMenu(appState)
+                    Page.GAME -> GamePage(appState)
+                    Page.SETTINGS -> SettingsPage(appState)
+                    Page.ABOUT -> AboutPage(appState)
+                    Page.JOIN_GAME -> JoinGamePage(appState)
+                    Page.NEW_GAME -> NewGamePage(appState)
+                    Page.SAVE_GAME -> SaveGamePage(appState)
+                }
 
                 // Show error dialog if there is an error
                 appState.value.error?.let { ErrorMessage(appState) }
