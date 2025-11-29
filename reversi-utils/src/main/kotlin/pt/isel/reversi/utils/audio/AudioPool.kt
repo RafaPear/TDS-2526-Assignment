@@ -107,6 +107,23 @@ data class AudioPool(val pool: List<AudioWrapper>) {
         }
     }
 
+    suspend fun whileNotFinishedAsync(func: suspend () -> Unit) {
+        while (pool.any { it.isPlaying() }) {
+            func()
+        }
+    }
+
+    /**
+     * Executes a suspend function while any audio track in the pool is still playing.
+     * @param func The suspend function to execute.
+     */
+    suspend fun whileNotFinishedAsync(id: String, func: suspend () -> Unit) {
+        val audio = pool.find { it.id == id } ?: return
+        while (audio.isPlaying()) {
+            func()
+        }
+    }
+
     /**
      * Changes the master volume of all audio tracks in the pool by the specified amount.
      * @param volume The amount to change the master volume by.
@@ -152,7 +169,19 @@ data class AudioPool(val pool: List<AudioWrapper>) {
      * @return The balance if available, null otherwise.
      */
     fun getBalance(): Float? {
-        return pool.firstOrNull()?.balanceControl?.getValue()
+        // Check if all tracks have the same balance if not fixes the bad balance
+        var value = 0f
+        for (track in pool) {
+            val trackBalance = track.balanceControl.getValue()
+            if (value == 0f) {
+                value = trackBalance
+            } else if (value != trackBalance) {
+                LOGGER.warning("AudioPool has inconsistent balance values among tracks. Resetting to $value")
+                setBalance(value)
+                break
+            }
+        }
+        return value
     }
 
     /**

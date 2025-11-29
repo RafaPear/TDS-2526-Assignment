@@ -9,6 +9,8 @@ import javax.sound.sampled.Clip
  * @constructor Creates a BooleanControlWrapper for the specified control type.
  * @param clip The Clip containing the control.
  * @param controlType The type of BooleanControl to wrap.
+ * @throws IllegalArgumentException if the specified control type is not supported by the Clip.
+ * @throws ClassCastException if the control retrieved is not a BooleanControl.
  */
 abstract class BooleanControlWrapper(clip: Clip, controlType: BooleanControl.Type) {
     private val control: BooleanControl = clip.getControl(controlType) as BooleanControl
