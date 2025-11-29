@@ -59,7 +59,7 @@ fun NewGamePage(
                     )
                 }
 
-                LOGGER.info("Novo jogo '${currGameName?.ifBlank { "(local)" } ?: "(local)"}' iniciado.")
+                LOGGER.info("Novo jogo '${currGameName?.takeIf { it.isNotBlank() } ?: "(local)"}' iniciado.")
                 appState.value = setAppState(appState, newGame, Page.GAME)
 
             } catch (e: ReversiException) {

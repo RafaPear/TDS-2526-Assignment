@@ -2,6 +2,7 @@ package pt.isel.reversi.app.gamePageTeste
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.*
+import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.app.gamePage.GamePage
 import pt.isel.reversi.app.gamePage.testTagCellView
 import pt.isel.reversi.app.gamePage.testTagGamePage
@@ -16,12 +17,14 @@ import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
 class GamePageTest {
-    val game = startNewGame(
-        side = 4,
-        players = listOf(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
-        firstTurn = PieceType.BLACK,
-        currGameName = null
-    )
+    val game = runBlocking {
+        startNewGame(
+            side = 4,
+            players = listOf(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
+            firstTurn = PieceType.BLACK,
+            currGameName = null
+        )
+    }
 
     @Test
     fun `check if the title is displayed correctly`() = runComposeUiTest {

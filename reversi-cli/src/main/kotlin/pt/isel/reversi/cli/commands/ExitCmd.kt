@@ -1,5 +1,6 @@
 package pt.isel.reversi.cli.commands
 
+import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.core.Game
 import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
@@ -30,7 +31,9 @@ object ExitCmd : CommandImpl<Game>() {
             val saveName = context.currGameName ?: askNameToSave()
             if (saveName != null) {
                 println("Saving game as '$saveName' before exit...")
-                context.copy(currGameName = saveName).saveEndGame()
+                runBlocking {
+                    context.copy(currGameName = saveName).saveEndGame()
+                }
             }
         }
         println("By byyyy")

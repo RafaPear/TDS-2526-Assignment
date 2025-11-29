@@ -1,5 +1,6 @@
 package pt.isel.reversi.cli.commands
 
+import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.core.Game
 import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
@@ -26,7 +27,7 @@ object PassCmd : CommandImpl<Game>() {
         }
 
         try {
-            val game = context.pass()
+            val game = runBlocking { context.pass() }
 
             return if (game.gameState?.winner == null) {
                 CommandResult.SUCCESS(

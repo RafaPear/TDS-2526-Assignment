@@ -1,5 +1,6 @@
 package pt.isel.reversi.cli.commands
 
+import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.cli.pieceTypes
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
@@ -26,8 +27,9 @@ object NewCmd : CommandImpl<Game>() {
     )
 
     override fun execute(vararg args: String, context: Game?): CommandResult<Game> {
-        if (context != null && context.currGameName != null)
-            context.saveEndGame()
+        if (context != null && context.currGameName != null) {
+            runBlocking { context.saveEndGame() }
+        }
 
         val playerType = PieceType.entries.find { it.symbol.toString() == args[0] }
                          ?: return ERROR("First player must be one of: $pieceTypes")
@@ -35,12 +37,13 @@ object NewCmd : CommandImpl<Game>() {
 
         val name: String? = if (args.size == 2) args[1] else null
 
-        val game: Game =
+        val game: Game = runBlocking {
             if (name != null) {
                 startNewGame(players = listOf(player), currGameName = name, firstTurn = playerType)
             } else {
                 startNewGame(players = listOf(player, player.swap()), firstTurn = playerType)
             }
+        }
 
         println(ShowCmd.executeWrapper(context = game).message)
 
