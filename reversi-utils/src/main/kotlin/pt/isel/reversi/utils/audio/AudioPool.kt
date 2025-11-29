@@ -7,6 +7,7 @@ import pt.isel.reversi.utils.LOGGER
  * Represents a pool of audio tracks that can be managed together.
  * @param pool The list of AudioWrapper instances in the pool.
  */
+@Suppress("Unused")
 data class AudioPool(val pool: List<AudioWrapper>) {
     init {
         LOGGER.info("AudioPool created with ${pool.size} audio tracks")
