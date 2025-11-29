@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 rootProject.name = "reversi"
+
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
@@ -33,14 +34,6 @@ dependencyResolutionManagement {
     }
 }
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-}
+plugins { id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0" }
 
-include(
-    "reversi-core",
-    "reversi-cli",
-    "reversi-storage",
-    "reversi-utils",
-    "reversi-app"
-)
+include("reversi-core", "reversi-cli", "reversi-storage", "reversi-utils", "reversi-app")
