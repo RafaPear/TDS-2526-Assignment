@@ -109,10 +109,12 @@ class AsyncFileStorageTest {
     }
 
     @Test
-    fun `Run delete at a non existing id does not fail`() {
+    fun `Run delete at a non existing id does fail`() {
         cleanup {
             runBlocking {
-                asyncFileStorage.delete(1.toString())
+                assertFails {
+                    asyncFileStorage.delete(1.toString())
+                }
             }
         }
     }

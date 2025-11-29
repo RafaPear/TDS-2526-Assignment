@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -26,6 +27,8 @@ import pt.isel.reversi.core.exceptions.ReversiException
 
 @Composable
 fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier, freeze: Boolean = false) {
+    val coroutineAppScope = rememberCoroutineScope()
+
     // Launch the game refresh coroutine
     LaunchedEffect(appState.value.page) {
         val game = appState.value.game

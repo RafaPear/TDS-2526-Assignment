@@ -10,7 +10,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -28,15 +30,6 @@ import pt.isel.reversi.core.stringifyBoard
 import pt.isel.reversi.utils.LOGGER
 import reversi.reversi_app.generated.resources.Res
 import reversi.reversi_app.generated.resources.reversi
-
-val logArg = CommandArg(
-    name = "log",
-    aliases = arrayOf("-l"),
-    description = "If set, enables logging to a file named reversi-app.log",
-    returnsValue = false,
-    isRequired = false
-)
-val argsParser = CommandArgsParser(logArg)
 
 fun main(args: Array<String>) {
     val initializedArgs = initializeAppArgs(args) ?: return
@@ -63,7 +56,7 @@ fun main(args: Array<String>) {
             LOGGER.info("Exiting application...")
 
             try {
-                appState.value.game.saveEndGame()
+                runBlocking { appState.value.game.saveEndGame() }
                 getStateAudioPool(appState).destroy()
             } catch (e: ReversiException) {
                 LOGGER.warning("Failed to save game on exit: ${e.message}")
@@ -193,11 +186,10 @@ fun SettingsPage(appState: MutableState<AppState>, modifier: Modifier = Modifier
         ) {
             Text("Opções futuras: som, tema, rede, etc.")
             val currentMasterVolume = getStateAudioPool(appState).getMasterVolume()
-            if (currentMasterVolume == null) LOGGER.warning("Master volume is null, using 0f as default")
             var volume by remember { mutableStateOf(currentMasterVolume ?: 0f) }
 
             // Convert volume in dB [-20, 0] to percentage [0, 100]
-            val number = if (volume == 0f) " (Default)" else if (volume == -20f) " (disabled)" else " (${volumeDbToPercent(volume, 20f, 0f)}%)"
+            val number = if (volume == 0f) " (Default)" else if (volume == -20f) " (disabled)" else " (${volumeDbToPercent(volume, -20f, 0f)}%)"
 
             Text("Master Volume: $number",
                 fontSize = 20.sp,

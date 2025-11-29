@@ -39,6 +39,8 @@ data class AudioWrapper(
         LOGGER.info("AUDIO '${id}' initialized")
     }
 
+    fun isLoaded(): Boolean = clip.isOpen
+
     /**
      * Checks if the audio clip is currently playing.
      *
@@ -55,6 +57,9 @@ data class AudioWrapper(
                 clip.setLoopPoints(loopStart, loopEnd)
                 clip.loop(Clip.LOOP_CONTINUOUSLY)
             } else clip.start()
+        }
+        while (!clip.isRunning) {
+            // wait for the clip to start playing
         }
     }
 

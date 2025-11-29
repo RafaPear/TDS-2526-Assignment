@@ -1,4 +1,4 @@
 dependencies {
-    implementation(libs.corroutines)
+    implementation(libs.coroutines)
     testImplementation(kotlin("test"))
 }
