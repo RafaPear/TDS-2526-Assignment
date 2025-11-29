@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.*
 import org.jetbrains.compose.resources.painterResource
 import pt.isel.reversi.app.exceptions.ErrorMessage
-import pt.isel.reversi.app.gameAudio.loadGameAudioPool
 import pt.isel.reversi.app.gamePage.GamePage
 import pt.isel.reversi.app.mainMenu.JoinGamePage
 import pt.isel.reversi.app.mainMenu.MainMenu
@@ -26,23 +25,12 @@ import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.core.stringifyBoard
 import pt.isel.reversi.utils.LOGGER
-import pt.isel.reversi.utils.setLoggerFilePath
-import pt.rafap.ktflag.cmd.args.CommandArg
-import pt.rafap.ktflag.cmd.args.CommandArgsParser
 import reversi.reversi_app.generated.resources.Res
 import reversi.reversi_app.generated.resources.reversi
 
-
-val logArg = CommandArg(
-    name = "log",
-    aliases = arrayOf("-l"),
-    description = "If set, enables logging to a file named reversi-app.log",
-    returnsValue = false,
-    isRequired = false
-)
-val argsParser = CommandArgsParser(logArg)
-
 fun main(args: Array<String>) {
+    val initializedArgs = initializeAppArgs(args) ?: return
+    val (audioPool) = initializedArgs
 
     application {
         val windowState = rememberWindowState(
@@ -50,17 +38,13 @@ fun main(args: Array<String>) {
             position = WindowPosition.PlatformDefault
         )
 
-        val parsedArgs = argsParser.parseArgs(*args)
-        val logToFileName = parsedArgs[logArg]
-        if (logToFileName != null) setLoggerFilePath()
-
         val appState = remember {
             mutableStateOf(
                 AppState(
                     game = Game(),
                     page = Page.MAIN_MENU,
                     error = null,
-                    audioPool = loadGameAudioPool()
+                    audioPool = audioPool
                 )
             )
         }
