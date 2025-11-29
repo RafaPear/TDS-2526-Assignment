@@ -5,6 +5,7 @@ import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,11 +36,13 @@ val MAIN_MENU_AUTO_SIZE_TITLE_TEXT = TextAutoSize.StepBased(
 
 @Composable
 fun MainMenu(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
-    val audioPool = getStateAudioPool(appState)
-    if (!audioPool.isPlaying(BACKGROUND_MUSIC)) {
-        LOGGER.info("Playing background music")
-        audioPool.stopAll()
-        audioPool.play(BACKGROUND_MUSIC)
+    LaunchedEffect(Unit) {
+        val audioPool = getStateAudioPool(appState)
+        if (!audioPool.isPlaying(BACKGROUND_MUSIC)) {
+            LOGGER.info("Playing background music")
+            audioPool.stopAll()
+            audioPool.play(BACKGROUND_MUSIC)
+        }
     }
     Column(
         modifier = modifier

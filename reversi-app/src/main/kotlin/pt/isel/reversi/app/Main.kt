@@ -202,11 +202,11 @@ fun SettingsPage(appState: MutableState<AppState>, modifier: Modifier = Modifier
 }
 
 /**
- * Converts a volume in decibels to a percentage string.
+ * Converts a volume in decibels to a percentage string representation (0-100).
  * @param volume The volume in decibels.
- * @param min The minimum volume in decibels (default -20f).
- * @param max The maximum volume in decibels (default 0f).
- * @return The volume as a percentage string.
+ * @param min The minimum volume in decibels, defining the lower bound of the conversion range (default -20f).
+ * @param max The maximum volume in decibels, defining the upper bound of the conversion range (default 0f).
+ * @return A string representation of the volume as a percentage (0-100).
  */
 fun volumeDbToPercent(volume: Float, min: Float, max: Float): String {
     val percent = ((volume - min) / (max - min)) * 100

@@ -14,7 +14,7 @@ import pt.isel.reversi.utils.loadResource
  * @return An AudioPool containing all loaded audio tracks.
  */
 fun loadGameAudioPool(): AudioPool {
-    val audioPaths = loadResource("audios/").listFiles().mapNotNull {
+    val audioPaths = loadResource("audios/").listFiles()?.mapNotNull {
         val name = it.name.substringBeforeLast('.')
         try {
             if (name in setOf(BACKGROUND_MUSIC, MEGALOVANIA))
@@ -28,6 +28,6 @@ fun loadGameAudioPool(): AudioPool {
             LOGGER.warning("Failed to load audio $name: ${e.message}")
             null
         }
-    }
+    } ?: emptyList()
     return buildAudioPool { for (audio in audioPaths) add(audio) }
 }

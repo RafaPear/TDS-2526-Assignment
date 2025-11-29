@@ -250,7 +250,6 @@ data class Game(
             type = ErrorType.WARNING
         )
 
-
         return this.copy(
             gameState = loadedState.copy(players = gs.players.map { it.refresh(loadedState.board) }),
             countPass =

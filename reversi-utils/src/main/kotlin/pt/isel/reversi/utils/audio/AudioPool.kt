@@ -118,9 +118,11 @@ data class AudioPool(val pool: List<AudioWrapper>) {
     }
 
     /**
-     * Executes a suspend function while any audio track in the pool is still playing.
+     * Executes a suspend function while the audio track with the specified ID is still playing.
+     * @param id The ID of the audio track to monitor.
      * @param func The suspend function to execute.
      */
+
     suspend fun whileNotFinishedAsync(id: String, func: suspend () -> Unit) {
         val audio = pool.find { it.id == id } ?: return
         while (audio.isPlaying()) {
