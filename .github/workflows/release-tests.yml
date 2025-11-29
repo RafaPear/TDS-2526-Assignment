@@ -18,6 +18,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup virtual audio device
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y pulseaudio alsa-utils
+          # Start PulseAudio in daemon mode
+          pulseaudio --start --daemonize=true --exit-idle-time=-1
+          # Create a dummy audio sink
+          pactl load-module module-null-sink sink_name=dummy
+          # Set as default
+          pactl set-default-sink dummy
+          # Verify audio is available
+          pactl info
+
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -32,6 +45,9 @@ jobs:
 
       - name: Run tests
         run: ./gradlew test --no-daemon
+        env:
+          # Ensure audio server is accessible
+          PULSE_SERVER: unix:/run/user/1001/pulse/native
 
       - name: Upload test reports
         if: always()
