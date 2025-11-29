@@ -41,12 +41,6 @@ fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier, fr
         }
     }
 
-    if (!getStateAudioPool(appState).isPlaying(MEGALOVANIA)) {
-        getStateAudioPool(appState).stop(BACKGROUND_MUSIC)
-        getStateAudioPool(appState).stop(MEGALOVANIA)
-        getStateAudioPool(appState).play(MEGALOVANIA)
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()

@@ -30,8 +30,8 @@ fun loadGameAudioPool(mainFolder: String = "audios/"): AudioPool {
                 null
             }
         } ?: emptyList()
-    } catch (e: IllegalArgumentException) {
-        LOGGER.warning("Audio resource directory missing: ${e.message}")
+    } catch (e: Exception) {
+        LOGGER.warning("Could not load audio resources from $mainFolder: ${e.message}")
         emptyList()
     }
     return buildAudioPool { for (audio in audioPaths) add(audio) }

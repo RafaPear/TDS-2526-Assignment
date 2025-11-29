@@ -1,5 +1,6 @@
 package pt.isel.reversi.utils.audio
 
+import kotlinx.coroutines.delay
 import pt.isel.reversi.utils.LOGGER
 
 /**
@@ -114,6 +115,7 @@ data class AudioPool(val pool: List<AudioWrapper>) {
     suspend fun whileNotFinishedAsync(func: suspend () -> Unit) {
         while (pool.any { it.isPlaying() }) {
             func()
+            delay(10)
         }
     }
 
@@ -127,6 +129,7 @@ data class AudioPool(val pool: List<AudioWrapper>) {
         val audio = pool.find { it.id == id } ?: return
         while (audio.isPlaying()) {
             func()
+            delay(10)
         }
     }
 
