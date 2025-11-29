@@ -9,8 +9,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import pt.isel.reversi.app.PreviousPage
+import pt.isel.reversi.app.ScaffoldView
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import pt.isel.reversi.app.HIT_SOUND
@@ -111,50 +112,51 @@ private fun newOrJoinGamePage(
     onClick: (Game) -> Unit
 ) {
     var game by remember { mutableStateOf(appState.value.game) }
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(30.dp),
-        verticalArrangement = Arrangement.spacedBy(15.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(title, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-
-        OutlinedTextField(
-            modifier = modifier,
-            value = game.currGameName ?: "",
-            onValueChange = { game = game.copy(currGameName = it) },
-            label = { Text("Nome do jogo") },
-            singleLine = true
-        )
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically
+    ScaffoldView(
+        appState = appState,
+        title = title,
+        previousPageContent = {
+            PreviousPage { appState.value = setPage(appState, Page.MAIN_MENU) }
+        }
+    ) { padding ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(padding),
+            verticalArrangement = Arrangement.spacedBy(15.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Sou o jogador:")
+            Spacer(Modifier.height(24.dp))
 
-            ButtonPieceType(PieceType.BLACK, game.myPiece) { selected ->
-                game = game.changeMyPiece(selected)
+            OutlinedTextField(
+                modifier = modifier,
+                value = game.currGameName ?: "",
+                onValueChange = { game = game.copy(currGameName = it) },
+                label = { Text("Nome do jogo") },
+                singleLine = true
+            )
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Sou o jogador:")
+
+                ButtonPieceType(PieceType.BLACK, game.myPiece) { selected ->
+                    game = game.changeMyPiece(selected)
+                }
+
+                ButtonPieceType(PieceType.WHITE, game.myPiece) { selected ->
+                    game = game.changeMyPiece(selected)
+                }
             }
 
-            ButtonPieceType(PieceType.WHITE, game.myPiece) { selected ->
-                game = game.changeMyPiece(selected)
+            Button(
+                modifier = modifier,
+                onClick = { onClick(game) }
+            ) {
+                Text("Entrar")
             }
-        }
-
-        Button(
-            modifier = modifier,
-            onClick = { onClick(game) }
-        ) {
-            Text("Entrar")
-        }
-
-        Spacer(Modifier.height(10.dp))
-
-        Button(onClick = { appState.value = setPage(appState, Page.MAIN_MENU) }) {
-            Text("Voltar")
         }
     }
 }

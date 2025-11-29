@@ -2,17 +2,15 @@ package pt.isel.reversi.app.gamePage
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.TextAutoSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import pt.isel.reversi.app.PreviousPage
+import pt.isel.reversi.app.ScaffoldView
 import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.BACKGROUND_MUSIC
 import pt.isel.reversi.app.MEGALOVANIA
@@ -23,6 +21,7 @@ import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.getStateAudioPool
 import pt.isel.reversi.app.state.setError
 import pt.isel.reversi.app.state.setGame
+import pt.isel.reversi.app.state.setPage
 import pt.isel.reversi.core.exceptions.ReversiException
 
 @Composable
@@ -42,86 +41,73 @@ fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier, fr
         }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(BOARD_BACKGROUND_COLOR)
-            .padding(all = 10.dp)
-            .testTag(tag = testTagGamePage())
-    ) {
-        val name = appState.value.game.currGameName
-        Row(
-            modifier = modifier.fillMaxWidth().testTag(tag = testTagTitle(gameName = name)),
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            if (name != null) {
-                Text(
-                    text = "Game: $name",
-                    color = TEXT_COLOR,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    autoSize = TextAutoSize.StepBased(
-                        maxFontSize = 50.sp
-                    ),
-                    maxLines = 1,
-                    softWrap = false,
-                )
-            }
+
+    val name = appState.value.game.currGameName?.let { "Game: $it" }
+
+    ScaffoldView(
+        appState = appState,
+        title = name ?: "Reversi",
+        previousPageContent = {
+            PreviousPage { appState.value = setPage(appState, appState.value.backPage) }
         }
-
-        Spacer(modifier = Modifier.height(padding))
-
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
+    ) { padding ->
+        Column(
+            modifier = modifier.fillMaxSize()
+                .background(BOARD_BACKGROUND_COLOR)
+                .padding(paddingValues = padding)
+                .testTag(tag = testTagGamePage()),
         ) {
-            Box(
-                modifier = modifier.weight(0.7f),
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(all = 16.dp),
             ) {
-
-                DrawBoard(appState.value.game, freeze = freeze) { coordinate ->
-                    coroutineAppScope.launch {
-                        try {
-                            appState.value = setGame(
-                                appState,
-                                game = appState.value.game.play(coordinate)
-                            )
-                            val audioPool = getStateAudioPool(appState)
-                            audioPool.stop(PLACE_PIECE_SOUND)
-                            audioPool.play(PLACE_PIECE_SOUND)
-                        } catch (e: ReversiException) {
-                            appState.value = setError(appState, error = e)
+                Box(
+                    modifier = modifier.weight(0.7f),
+                ) {
+                    DrawBoard(appState.value.game, freeze = freeze) { coordinate ->
+                        coroutineAppScope.launch {
+                            try {
+                                appState.value = setGame(
+                                    appState,
+                                    game = appState.value.game.play(coordinate)
+                                )
+                                val audioPool = getStateAudioPool(appState)
+                                audioPool.stop(PLACE_PIECE_SOUND)
+                                audioPool.play(PLACE_PIECE_SOUND)
+                            } catch (e: ReversiException) {
+                                appState.value = setError(appState, error = e)
+                            }
                         }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.width(padding))
+                Spacer(modifier = Modifier.width(width = 16.dp))
 
-            // Coluna dos jogadores e botões
-            Column(
-                modifier = modifier.weight(0.3f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                TextPlayersScore(state = appState.value.game.gameState)
+                // Coluna dos jogadores e botões
+                Column(
+                    modifier = modifier.weight(0.3f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    TextPlayersScore(state = appState.value.game.gameState)
 
-                Spacer(modifier = Modifier.height(padding * 3))
+                    val target = appState.value.game.target
 
-                val target = appState.value.game.target
+                    Spacer(modifier = Modifier.height(32.dp))
 
-                TargetButton(target, freeze = freeze) {
-                    appState.value = setGame(
-                        appState,
-                        game = appState.value.game.setTargetMode(!appState.value.game.target)
-                    )
-                }
 
-                //Spacer(modifier = Modifier.height(padding))
+                    TargetButton(target, freeze = freeze) {
+                        appState.value = setGame(
+                            appState,
+                            game = appState.value.game.setTargetMode(!appState.value.game.target)
+                        )
+                    }
+
+                    //Spacer(modifier = Modifier.height(padding))
 
 //                GameButton("Update", freeze = freeze) {
 //                    appState.value = setGame(appState, appState.value.game.refresh())
 //                }
 
+                }
             }
         }
     }

@@ -10,20 +10,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.painterResource
-import pt.isel.reversi.app.exceptions.ErrorMessage
+import pt.isel.reversi.app.exceptions.GameNotStartedYet
 import pt.isel.reversi.app.gamePage.GamePage
 import pt.isel.reversi.app.mainMenu.JoinGamePage
 import pt.isel.reversi.app.mainMenu.MainMenu
 import pt.isel.reversi.app.mainMenu.NewGamePage
 import pt.isel.reversi.app.state.*
 import pt.isel.reversi.core.Game
+import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.core.stringifyBoard
 import pt.isel.reversi.utils.LOGGER
@@ -77,36 +76,21 @@ fun main(args: Array<String>) {
             onCloseRequest = ::safeExitApplication,
             title = "Reversi-DEV",
             icon = painterResource(Res.drawable.reversi),
-            state = windowState
+            state = windowState,
         ) {
 
             window.minimumSize = java.awt.Dimension(500, 500)
 
             MakeMenuBar(appState, ::safeExitApplication)
 
-            Box(modifier = Modifier.fillMaxSize()) {
-                when (appState.value.page) {
-                    Page.MAIN_MENU -> MainMenu(appState)
-                    Page.GAME -> GamePage(appState)
-                    Page.SETTINGS -> SettingsPage(appState)
-                    Page.ABOUT -> AboutPage(appState)
-                    Page.JOIN_GAME -> JoinGamePage(appState)
-                    Page.NEW_GAME -> NewGamePage(appState)
-                    Page.SAVE_GAME -> SaveGamePage(appState)
-                }
-
-                // Show error dialog if there is an error
-                appState.value.error?.let { ErrorMessage(appState) }
-                Box (modifier = Modifier
-                    .padding(all = 24.dp)
-                    .align(Alignment.BottomEnd)
-                ) {
-                    if (appState.value.page != Page.MAIN_MENU) {
-                        PreviousPage {
-                            appState.value = setPage(appState, appState.value.backPage)
-                        }
-                    }
-                }
+            when (appState.value.page) {
+                Page.MAIN_MENU -> MainMenu(appState)
+                Page.GAME -> GamePage(appState)
+                Page.SETTINGS -> SettingsPage(appState)
+                Page.ABOUT -> AboutPage(appState)
+                Page.JOIN_GAME -> JoinGamePage(appState)
+                Page.NEW_GAME -> NewGamePage(appState)
+                Page.SAVE_GAME -> SaveGamePage(appState)
             }
         }
     }
@@ -121,54 +105,72 @@ fun main(args: Array<String>) {
  * When the user clicks the save button, saves the game and returns to the game page.
  */
 @Composable
-fun SaveGamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
+fun SaveGamePage(appState: MutableState<AppState>) {
     val game = appState.value.game
+    if (game.gameState == null) {
+        appState.value = setAppState(
+            appState,
+            page = appState.value.backPage,
+            error = GameNotStartedYet(
+                message = "Not possible to save a game that has not started yet",
+                type = ErrorType.WARNING
+            )
+        )
+        return
+    }
+
     var gameName by remember { mutableStateOf(game.currGameName) }
     val coroutineAppScope = rememberCoroutineScope()
-    GamePage(appState, freeze = true)
-    Column(
-        modifier = modifier
-            .fillMaxSize().background(Color.White.copy(alpha = 0.5f))
-            .padding(30.dp),
-        verticalArrangement = Arrangement.spacedBy(15.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Guardar Jogo", fontSize = 28.sp, fontWeight = FontWeight.Bold)
 
-        OutlinedTextField(
-            value = gameName ?: "",
-            enabled = appState.value.game.currGameName == null,
-            onValueChange = { gameName = it },
-            label = { Text("Nome do jogo") },
-            singleLine = true
-        )
+    GamePage(appState = appState, freeze = true)
 
-        Button(
-            onClick = {
-                appState.value = setGame(
-                    appState,
-                    game.copy(currGameName = gameName?.trim() ?: return@Button)
-                )
-                coroutineAppScope.launch {
-                    try {
-                        appState.value.game.saveOnlyBoard(gameState = appState.value.game.gameState)
-                        appState.value = setPage(appState, Page.GAME)
-                    } catch (e: ReversiException) {
-                        appState.value = setAppState(
-                            appState, error = e,
-                            game = game.copy(currGameName = null)
-                        )
+    ScaffoldView(
+        appState = appState,
+        title = "Guardar Jogo",
+        previousPageContent = {
+            PreviousPage { appState.value = setPage(appState, Page.GAME) }
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .background(Color.White.copy(alpha = 0.8f))
+                .padding(paddingValues = padding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+
+            Spacer(Modifier.height(height = 24.dp))
+
+            OutlinedTextField(
+                value = gameName ?: "",
+                enabled = appState.value.game.currGameName == null,
+                onValueChange = { gameName = it },
+                label = { Text("Nome do jogo") },
+                singleLine = true
+            )
+
+            Spacer(Modifier.height(height = 24.dp))
+
+            Button(
+                onClick = {
+                    appState.value = setGame(
+                        appState,
+                        game.copy(currGameName = gameName?.trim() ?: return@Button)
+                    )
+                    coroutineAppScope.launch {
+                        try {
+                            appState.value.game.saveOnlyBoard(gameState = appState.value.game.gameState)
+                            appState.value = setPage(appState, Page.GAME)
+                        } catch (e: ReversiException) {
+                            appState.value = setAppState(
+                                appState, error = e,
+                                game = game.copy(currGameName = null)
+                            )
+                        }
                     }
                 }
+            ) {
+                Text("Guardar")
             }
-        ) {
-            Text("Guardar")
-        }
-
-        Spacer(Modifier.height(10.dp))
-
-        Button(onClick = { appState.value = setPage(appState, Page.GAME) }) {
-            Text("Voltar")
         }
     }
 }
@@ -176,40 +178,42 @@ fun SaveGamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier
 
 @Composable
 fun SettingsPage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.fillMaxSize().padding(30.dp),
-        verticalArrangement = Arrangement.spacedBy(15.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Definições", fontSize = 30.sp, fontWeight = FontWeight.Bold)
 
-        Text("Opções futuras: som, tema, rede, etc.")
-        val currentMasterVolume = getStateAudioPool(appState).getMasterVolume()
-        if (currentMasterVolume == null) LOGGER.warning("Master volume is null, using 0f as default")
-        var volume by remember { mutableStateOf(currentMasterVolume ?: 0f) }
+    ScaffoldView(
+        appState = appState,
+        title = "Definições",
+        previousPageContent = {
+            PreviousPage { appState.value = setPage(appState, appState.value.backPage) }
+        }
+    ) { padding ->
+        Column(
+            modifier = modifier.fillMaxSize().padding(paddingValues = padding),
+            verticalArrangement = Arrangement.spacedBy(15.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Opções futuras: som, tema, rede, etc.")
+            val currentMasterVolume = getStateAudioPool(appState).getMasterVolume()
+            if (currentMasterVolume == null) LOGGER.warning("Master volume is null, using 0f as default")
+            var volume by remember { mutableStateOf(currentMasterVolume ?: 0f) }
 
-        // Convert volume in dB [-20, 0] to percentage [0, 100]
-        val number = if (volume == 0f) " (Default)" else if (volume == -20f) " (disabled)" else " (${volumeDbToPercent(volume, 20f, 0f)}%)"
+            // Convert volume in dB [-20, 0] to percentage [0, 100]
+            val number = if (volume == 0f) " (Default)" else if (volume == -20f) " (disabled)" else " (${volumeDbToPercent(volume, 20f, 0f)}%)"
 
-        Text("Master Volume: $number",
-             fontSize = 20.sp,
-             fontWeight = FontWeight.Medium
-        )
-        Slider(value = volume, valueRange = -20f..0f, onValueChange = {
-            volume = it
-            val audioPool = getStateAudioPool(appState)
-            if (volume == -20f) {
-                audioPool.mute(true)
-            } else {
-                audioPool.mute(false)
-                audioPool.setMasterVolume(volume)
-            }
-        })
+            Text("Master Volume: $number",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Slider(value = volume, valueRange = -20f..0f, onValueChange = {
+                volume = it
+                val audioPool = getStateAudioPool(appState)
+                if (volume == -20f) {
+                    audioPool.mute(true)
+                } else {
+                    audioPool.mute(false)
+                    audioPool.setMasterVolume(volume)
+                }
+            })
 
-        Spacer(Modifier.height(20.dp))
-
-        Button(onClick = { appState.value = setPage(appState, Page.MAIN_MENU) }) {
-            Text("Voltar")
         }
     }
 }
@@ -228,23 +232,27 @@ fun volumeDbToPercent(volume: Float, min: Float, max: Float): String {
 
 @Composable
 fun AboutPage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.fillMaxSize().padding(30.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Sobre", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-        Text("Projeto Reversi desenvolvido no ISEL.")
-        Text("Autores: ")
-        Text(" - Rafael Pereira - NUMERO")
-        Text(" - Ian Frunze - NUMERO")
-        Text(" - Tito Silva - NUMERO")
-        Text("Versão: DEV Build")
 
-        Spacer(Modifier.height(20.dp))
+    ScaffoldView(
+        appState = appState,
+        title = "Sobre",
+        previousPageContent = {
+            PreviousPage { appState.value = setPage(appState, appState.value.backPage) }
+        }
+    ) { padding ->
+        Column(
+            modifier = modifier.fillMaxSize().padding(paddingValues = padding),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(height = 24.dp))
+            Text("Projeto Reversi desenvolvido no ISEL.")
+            Text("Autores: ")
+            Text(" - Rafael Pereira - NUMERO")
+            Text(" - Ian Frunze - NUMERO")
+            Text(" - Tito Silva - NUMERO")
+            Text("Versão: DEV Build")
 
-        Button(onClick = { appState.value = setPage(appState, Page.MAIN_MENU) }) {
-            Text("Voltar")
         }
     }
 }
