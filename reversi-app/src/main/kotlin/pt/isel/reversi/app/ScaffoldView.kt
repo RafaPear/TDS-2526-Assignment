@@ -1,13 +1,10 @@
 package pt.isel.reversi.app
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -22,16 +19,17 @@ import pt.isel.reversi.app.state.AppState
 @OptIn(ExperimentalMaterial3Api::class)
 fun ScaffoldView(
     appState: MutableState<AppState>,
-    modifier: Modifier = Modifier,
-    title: String,
+    backgroundTopBar: Color = Color.Transparent,
+    title: String = "",
     previousPageContent: @Composable () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
+                    containerColor = backgroundTopBar,
                 ),
                 title = {
                     Text(
@@ -52,13 +50,7 @@ fun ScaffoldView(
             )
         },
         snackbarHost = { appState.value.error?.let { ErrorMessage(appState) } }
-    ) { padding ->
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            content()
-        }
+    ) { paddingValues ->
+        content(paddingValues)
     }
 }

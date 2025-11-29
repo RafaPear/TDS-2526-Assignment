@@ -17,6 +17,7 @@ dependencies {
     implementation(compose.components.uiToolingPreview)
     implementation(libs.androidx.lifecycle.viewmodelCompose)
     implementation(libs.androidx.lifecycle.runtimeCompose)
+
     @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
     implementation(compose.uiTest)
     implementation(compose.materialIconsExtended)
