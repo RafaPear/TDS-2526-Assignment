@@ -56,8 +56,7 @@ suspend fun startNewGame(
                 type = ErrorType.WARNING
             )
         }
-    }
-    else {
+    } else {
         Game(
             target = false,
             gameState = gs,
@@ -83,10 +82,10 @@ suspend fun loadGame(
     val conf = loadCoreConfig()
     val storage = conf.STORAGE_TYPE.storage(conf.SAVES_FOLDER)
     val loadedState = storage.load(gameName)
-                      ?: throw InvalidFileException(
-                          message = "$gameName does not exist",
-                          type = ErrorType.ERROR
-                      )
+        ?: throw InvalidFileException(
+            message = "$gameName does not exist",
+            type = ErrorType.ERROR
+        )
 
     val myPieceType =
         if (loadedState.players.isNotEmpty())
@@ -135,9 +134,9 @@ fun Game.stringifyBoard(): String {
             val cords = Coordinate(row, col)
             when {
                 row == 0 && col == 0 -> sb.append("  ")
-                row == 0             -> sb.append("$col ")
-                col == 0             -> sb.append("$row ")
-                else                 -> sb.append(
+                row == 0 -> sb.append("$col ")
+                col == 0 -> sb.append("$row ")
+                else -> sb.append(
                     when (useTarget && cords in availablePlays) {
                         true -> "${this.config.TARGET_CHAR} "
                         false -> (board[cords]?.symbol ?: this.config.EMPTY_CHAR) + " "

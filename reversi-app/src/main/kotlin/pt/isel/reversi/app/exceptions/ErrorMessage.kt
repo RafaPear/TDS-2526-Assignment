@@ -180,8 +180,8 @@ fun ToastMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier
         }
     }
 
-    LaunchedEffect(error, message) {
-        if (error == null) return@LaunchedEffect
+    LaunchedEffect(key1 = error, key2 = message) {
+        if (error == null || message == null) return@LaunchedEffect
 
         offsetY.animateTo(
             targetValue = 1f,

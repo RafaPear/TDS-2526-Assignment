@@ -10,11 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pt.isel.reversi.app.PreviousPage
-import pt.isel.reversi.app.ScaffoldView
-import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import pt.isel.reversi.app.HIT_SOUND
+import pt.isel.reversi.app.PreviousPage
+import pt.isel.reversi.app.ScaffoldView
 import pt.isel.reversi.app.exceptions.NoPieceSelected
 import pt.isel.reversi.app.exceptions.TextBoxIsEmpty
 import pt.isel.reversi.app.state.*
@@ -89,6 +88,7 @@ fun JoinGamePage(
             )
             return@newOrJoinGamePage
         }
+
         coroutineAppScope.launch {
             try {
                 val loadedGame = loadGame(
