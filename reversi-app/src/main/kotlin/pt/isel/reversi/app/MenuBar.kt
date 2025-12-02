@@ -4,13 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowState
 import pt.isel.reversi.app.state.*
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.utils.LOGGER
 
 @Composable
-fun FrameWindowScope.MakeMenuBar(appState: MutableState<AppState>, exitAction: () -> Unit) {
+fun FrameWindowScope.MakeMenuBar(appState: MutableState<AppState>, windowState: WindowState, exitAction: () -> Unit) {
     MenuBar {
         Menu("Ficheiro") {
             Item("Novo Jogo") {
@@ -34,6 +36,14 @@ fun FrameWindowScope.MakeMenuBar(appState: MutableState<AppState>, exitAction: (
             Separator()
             Item("Sair") {
                 exitAction()
+            }
+        }
+
+        Menu("View") {
+            Item("Toggle Fullscreen") {
+                windowState.placement =
+                    if (windowState.placement == WindowPlacement.Floating) WindowPlacement.Fullscreen
+                    else WindowPlacement.Floating
             }
         }
 

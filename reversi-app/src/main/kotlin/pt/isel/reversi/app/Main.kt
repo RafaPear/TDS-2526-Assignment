@@ -71,7 +71,7 @@ fun main(args: Array<String>) {
 
             window.minimumSize = java.awt.Dimension(500, 500)
 
-            MakeMenuBar(appState, ::safeExitApplication)
+            MakeMenuBar(appState, windowState, ::safeExitApplication)
 
             AppScreenSwitcher(appState)
         }

@@ -1,15 +1,15 @@
 package pt.isel.reversi.cli
 
-import pt.isel.reversi.utils.GAME_BASE_FOLDER
+import pt.isel.reversi.utils.BASE_FOLDER
 import java.io.File
 import kotlin.test.Test
 
 class CliConfigTests {
 
     private fun cleanup(func: () -> Unit) {
-        File(GAME_BASE_FOLDER).deleteRecursively()
+        File(BASE_FOLDER).deleteRecursively()
         func()
-        File(GAME_BASE_FOLDER).deleteRecursively()
+        File(BASE_FOLDER).deleteRecursively()
     }
 
     @Test

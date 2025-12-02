@@ -9,7 +9,7 @@ import java.time.LocalDate
  * @return The joined path string.
  */
 fun makePathString(vararg parts: String): String =
-    listOf(GAME_BASE_FOLDER, *parts).joinToString(separator = "/")
+    listOf(BASE_FOLDER, *parts).joinToString(separator = "/")
 
 /**
  * Sets the logger to log to a file with a name based on the current date.

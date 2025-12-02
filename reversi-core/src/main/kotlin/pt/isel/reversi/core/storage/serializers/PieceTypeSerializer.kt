@@ -8,7 +8,7 @@ import pt.isel.reversi.storage.Serializer
 /**
  * Serializer for the PieceType enum, converting it to and from a Char representation.
  */
-class PieceTypeSerializer : Serializer<PieceType, Char> {
+internal class PieceTypeSerializer : Serializer<PieceType, Char> {
     override fun serialize(obj: PieceType): Char {
         return obj.symbol
     }

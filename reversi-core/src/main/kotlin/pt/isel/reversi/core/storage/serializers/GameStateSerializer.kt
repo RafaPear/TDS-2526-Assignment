@@ -11,7 +11,7 @@ import pt.isel.reversi.storage.Serializer
 /**
  * Serializer for the GameState class, converting it to and from a String representation.
  */
-class GameStateSerializer : Serializer<GameState, String> {
+internal class GameStateSerializer : Serializer<GameState, String> {
     private val pieceTypeSerializer = PieceTypeSerializer()
     private val boardSerializer = BoardSerializer()
     private val playerSerializer = PlayerSerializer()

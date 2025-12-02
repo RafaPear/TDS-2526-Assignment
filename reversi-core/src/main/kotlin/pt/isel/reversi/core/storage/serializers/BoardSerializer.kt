@@ -9,7 +9,7 @@ import pt.isel.reversi.storage.Serializer
 /**
  * Serializer for the Board class, converting it to and from a String representation.
  */
-class BoardSerializer : Serializer<Board, String> {
+internal class BoardSerializer : Serializer<Board, String> {
     private val pieceSerializer = PieceSerializer()
 
     override fun serialize(obj: Board): String {

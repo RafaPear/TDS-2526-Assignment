@@ -8,7 +8,7 @@ import pt.isel.reversi.storage.Serializer
  * Format: "<symbol>,<points>" where <symbol> is the piece symbol (e.g. 'B' or 'W') and
  * <points> is the integer number of points the player has.
  */
-class PlayerSerializer : Serializer<Player, String> {
+internal class PlayerSerializer : Serializer<Player, String> {
     private val pieceTypeSerializer = PieceTypeSerializer()
 
     override fun serialize(obj: Player): String {
