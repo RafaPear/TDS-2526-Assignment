@@ -20,9 +20,7 @@ fun previousPageContentDefault(
     appState: MutableState<AppState>
 ): @Composable () -> Unit = {
     PreviousPage {
-        appState.value = setPage(
-            appState, appState.value.backPage
-        )
+        appState.setPage(appState.value.backPage)
     }
 }
 

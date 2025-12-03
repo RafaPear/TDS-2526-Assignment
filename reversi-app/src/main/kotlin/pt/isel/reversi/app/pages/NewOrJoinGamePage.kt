@@ -36,7 +36,7 @@ fun NewGamePage(
         val currGameName = game.currGameName
 
         val myPiece: PieceType = game.myPiece ?: run {
-            appState.value = setError(appState, error = NoPieceSelected())
+            appState.setError(error = NoPieceSelected())
             return@newOrJoinGamePage
         }
 
@@ -61,10 +61,12 @@ fun NewGamePage(
                 }
 
                 LOGGER.info("Novo jogo '${currGameName?.ifBlank { "(local)" } ?: "(local)"} ' iniciado.")
-                appState.value = setAppState(appState, newGame, Page.GAME)
-                getStateAudioPool(appState).play(HIT_SOUND)
+                appState.run {
+                    setAppState(newGame, Page.GAME)
+                    getStateAudioPool().play(HIT_SOUND)
+                }
             } catch (e: ReversiException) {
-                appState.value = setError(appState, e)
+                appState.setError(e)
             }
         }
     }
@@ -78,8 +80,7 @@ fun JoinGamePage(
     newOrJoinGamePage(appState, modifier, "Entrar num Jogo") { game ->
         val currGameName = game.currGameName
         if (currGameName.isNullOrBlank()) {
-            appState.value = setError(
-                appState,
+            appState.setError(
                 error = TextBoxIsEmpty(
                     message = "Insira um nome do jogo.",
                     type = ErrorType.INFO
@@ -94,9 +95,9 @@ fun JoinGamePage(
                     desiredType = game.myPiece
                 )
                 LOGGER.info("Ligado ao jogo '$loadedGame'.")
-                appState.value = setAppState(appState, loadedGame, Page.GAME)
+                appState.setAppState(loadedGame, Page.GAME)
             } catch (e: ReversiException) {
-                appState.value = setError(appState, e)
+                appState.setError(e)
             }
         }
     }
@@ -114,7 +115,7 @@ private fun newOrJoinGamePage(
         appState = appState,
         title = title,
         previousPageContent = {
-            PreviousPage { appState.value = setPage(appState, Page.MAIN_MENU) }
+            PreviousPage { appState.setPage(Page.MAIN_MENU) }
         }
     ) { padding ->
         Column(

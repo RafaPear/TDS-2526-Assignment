@@ -110,7 +110,7 @@ fun WarningMessage(appState: MutableState<AppState>, modifier: Modifier = Modifi
 
             Button(
                 onClick = {
-                    appState.value = setError(appState, error = null)
+                    appState.setError(error = null)
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = buttonBackgroundColor,
@@ -183,6 +183,6 @@ fun ToastMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier
             targetValue = -100f,
             animationSpec = tween(durationMillis = slideDuration)
         )
-        appState.value = setError(appState, error = null)
+        appState.setError(error = null)
     }
 }

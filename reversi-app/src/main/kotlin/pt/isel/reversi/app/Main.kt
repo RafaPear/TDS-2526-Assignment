@@ -18,7 +18,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.painterResource
 import pt.isel.reversi.app.exceptions.GameNotStartedYet
+import pt.isel.reversi.app.pages.MainMenu
+import pt.isel.reversi.app.pages.NewGamePage
 import pt.isel.reversi.app.pages.game.GamePage
+import pt.isel.reversi.app.pages.lobby.LobbyMenu
 import pt.isel.reversi.app.state.*
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.exceptions.ErrorType
@@ -54,7 +57,7 @@ fun main(args: Array<String>) {
 
             try {
                 runBlocking { appState.value.game.saveEndGame() }
-                getStateAudioPool(appState).destroy()
+                appState.getStateAudioPool().destroy()
             } catch (e: ReversiException) {
                 LOGGER.warning("Failed to save game on exit: ${e.message}")
             }
@@ -73,7 +76,17 @@ fun main(args: Array<String>) {
 
             MakeMenuBar(appState, windowState, ::safeExitApplication)
 
-            AppScreenSwitcher(appState)
+            AppScreenSwitcher(appState) { page ->
+                when (page) {
+                    Page.MAIN_MENU -> MainMenu(appState)
+                    Page.GAME      -> GamePage(appState)
+                    Page.SETTINGS  -> SettingsPage(appState)
+                    Page.ABOUT     -> AboutPage(appState)
+                    Page.NEW_GAME  -> NewGamePage(appState)
+                    Page.SAVE_GAME -> SaveGamePage(appState)
+                    Page.LOBBY     -> LobbyMenu(appState)
+                }
+            }
         }
     }
 }
@@ -90,8 +103,7 @@ fun main(args: Array<String>) {
 fun SaveGamePage(appState: MutableState<AppState>) {
     val game = appState.value.game
     if (game.gameState == null) {
-        appState.value = setAppState(
-            appState,
+        appState.setAppState(
             page = appState.value.backPage,
             error = GameNotStartedYet(
                 message = "Not possible to save a game that has not started yet",
@@ -110,7 +122,7 @@ fun SaveGamePage(appState: MutableState<AppState>) {
         appState = appState,
         title = "Guardar Jogo",
         previousPageContent = {
-            PreviousPage { appState.value = setPage(appState, Page.GAME) }
+            PreviousPage {appState.setPage(Page.GAME) }
         }
     ) { padding ->
         Column(
@@ -134,17 +146,14 @@ fun SaveGamePage(appState: MutableState<AppState>) {
 
             Button(
                 onClick = {
-                    appState.value = setGame(
-                        appState,
-                        game.copy(currGameName = gameName?.trim() ?: return@Button)
-                    )
+                    appState.setGame(game.copy(currGameName = gameName?.trim() ?: return@Button))
                     coroutineAppScope.launch {
                         try {
                             appState.value.game.saveOnlyBoard(gameState = appState.value.game.gameState)
-                            appState.value = setPage(appState, Page.GAME)
+                            appState.setPage(Page.GAME)
                         } catch (e: ReversiException) {
-                            appState.value = setAppState(
-                                appState, error = e,
+                            appState.setAppState(
+                                error = e,
                                 game = game.copy(currGameName = null)
                             )
                         }
@@ -167,7 +176,7 @@ fun SettingsPage(appState: MutableState<AppState>, modifier: Modifier = Modifier
         appState = appState,
         title = "Definições",
         previousPageContent = {
-            PreviousPage { appState.value = setPage(appState, appState.value.backPage) }
+            PreviousPage { appState.setPage(appState.value.backPage) }
         }
     ) { padding ->
         Column(
@@ -176,17 +185,21 @@ fun SettingsPage(appState: MutableState<AppState>, modifier: Modifier = Modifier
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text("Opções futuras: som, tema, rede, etc.", color = TEXT_COLOR)
-            val currentMasterVolume = getStateAudioPool(appState).getMasterVolume()
+            val currentMasterVolume = appState.getStateAudioPool().getMasterVolume()
             var volume by remember { mutableStateOf(currentMasterVolume ?: 0f) }
 
             // Convert volume in dB [-20, 0] to percentage [0, 100]
-            val number = if (volume == 0f) " (Default)" else if (volume == -20f) " (disabled)" else " (${
-                volumeDbToPercent(
-                    volume,
-                    -20f,
-                    0f
-                )
-            }%)"
+            val number = when (volume) {
+                0f   -> " (Default)"
+                -20f -> " (disabled)"
+                else -> " (${
+                    volumeDbToPercent(
+                        volume,
+                        -20f,
+                        0f
+                    )
+                }%)"
+            }
 
             Text(
                 "Master Volume: $number",
@@ -197,7 +210,7 @@ fun SettingsPage(appState: MutableState<AppState>, modifier: Modifier = Modifier
             Slider(
                 value = volume, valueRange = -20f..0f, onValueChange = {
                     volume = it
-                    val audioPool = getStateAudioPool(appState)
+                    val audioPool = appState.getStateAudioPool()
                     if (volume == -20f) {
                         audioPool.mute(true)
                     } else {
@@ -234,7 +247,7 @@ fun AboutPage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
         appState = appState,
         title = "Sobre",
         previousPageContent = {
-            PreviousPage { appState.value = setPage(appState, appState.value.backPage) }
+            PreviousPage { appState.setPage(appState.value.backPage) }
         }
     ) { padding ->
         Column(

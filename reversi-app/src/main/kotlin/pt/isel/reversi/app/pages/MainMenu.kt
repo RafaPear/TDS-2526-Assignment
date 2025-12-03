@@ -38,7 +38,7 @@ val MAIN_MENU_AUTO_SIZE_TITLE_TEXT = TextAutoSize.StepBased(
 @Composable
 fun MainMenu(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
     LaunchedEffect(appState.value.page) {
-        val audioPool = getStateAudioPool(appState)
+        val audioPool = appState.getStateAudioPool()
         if (!audioPool.isPlaying(BACKGROUND_MUSIC)) {
             LOGGER.info("Playing background music")
             audioPool.stopAll()
@@ -65,25 +65,25 @@ fun MainMenu(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
             Spacer(Modifier.height(MAIN_MENU_PADDING))
 
             MainMenuButton(text = "Novo Jogo") {
-                appState.value = setPage(appState, Page.NEW_GAME)
+                appState.setPage(Page.NEW_GAME)
             }
 
             Spacer(Modifier.height(MAIN_MENU_BUTTON_SPACER))
 
-            MainMenuButton(text = "Entrar em Jogo") {
-                appState.value = setPage(appState, Page.JOIN_GAME)
+            MainMenuButton(text = "Lobby") {
+                appState.setPage(Page.LOBBY)
             }
 
             Spacer(Modifier.height(MAIN_MENU_BUTTON_SPACER))
 
             MainMenuButton(text = "Definições") {
-                appState.value = setPage(appState, Page.SETTINGS)
+                appState.setPage(Page.SETTINGS)
             }
 
             Spacer(Modifier.height(MAIN_MENU_BUTTON_SPACER))
 
             MainMenuButton(text = "Sobre") {
-                appState.value = setPage(appState, Page.ABOUT)
+                appState.setPage(Page.ABOUT)
             }
         }
     }

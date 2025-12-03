@@ -27,11 +27,12 @@ fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier, fr
             launchGameRefreshCoroutine(50L, appState)
         }
 
-        val audioPool = getStateAudioPool(appState)
-        if (!audioPool.isPlaying(MEGALOVANIA)) {
-            audioPool.stop(BACKGROUND_MUSIC)
-            audioPool.stop(MEGALOVANIA)
-            audioPool.play(MEGALOVANIA)
+        appState.getStateAudioPool().run {
+            if (!isPlaying(MEGALOVANIA)) {
+                stop(BACKGROUND_MUSIC)
+                stop(MEGALOVANIA)
+                play(MEGALOVANIA)
+            }
         }
     }
 
@@ -41,7 +42,7 @@ fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier, fr
         appState = appState,
         title = name ?: "Reversi",
         previousPageContent = {
-            PreviousPage { appState.value = setPage(appState, appState.value.backPage) }
+            PreviousPage { appState.setPage(appState.value.backPage) }
         }
     ) { padding ->
         Column(
@@ -59,15 +60,15 @@ fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier, fr
                     DrawBoard(appState.value.game, freeze = freeze) { coordinate ->
                         coroutineAppScope.launch {
                             try {
-                                appState.value = setGame(
-                                    appState,
+                                appState.setGame(
                                     game = appState.value.game.play(coordinate)
                                 )
-                                val audioPool = getStateAudioPool(appState)
-                                audioPool.stop(PLACE_PIECE_SOUND)
-                                audioPool.play(PLACE_PIECE_SOUND)
+                                appState.getStateAudioPool().run {
+                                    stop(PLACE_PIECE_SOUND)
+                                    play(PLACE_PIECE_SOUND)
+                                }
                             } catch (e: ReversiException) {
-                                appState.value = setError(appState, error = e)
+                                appState.setError(error = e)
                             }
                         }
                     }
@@ -88,8 +89,7 @@ fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier, fr
 
 
                     TargetButton(target, freeze = freeze) {
-                        appState.value = setGame(
-                            appState,
+                        appState.setGame(
                             game = appState.value.game.setTargetMode(!appState.value.game.target)
                         )
                     }

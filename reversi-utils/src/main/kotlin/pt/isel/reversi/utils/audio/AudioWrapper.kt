@@ -52,14 +52,23 @@ data class AudioWrapper(
      * Starts playback of the audio clip. If the clip is set to loop, it will loop continuously.
      */
     fun play() {
+        if (clip.framePosition >= clip.frameLength)
+            clip.framePosition = modifier.startPosition?.coerceIn(0, clip.frameLength - 1) ?: 0
+
         if (!clip.isRunning) {
             if (modifier.loop) {
                 clip.setLoopPoints(loopStart, loopEnd)
                 clip.loop(Clip.LOOP_CONTINUOUSLY)
             } else clip.start()
         }
+        var elapsed = 0L
         while (!clip.isRunning) {
-            // wait for the clip to start playing
+            Thread.sleep(1)
+            elapsed++
+            if (elapsed > 2000) {
+                LOGGER.warning("AUDIO '${id}' failed to start playing after 2 seconds")
+                break
+            }
         }
     }
 

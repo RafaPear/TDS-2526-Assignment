@@ -1,12 +1,15 @@
 package pt.isel.reversi.app.state
 
-enum class Page {
-    MAIN_MENU,
-    GAME,
-    SETTINGS,
-    ABOUT,
-    JOIN_GAME,
-    NEW_GAME,
-    SAVE_GAME,
-    LOBBY
+/**
+ * Represents the different pages in the application along with their hierarchy levels.
+ * @property level The hierarchy level of the page, where a higher number indicates a deeper level.
+ */
+enum class Page(val level: Int) {
+    MAIN_MENU(0),
+    SETTINGS(1),
+    ABOUT(1),
+    NEW_GAME(1),
+    SAVE_GAME(1),
+    LOBBY(1),
+    GAME(2),
 }
