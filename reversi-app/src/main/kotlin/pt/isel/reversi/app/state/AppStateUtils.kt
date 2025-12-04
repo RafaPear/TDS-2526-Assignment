@@ -3,9 +3,11 @@ package pt.isel.reversi.app.state
 import androidx.compose.runtime.MutableState
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.exceptions.ErrorType
+import pt.isel.reversi.core.exceptions.ErrorType.Companion.toReversiException
 import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.utils.LOGGER
 import pt.isel.reversi.utils.audio.AudioPool
+
 
 fun MutableState<AppState>.setGame(game: Game) {
     LOGGER.info("Set new game state")
@@ -13,22 +15,23 @@ fun MutableState<AppState>.setGame(game: Game) {
 }
 
 fun MutableState<AppState>.setPage(page: Page) {
+    if (page == value.page) {
+        LOGGER.info("Page is the same: ${page.name}, no changes made")
+        return
+    }
     checkAndClearInfoError()
     val error = value.error
 
-    if (error != null) {
-        setError(error = error)
-        return
-    }
+    if (error != null) return
 
-    setBackPage(value.page)
+    setBackPage(page)
     LOGGER.info("Set page ${page.name}")
     value = value.copy(page = page, error = error)
 }
 
 private fun MutableState<AppState>.checkAndClearInfoError() {
     val error = value.error
-    if (error != null && error.type == ErrorType.INFO) {
+    if (error?.type == ErrorType.INFO) {
         LOGGER.info("Clearing info error")
         value = value.copy(error = null)
     }
@@ -37,15 +40,22 @@ private fun MutableState<AppState>.checkAndClearInfoError() {
 fun MutableState<AppState>.setAppState(
     game: Game = value.game,
     page: Page = value.page,
-    error: ReversiException? = value.error,
+    error: Exception? = null,
     audioPool: AudioPool = value.audioPool,
 ) {
     LOGGER.info("Set entire app state")
-    setBackPage(value.page)
-    value = AppState(
+
+    if (page != value.page) {
+        setPage(page)
+    } else {
+        value
+    }
+
+    if (error !is ReversiException )
+        setError(error?.toReversiException(ErrorType.CRITICAL))
+
+    value = value.copy(
         game = game,
-        page = page,
-        error = error,
         audioPool = audioPool
     )
 }
@@ -57,18 +67,19 @@ fun MutableState<AppState>.setAppState(
  */
 fun MutableState<AppState>.getStateAudioPool() = value.audioPool
 
-fun MutableState<AppState>.setError(error: ReversiException?) {
+fun MutableState<AppState>.setError(error: Exception?) {
     LOGGER.info("Set error: ${error?.message ?: "null"}")
-    value = value.copy(error = error)
+    val newError = error as? ReversiException ?: error?.toReversiException(ErrorType.CRITICAL)
+    value = value.copy(error = newError)
 }
 
 private fun MutableState<AppState>.setBackPage(newPage: Page) {
     val page = value.page
-    LOGGER.info("Set back page: ${page.name}")
     val backPage = when (newPage) {
         Page.LOBBY -> Page.MAIN_MENU
         Page.GAME -> Page.MAIN_MENU
-        else      -> page
+        else -> page
     }
+    LOGGER.info("Set back page: ${backPage.name}")
     value = value.copy(backPage = backPage)
 }

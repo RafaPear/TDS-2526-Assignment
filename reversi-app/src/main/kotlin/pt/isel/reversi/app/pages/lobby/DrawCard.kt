@@ -7,8 +7,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -93,6 +91,7 @@ fun GameCard(
     game: Game,
     enabled: Boolean,
     statusData: GameStatus,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     val name = game.currGameName ?: return
@@ -105,7 +104,7 @@ fun GameCard(
     Card(
         onClick = onClick,
         enabled = enabled,
-        modifier = Modifier.shadow(16.dp, RoundedCornerShape(24.dp)),
+        modifier = modifier.shadow(16.dp, RoundedCornerShape(24.dp)),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = CARD_BG),
         border = BorderStroke(1.dp, Color.White.copy(0.1f))
@@ -123,8 +122,7 @@ fun GameCard(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
-                    .weight(1f),
+                    .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
@@ -142,21 +140,21 @@ fun GameCard(
                 board = state.board, modifier = Modifier.weight(4f).padding(vertical = 12.dp)
             )
 
-            ScorePanel(Modifier.weight(1f), state.board)
+            ScorePanel(Modifier, state.board)
 
 
-            if (state.players.isNotEmpty()) {// Botão
-                Button(
-                    onClick = onClick,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = PRIMARY),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Icon(Icons.Filled.PlayArrow, null, Modifier.size(20.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text("Continuar", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-                }
-            }
+//            if (state.players.isNotEmpty()) {// Botão
+//                Button(
+//                    onClick = onClick,
+//                    modifier = Modifier.fillMaxWidth(),
+//                    colors = ButtonDefaults.buttonColors(containerColor = PRIMARY),
+//                    shape = RoundedCornerShape(16.dp)
+//                ) {
+//                    Icon(Icons.Filled.PlayArrow, null, Modifier.size(20.dp))
+//                    Spacer(Modifier.width(8.dp))
+//                    Text("Continuar", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+//                }
+//            }
         }
     }
 }
@@ -191,7 +189,9 @@ fun ScorePanel(modifier: Modifier, board: Board) {
 
 @Composable
 fun ScoreItem(type: PieceType, score: Int) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Box(
             Modifier.size(40.dp).background(
                 if (type == PieceType.BLACK) Color.Black else Color.White, CircleShape

@@ -19,10 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
 import androidx.compose.material.icons.filled.SportsEsports
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,14 +37,13 @@ import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.app.HIT_SOUND
 import pt.isel.reversi.app.MAIN_BACKGROUND_COLOR
 import pt.isel.reversi.app.ScaffoldView
+import pt.isel.reversi.app.exceptions.GameCorrupted
+import pt.isel.reversi.app.exceptions.GameIsFull
 import pt.isel.reversi.app.reversiFadeAnimation
-import pt.isel.reversi.app.state.AppState
-import pt.isel.reversi.app.state.Page
-import pt.isel.reversi.app.state.getStateAudioPool
-import pt.isel.reversi.app.state.setGame
-import pt.isel.reversi.app.state.setPage
+import pt.isel.reversi.app.state.*
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.board.PieceType
+import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.getAllGameNames
 import pt.isel.reversi.core.loadGame
 import pt.isel.reversi.core.readGame
@@ -74,20 +70,54 @@ fun LobbyCarousel(
 ) {
     val pagerState = rememberPagerState(pageCount = { games.size })
     val scope = rememberCoroutineScope()
+    var search by remember { mutableStateOf("") }
+    Column(
+        modifier = Modifier.fillMaxSize().padding(all = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween,
+    ) {
 
-    BoxWithConstraints(Modifier.fillMaxSize()) {
-        val availableWidth = this.maxWidth
-        val availableHeight = this.maxHeight
 
-        val maxCardWidth = (availableWidth * 0.7f).coerceAtMost(450.dp)
-        val maxCardHeight = (availableHeight * 0.8f).coerceAtMost(950.dp)
+        OutlinedTextField(
+            value = search,
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White.copy(alpha = 0.7f),
+                unfocusedTextColor = Color.Gray.copy(alpha = 0.7f),
+                cursorColor = Color.White.copy(alpha = 0.7f),
+                focusedBorderColor = PRIMARY,
+                unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+            ),
+            onValueChange = {
+                scope.launch {
+                    search = it
+                    val game = games.find { game -> game.currGameName == it } ?: return@launch
+                    val page = games.indexOf(game)
+                    pagerState.animateScrollToPage(
+                        page = page,
+                        animationSpec = spring(
+                            stiffness = 400f,
+                            dampingRatio = 0.75f
+                        )
+                    )
+                }
+            },
+            placeholder = { Text("Procure um jogo...") },
+        )
 
-        val horizontalPadding = (availableWidth / 2 - maxCardWidth / 2)
+        BoxWithConstraints {
+            val availableWidth = this.maxWidth
+            val availableHeight = this.maxHeight
 
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            val maxCardWidth = (availableWidth * 0.7f).coerceAtMost(450.dp)
+            val maxCardHeight = (availableHeight * 0.8f).coerceAtMost(950.dp)
+
+            val horizontalPadding = (availableWidth / 2 - maxCardWidth / 2)
+
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = horizontalPadding),
                 pageSpacing = 16.dp
             ) { page ->
@@ -99,7 +129,51 @@ fun LobbyCarousel(
                 val alpha = 0.2f + (1f - distance) * 0.8f
                 val translation = 8.dp * distance
 
-                Box(
+                val gameState = remember { mutableStateOf(games[page]) }
+                val statusState = remember { mutableStateOf(GameStatus.WAITING_FOR_PLAYERS) }
+
+                LaunchedEffect(gameState.value.currGameName) {
+                    while (isActive) {
+                        try {
+                            gameState.value = gameState.value.hardRefresh()
+                            val state =
+                                gameState.value.gameState ?: throw Exception("Estado do jogo nulo")
+
+                            statusState.value = when {
+                                appState.value.game.currGameName == gameState.value.currGameName ->
+                                    GameStatus.CURRENT_GAME
+
+                                state.players.size == 2 -> GameStatus.EMPTY
+                                state.players.size == 1 -> GameStatus.WAITING_FOR_PLAYERS
+                                state.players.isEmpty() -> GameStatus.FULL
+                                else -> GameStatus.CORRUPTED
+                            }
+                        } catch (e: Exception) {
+                            statusState.value = GameStatus.CORRUPTED
+                            LOGGER.warning(
+                                "Erro ao atualizar jogo: ${gameState.value.currGameName} - ${e.message}"
+                            )
+                        }
+
+                        val delayMillis = when (statusState.value) {
+                            GameStatus.EMPTY -> 100L
+                            GameStatus.WAITING_FOR_PLAYERS -> 500L
+                            GameStatus.FULL -> 15_000L
+                            GameStatus.CORRUPTED -> 20_000L
+                            GameStatus.CURRENT_GAME -> 100L
+                        }
+                        delay(delayMillis)
+
+                    }
+                }
+
+                GameCard(
+                    game = gameState.value,
+                    statusData = statusState.value,
+                    enabled = statusState.value !in listOf(
+                        GameStatus.CORRUPTED,
+                        GameStatus.FULL
+                    ),
                     modifier = Modifier
                         .width(maxCardWidth)
                         .height(maxCardHeight)
@@ -110,66 +184,43 @@ fun LobbyCarousel(
                             this.translationX =
                                 if (pageOffset < 0) translation.toPx() else -translation.toPx()
                         },
-                    contentAlignment = Alignment.Center
-                ) {
-                    val gameState = remember { mutableStateOf(games[page]) }
-                    val statusState = remember { mutableStateOf(GameStatus.WAITING_FOR_PLAYERS) }
-
-                    LaunchedEffect(gameState.value.currGameName) {
-                        while (isActive) {
-                            try {
-                                gameState.value = gameState.value.hardRefresh()
-                                val state =
-                                    gameState.value.gameState ?: throw Exception("Estado do jogo nulo")
-
-                                statusState.value = when {
-                                    appState.value.game.currGameName == gameState.value.currGameName ->
-                                        GameStatus.CURRENT_GAME
-
-                                    state.players.size == 2 -> GameStatus.EMPTY          // 2 lugares livres
-                                    state.players.size == 1 -> GameStatus.WAITING_FOR_PLAYERS // 1 lugar livre
-                                    state.players.isEmpty() -> GameStatus.FULL           // 0 lugares livres
-                                    else -> GameStatus.CORRUPTED
-                                }
-                            } catch (e: Exception) {
-                                statusState.value = GameStatus.CORRUPTED
-                                LOGGER.warning(
-                                    "Erro ao atualizar jogo: ${gameState.value.currGameName} - ${e.message}"
+                    onClick = {
+                        scope.launch {
+                            if (page != pagerState.currentPage) {
+                                pagerState.animateScrollToPage(
+                                    page,
+                                    animationSpec = spring(
+                                        stiffness = 400f,
+                                        dampingRatio = 0.75f
+                                    )
                                 )
                             }
-
-                            val delayMillis = when (statusState.value) {
-                                GameStatus.EMPTY -> 100L
-                                GameStatus.WAITING_FOR_PLAYERS -> 500L
-                                GameStatus.FULL -> 15_000L
-                                GameStatus.CORRUPTED -> 20_000L
-                                GameStatus.CURRENT_GAME -> 100L
-                            }
-                            delay(delayMillis)
-
+                            delay(150L)
+                            onGameClick(gameState.value)
                         }
                     }
+                )
+            }
 
-                    GameCard(
-                        game = gameState.value,
-                        statusData = statusState.value,
-                        enabled = statusState.value !in listOf(
-                            GameStatus.CORRUPTED,
-                            GameStatus.FULL
-                        ),
+            if (games.size > 1) {
+                if (pagerState.currentPage > 0) {
+                    NavButton(
+                        icon = Icons.AutoMirrored.Rounded.ArrowBackIos,
+                        alignment = Alignment.CenterStart,
                         onClick = {
                             scope.launch {
-                                if (page != pagerState.currentPage) {
-                                    pagerState.animateScrollToPage(
-                                        page,
-                                        animationSpec = spring(
-                                            stiffness = 400f,
-                                            dampingRatio = 0.75f
-                                        )
-                                    )
-                                }
-                                delay(150L)
-                                onGameClick(gameState.value)
+                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                            }
+                        }
+                    )
+                }
+                if (pagerState.currentPage < games.size - 1) {
+                    NavButton(
+                        icon = Icons.AutoMirrored.Rounded.ArrowForwardIos,
+                        alignment = Alignment.CenterEnd,
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
                             }
                         }
                     )
@@ -177,36 +228,9 @@ fun LobbyCarousel(
             }
         }
 
-        if (games.size > 1) {
-            if (pagerState.currentPage > 0) {
-                NavButton(
-                    icon = Icons.AutoMirrored.Rounded.ArrowBackIos,
-                    alignment = Alignment.CenterStart,
-                    onClick = {
-                        scope.launch {
-                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                        }
-                    }
-                )
-            }
-            if (pagerState.currentPage < games.size - 1) {
-                NavButton(
-                    icon = Icons.AutoMirrored.Rounded.ArrowForwardIos,
-                    alignment = Alignment.CenterEnd,
-                    onClick = {
-                        scope.launch {
-                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                        }
-                    }
-                )
-            }
-        }
-
         Column(
-            Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             PageIndicators(games.size, pagerState.currentPage)
             Spacer(Modifier.height(8.dp))
@@ -275,6 +299,7 @@ private enum class LobbyState {
     LOADING, EMPTY, BACKGROUND_DRAW, SHOW_GAMES
 }
 
+
 @Composable
 fun LobbyMenu(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
     val games = remember { mutableStateListOf<Game>() }
@@ -285,16 +310,16 @@ fun LobbyMenu(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
         while (isActive) {
             val ids = getAllGameNames()
             val hasNewId = ids.any { id -> id !in games.mapNotNull { it.currGameName } } ||
-                           games.size != ids.size
+                    games.size != ids.size
 
             if (hasNewId) {
                 lobbyState.value = LobbyState.LOADING
                 delay(100L)
                 val loaded = ids.mapNotNull { id ->
                     try {
-                        readGame(id)
+                        runBlocking { readGame(id) }
                     } catch (e: Exception) {
-                        LOGGER.warning("Erro ao ler jogo: $id")
+                        LOGGER.warning("Erro ao ler jogo: $id - ${e.message}")
                         null
                     }
                 }
@@ -326,16 +351,15 @@ fun LobbyMenu(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
                 label = "PageTransition"
             ) { page ->
                 when (page) {
-                    LobbyState.LOADING         -> Loading()
-                    LobbyState.EMPTY           -> Empty()
+                    LobbyState.LOADING -> Loading()
+                    LobbyState.EMPTY -> Empty()
                     LobbyState.BACKGROUND_DRAW -> LobbyBackgroundLoad(lobbyState)
-                    LobbyState.SHOW_GAMES      -> LobbyCarousel(appState, games) { game ->
-                        selectedGame = game      // <-- só atualizamos estado
+                    LobbyState.SHOW_GAMES -> LobbyCarousel(appState, games) { game ->
+                        selectedGame = game
                     }
                 }
             }
 
-            // Pop-up por cima de tudo, controlado por estado
             selectedGame?.let { game ->
                 LobbyLoadGame(
                     appState = appState,
@@ -369,23 +393,7 @@ private fun LobbyLoadGame(
 ) {
     LOGGER.info("Jogo selecionado: ${game.currGameName}")
     val state = game.gameState
-    if (state == null) {
-        LOGGER.warning("Estado do jogo nulo para o jogo: ${game.currGameName}")
-        onClose()
-        return
-    }
-    if (state.players.isEmpty()) {
-        LOGGER.warning("Jogo cheio selecionado: ${game.currGameName}")
-        onClose()
-        return
-    }
-
     val name = game.currGameName
-    if (name == null) {
-        LOGGER.warning("Nome do jogo nulo ao tentar entrar no jogo.")
-        onClose()
-        return
-    }
 
     if (name == appState.value.game.currGameName) {
         appState.setPage(Page.GAME)
@@ -393,6 +401,37 @@ private fun LobbyLoadGame(
         onClose()
         return
     }
+
+    if (state == null) {
+        LOGGER.warning("Estado do jogo nulo para o jogo: ${game.currGameName}")
+        appState.setError(
+            GameCorrupted(
+                message = "O jogo '${game.currGameName}' está corrompido.",
+                type = ErrorType.ERROR
+            )
+        )
+        onClose()
+        return
+    }
+    if (state.players.isEmpty()) {
+        LOGGER.warning("Jogo cheio selecionado: ${game.currGameName}")
+        appState.setError(GameIsFull())
+        onClose()
+        return
+    }
+
+    if (name == null) {
+        LOGGER.warning("Nome do jogo nulo ao tentar entrar no jogo.")
+        appState.setError(
+            GameCorrupted(
+                message = "O jogo selecionado não tem um nome válido.",
+                type = ErrorType.ERROR
+            )
+        )
+        onClose()
+        return
+    }
+
 
     val players = state.players.map { it.type }
     PickAPiece(
@@ -407,7 +446,17 @@ private fun LobbyLoadGame(
                 } catch (e: Exception) {
                     LOGGER.warning("Erro ao salvar estado atual do jogo: ${e.message}")
                 }
-                loadGame(gameName, pieceType)
+                try {
+                    loadGame(gameName, pieceType)
+                } catch (e: Exception) {
+                    appState.setError(e)
+                    null
+                }
+            }
+
+            if (joinedGame == null) {
+                onClose()
+                return@PickAPiece
             }
 
             appState.getStateAudioPool().play(HIT_SOUND)
