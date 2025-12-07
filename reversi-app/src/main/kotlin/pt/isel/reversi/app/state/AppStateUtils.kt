@@ -24,7 +24,7 @@ fun MutableState<AppState>.setPage(page: Page) {
 
     if (error != null) return
 
-    setBackPage(page)
+    autoBackPage(page)
     LOGGER.info("Set page ${page.name}")
     value = value.copy(page = page, error = error)
 }
@@ -41,6 +41,7 @@ fun MutableState<AppState>.setAppState(
     game: Game = value.game,
     page: Page = value.page,
     error: Exception? = null,
+    backPage: Page? = null,
     audioPool: AudioPool = value.audioPool,
 ) {
     LOGGER.info("Set entire app state")
@@ -53,6 +54,10 @@ fun MutableState<AppState>.setAppState(
 
     if (error !is ReversiException )
         setError(error?.toReversiException(ErrorType.CRITICAL))
+
+    if (backPage != null) {
+        setBackPage(backPage)
+    }
 
     value = value.copy(
         game = game,
@@ -73,7 +78,7 @@ fun MutableState<AppState>.setError(error: Exception?) {
     value = value.copy(error = newError)
 }
 
-private fun MutableState<AppState>.setBackPage(newPage: Page) {
+private fun MutableState<AppState>.autoBackPage(newPage: Page) {
     val page = value.page
     val backPage = when (newPage) {
         Page.LOBBY -> Page.MAIN_MENU
@@ -82,4 +87,15 @@ private fun MutableState<AppState>.setBackPage(newPage: Page) {
     }
     LOGGER.info("Set back page: ${backPage.name}")
     value = value.copy(backPage = backPage)
+}
+
+fun MutableState<AppState>.setBackPage(backPage: Page) {
+    LOGGER.info("Set back page: ${backPage.name}")
+    value = value.copy(backPage = backPage)
+}
+
+fun MutableState<AppState>.setLoading(isLoading: Boolean) {
+    if (isLoading == value.isLoading) return
+    LOGGER.info("Set loading: $isLoading")
+    value = value.copy(isLoading = isLoading)
 }

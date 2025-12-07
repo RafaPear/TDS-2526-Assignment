@@ -15,5 +15,6 @@ data class AppState(
     val page: Page,
     val error: ReversiException?,
     val backPage: Page = Page.MAIN_MENU,
+    val isLoading: Boolean = false,
     val audioPool: AudioPool,
 )

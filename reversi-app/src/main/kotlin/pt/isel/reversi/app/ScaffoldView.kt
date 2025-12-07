@@ -1,6 +1,7 @@
 package pt.isel.reversi.app
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.*
@@ -31,6 +32,7 @@ fun ScaffoldView(
     appState: MutableState<AppState>,
     backgroundTopBar: Color = Color.Transparent,
     title: String = "",
+    loadingModifier: Modifier = Modifier,
     previousPageContent: @Composable () -> Unit = previousPageContentDefault(appState),
     content: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
@@ -56,7 +58,13 @@ fun ScaffoldView(
                 previousPageContent()
             },
         )
-    }, snackbarHost = { appState.value.error?.let { ErrorMessage(appState) } }) { paddingValues ->
-        content(paddingValues)
+    }, snackbarHost = { appState.value.error?.let { ErrorMessage(appState) } }
+    ) { paddingValues ->
+        Box {
+            content(paddingValues)
+            if (appState.value.isLoading) {
+                Loading(loadingModifier)
+            }
+        }
     }
 }
