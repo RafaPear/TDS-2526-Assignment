@@ -34,7 +34,7 @@ fun ScaffoldView(
     title: String = "",
     loadingModifier: Modifier = Modifier,
     previousPageContent: @Composable () -> Unit = previousPageContentDefault(appState),
-    content: @Composable (paddingValues: PaddingValues) -> Unit
+    content: @Composable ReversiScope.(paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(modifier = Modifier.background(MAIN_BACKGROUND_COLOR), containerColor = Color.Transparent, topBar = {
         CenterAlignedTopAppBar(

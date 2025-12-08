@@ -2,7 +2,6 @@ package pt.isel.reversi.app.pages
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.TextAutoSize
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,11 +9,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.BACKGROUND_MUSIC
-import pt.isel.reversi.app.PRIMARY
+import pt.isel.reversi.app.ReversiButton
 import pt.isel.reversi.app.ScaffoldView
 import pt.isel.reversi.app.pages.game.utils.TEXT_COLOR
 import pt.isel.reversi.app.state.AppState
@@ -64,44 +62,27 @@ fun MainMenu(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
 
             Spacer(Modifier.height(MAIN_MENU_PADDING))
 
-            MainMenuButton(text = "Novo Jogo") {
+            ReversiButton(text = "Novo Jogo") {
                 appState.setPage(Page.NEW_GAME)
             }
 
             Spacer(Modifier.height(MAIN_MENU_BUTTON_SPACER))
 
-            MainMenuButton(text = "Lobby") {
+            ReversiButton(text = "Lobby") {
                 appState.setPage(Page.LOBBY)
             }
 
             Spacer(Modifier.height(MAIN_MENU_BUTTON_SPACER))
 
-            MainMenuButton(text = "Definições") {
+            ReversiButton(text = "Definições") {
                 appState.setPage(Page.SETTINGS)
             }
 
             Spacer(Modifier.height(MAIN_MENU_BUTTON_SPACER))
 
-            MainMenuButton(text = "Sobre") {
+            ReversiButton(text = "Sobre") {
                 appState.setPage(Page.ABOUT)
             }
         }
-    }
-}
-
-@Composable
-fun MainMenuButton(
-    text: String, modifier: Modifier = Modifier, onClick: () -> Unit
-) {
-    Button(
-        modifier = modifier,
-        onClick = onClick,
-        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-            containerColor = PRIMARY
-        )
-    ) {
-        Text(
-            text = text, color = TEXT_COLOR, textAlign = TextAlign.Center, autoSize = MAIN_MENU_AUTO_SIZE_BUTTON_TEXT
-        )
     }
 }

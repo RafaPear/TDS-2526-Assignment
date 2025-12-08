@@ -3,9 +3,7 @@ package pt.isel.reversi.app.pages
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -92,24 +90,13 @@ private fun newOrJoinGamePage(
             Spacer(Modifier.height(24.dp))
 
             //  colors: TextFieldColors =
-            OutlinedTextField(
+            ReversiTextField(
                 modifier = modifier,
                 value = game.currGameName ?: "",
                 onValueChange = { game = game.copy(currGameName = it) },
                 label = { Text("Nome do jogo", color = TEXT_COLOR) },
                 singleLine = true,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = PRIMARY,
-                    unfocusedIndicatorColor = Color.White.copy(0.3f),
-                    cursorColor = PRIMARY,
-                    focusedTextColor = TEXT_COLOR,
-                    unfocusedTextColor = TEXT_COLOR,
-                    focusedLabelColor = PRIMARY,
-                    unfocusedLabelColor = TEXT_COLOR
-                )
-
+                onDone = { onClick(game); LOGGER.info("Nome do jogo") },
             )
 
             Row(

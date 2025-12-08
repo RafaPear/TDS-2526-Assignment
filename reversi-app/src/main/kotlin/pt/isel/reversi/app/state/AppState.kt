@@ -1,5 +1,6 @@
 package pt.isel.reversi.app.state
 
+import pt.isel.reversi.app.AppTheme
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.utils.audio.AudioPool
@@ -17,4 +18,5 @@ data class AppState(
     val backPage: Page = Page.MAIN_MENU,
     val isLoading: Boolean = false,
     val audioPool: AudioPool,
+    val theme: AppTheme,
 )
