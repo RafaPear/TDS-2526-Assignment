@@ -30,11 +30,13 @@ import pt.isel.reversi.core.stringifyBoard
 import pt.isel.reversi.utils.LOGGER
 import reversi.reversi_app.generated.resources.Res
 import reversi.reversi_app.generated.resources.reversi
+import java.lang.System.setProperty
 
 fun main(args: Array<String>) {
     val initializedArgs = initializeAppArgs(args) ?: return
     val (audioPool) = initializedArgs
-
+    setProperty("apple.awt.application.name", "Reversi-DEV")
+    
     application {
         val windowState = rememberWindowState(
             placement = WindowPlacement.Floating,
@@ -47,7 +49,8 @@ fun main(args: Array<String>) {
                     game = Game(),
                     page = Page.MAIN_MENU,
                     error = null,
-                    audioPool = audioPool
+                    audioPool = audioPool,
+                    theme = AppTheme(),
                 )
             )
         }

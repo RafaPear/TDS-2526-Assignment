@@ -32,7 +32,7 @@ fun ScaffoldView(
     backgroundTopBar: Color = Color.Transparent,
     title: String = "",
     previousPageContent: @Composable () -> Unit = previousPageContentDefault(appState),
-    content: @Composable (paddingValues: PaddingValues) -> Unit
+    content: @Composable ReversiScope.(paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(modifier = Modifier.background(MAIN_BACKGROUND_COLOR), containerColor = Color.Transparent, topBar = {
         CenterAlignedTopAppBar(
@@ -57,6 +57,6 @@ fun ScaffoldView(
             },
         )
     }, snackbarHost = { appState.value.error?.let { ErrorMessage(appState) } }) { paddingValues ->
-        content(paddingValues)
+        ReversiScope(appState).content(paddingValues)
     }
 }

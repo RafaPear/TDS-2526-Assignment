@@ -41,6 +41,10 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = rootProject.name
             packageVersion = rootProject.version.toString()
+            macOS {
+                dockName = "Reversi App"
+                iconFile.set(project.file("src/main/composeResources/drawable/reversi.png"))
+            }
         }
     }
 }
