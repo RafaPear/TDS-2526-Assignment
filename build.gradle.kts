@@ -25,7 +25,7 @@ allprojects {
 
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "org.jetbrains.kotlin.jvm")
-
+    
     dokka {
         moduleName.set(project.name)
 
@@ -59,6 +59,7 @@ allprojects {
         }
     }
 }
+
 
 dokka {
     moduleName.set(project.name)

@@ -44,6 +44,10 @@ tasks.register<Jar>("fatJar") {
     }
 }
 
+kotlin {
+    jvmToolchain(21)
+}
+
 // === Tornar o fatJar o padrão ===
 tasks {
     build {

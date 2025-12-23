@@ -37,7 +37,7 @@ fun main(args: Array<String>) {
     val initializedArgs = initializeAppArgs(args) ?: return
     val (audioPool) = initializedArgs
     setProperty("apple.awt.application.name", "Reversi-DEV")
-    
+
     application {
         val windowState = rememberWindowState(
             placement = WindowPlacement.Floating,
@@ -304,4 +304,3 @@ fun Game.printDebugState() {
 
     LOGGER.info("==========================================\n")
 }
-
