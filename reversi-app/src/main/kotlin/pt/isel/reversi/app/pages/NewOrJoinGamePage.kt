@@ -12,16 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.app.*
 import pt.isel.reversi.app.exceptions.NoPieceSelected
-import pt.isel.reversi.app.exceptions.TextBoxIsEmpty
 import pt.isel.reversi.app.state.*
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
-import pt.isel.reversi.core.exceptions.ErrorType
-import pt.isel.reversi.core.loadGame
 import pt.isel.reversi.core.startNewGame
 import pt.isel.reversi.utils.LOGGER
 
@@ -64,37 +60,6 @@ fun NewGamePage(
                     setAppState(newGame, Page.GAME)
                     getStateAudioPool().play(HIT_SOUND)
                 }
-            } catch (e: Exception) {
-                appState.setError(e)
-            }
-        }
-    }
-}
-
-@Composable
-fun JoinGamePage(
-    appState: MutableState<AppState>,
-    modifier: Modifier = Modifier,
-) {
-    newOrJoinGamePage(appState, modifier, "Entrar num Jogo") { game ->
-        val currGameName = game.currGameName
-        if (currGameName.isNullOrBlank()) {
-            appState.setError(
-                error = TextBoxIsEmpty(
-                    message = "Insira um nome do jogo.",
-                    type = ErrorType.INFO
-                )
-            )
-            return@newOrJoinGamePage
-        }
-        runBlocking {
-            try {
-                val loadedGame = loadGame(
-                    gameName = currGameName.trim(),
-                    desiredType = game.myPiece
-                )
-                LOGGER.info("Ligado ao jogo '$loadedGame'.")
-                appState.setAppState(loadedGame, Page.GAME)
             } catch (e: Exception) {
                 appState.setError(e)
             }
