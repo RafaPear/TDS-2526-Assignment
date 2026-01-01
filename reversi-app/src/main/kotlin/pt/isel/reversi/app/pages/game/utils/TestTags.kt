@@ -1,4 +1,4 @@
-package pt.isel.reversi.app.pages.game
+package pt.isel.reversi.app.pages.game.utils
 
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.Coordinate

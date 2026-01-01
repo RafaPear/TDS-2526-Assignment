@@ -1,9 +1,9 @@
 package pt.isel.reversi.app.gamePageTeste
 
 import androidx.compose.ui.test.*
-import pt.isel.reversi.app.pages.game.cellView
-import pt.isel.reversi.app.pages.game.testTagCellView
-import pt.isel.reversi.app.pages.game.testTagPiece
+import pt.isel.reversi.app.pages.game.utils.cellView
+import pt.isel.reversi.app.pages.game.utils.testTagCellView
+import pt.isel.reversi.app.pages.game.utils.testTagPiece
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.Piece
 import pt.isel.reversi.core.board.PieceType

@@ -13,7 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.exceptions.ErrorMessage
-import pt.isel.reversi.app.pages.game.TEXT_COLOR
+import pt.isel.reversi.app.pages.game.utils.TEXT_COLOR
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.setPage
 

@@ -21,6 +21,7 @@ import pt.isel.reversi.app.exceptions.GameNotStartedYet
 import pt.isel.reversi.app.pages.MainMenu
 import pt.isel.reversi.app.pages.NewGamePage
 import pt.isel.reversi.app.pages.game.GamePage
+import pt.isel.reversi.app.pages.game.GameViewModel
 import pt.isel.reversi.app.pages.lobby.LobbyMenu
 import pt.isel.reversi.app.pages.lobby.LobbyViewModel
 import pt.isel.reversi.app.state.*
@@ -80,7 +81,7 @@ fun main(args: Array<String>) {
             AppScreenSwitcher(appState) { page ->
                 when (page) {
                     Page.MAIN_MENU -> MainMenu(appState)
-                    Page.GAME -> GamePage(appState)
+                    Page.GAME -> GamePage(GameViewModel(appState, scope))
                     Page.SETTINGS -> SettingsPage(appState)
                     Page.ABOUT -> AboutPage(appState)
                     Page.NEW_GAME -> NewGamePage(appState)

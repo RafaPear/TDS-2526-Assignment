@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.BACKGROUND_MUSIC
 import pt.isel.reversi.app.PRIMARY
 import pt.isel.reversi.app.ScaffoldView
-import pt.isel.reversi.app.pages.game.TEXT_COLOR
+import pt.isel.reversi.app.pages.game.utils.TEXT_COLOR
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.Page
 import pt.isel.reversi.app.state.getStateAudioPool

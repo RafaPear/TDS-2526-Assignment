@@ -1,4 +1,4 @@
-package pt.isel.reversi.app.pages.game
+package pt.isel.reversi.app.pages.game.utils
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.TextAutoSize

@@ -11,7 +11,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pt.isel.reversi.app.pages.game.BOARD_BACKGROUND_COLOR
+import pt.isel.reversi.app.pages.game.utils.BOARD_BACKGROUND_COLOR
 import pt.isel.reversi.app.pages.lobby.BOARD_COLOR
 import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.Coordinate
