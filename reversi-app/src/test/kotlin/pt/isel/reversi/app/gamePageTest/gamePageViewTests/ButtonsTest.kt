@@ -1,4 +1,4 @@
-package pt.isel.reversi.app.gamePageTeste.gamePageViewTests
+package pt.isel.reversi.app.gamePageTest.gamePageViewTests
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithTag

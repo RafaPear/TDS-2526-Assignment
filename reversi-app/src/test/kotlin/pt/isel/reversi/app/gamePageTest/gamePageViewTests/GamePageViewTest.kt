@@ -1,4 +1,4 @@
-package pt.isel.reversi.app.gamePageTeste.gamePageViewTests
+package pt.isel.reversi.app.gamePageTest.gamePageViewTests
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -43,6 +43,7 @@ class GamePageViewTest {
                 game = appState.value.game,
                 freeze = false,
                 onCellClick = {},
+                getAvailablePlays = { emptyList()},
                 setTargetMode = {}
             )
         }
@@ -66,6 +67,7 @@ class GamePageViewTest {
                 game = appState.value.game,
                 freeze = false,
                 onCellClick = {},
+                getAvailablePlays = { emptyList() },
                 setTargetMode = {}
             )
         }
@@ -88,6 +90,7 @@ class GamePageViewTest {
                 game = appState.value.game,
                 freeze = false,
                 onCellClick = {},
+                getAvailablePlays = { emptyList()},
                 setTargetMode = {}
             )
         }
@@ -113,6 +116,7 @@ class GamePageViewTest {
                 game = expectedAppState.game,
                 freeze = false,
                 onCellClick = {},
+                getAvailablePlays = { emptyList() },
                 setTargetMode = {}
             )
         }

@@ -16,14 +16,14 @@ import pt.isel.reversi.app.state.setPage
 
 
 @Composable
-fun GamePage(viewModel: GameViewModel, modifier: Modifier = Modifier, freeze: Boolean = false) {
+fun GamePage(viewModel: GamePageViewModel, modifier: Modifier = Modifier, freeze: Boolean = false) {
     val appState = viewModel.appState
     val game = viewModel.uiState.value
 
     // Launch the game refresh coroutine
-    DisposableEffect(Unit) {
+    DisposableEffect(game.currGameName) {
         if (game.currGameName != null && game.gameState?.players?.size != 2) {
-            viewModel.autoRefresh()
+            viewModel.startPolling()
         }
 
         appState.getStateAudioPool().run {
@@ -35,6 +35,7 @@ fun GamePage(viewModel: GameViewModel, modifier: Modifier = Modifier, freeze: Bo
         }
 
         onDispose {
+            viewModel.stopPolling()
             viewModel.save()
         }
     }
@@ -53,7 +54,8 @@ fun GamePage(viewModel: GameViewModel, modifier: Modifier = Modifier, freeze: Bo
                 .background(BOARD_BACKGROUND_COLOR)
                 .padding(paddingValues = padding),
             game = game,
-            freeze,
+            freeze = freeze,
+            getAvailablePlays = { viewModel.getAvailablePlays() },
             onCellClick = { viewModel.playMove(it) },
             setTargetMode = { viewModel.setTarget(!game.target) },
         )

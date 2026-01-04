@@ -1,11 +1,11 @@
-package pt.isel.reversi.app.gamePageTeste
+package pt.isel.reversi.app.gamePageTest
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.test.*
 import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.app.pages.game.GamePage
-import pt.isel.reversi.app.pages.game.GameViewModel
+import pt.isel.reversi.app.pages.game.GamePageViewModel
 import pt.isel.reversi.app.pages.game.utils.testTagBoard
 import pt.isel.reversi.app.pages.game.utils.testTagCellView
 import pt.isel.reversi.app.pages.game.utils.testTagPlayerScore
@@ -44,7 +44,7 @@ class GamePageTests {
         val appState = mutableStateOf(value = expectedAppState)
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GameViewModel(appState, scope)
+            val gameViewModel = GamePageViewModel(appState, scope)
 
             GamePage(gameViewModel)
         }
@@ -84,7 +84,7 @@ class GamePageTests {
 
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GameViewModel(appState, scope)
+            val gameViewModel = GamePageViewModel(appState, scope)
 
             GamePage(gameViewModel, freeze = true)
         }
@@ -124,7 +124,7 @@ class GamePageTests {
 
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GameViewModel(appState, scope)
+            val gameViewModel = GamePageViewModel(appState, scope)
 
             GamePage(gameViewModel)
         }
@@ -170,7 +170,7 @@ class GamePageTests {
 
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GameViewModel(appState, scope)
+            val gameViewModel = GamePageViewModel(appState, scope)
 
             GamePage(gameViewModel, freeze = true)
         }

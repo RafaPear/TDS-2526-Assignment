@@ -1,4 +1,4 @@
-package pt.isel.reversi.app.gamePageTeste.gamePageViewTests
+package pt.isel.reversi.app.gamePageTest.gamePageViewTests
 
 import androidx.compose.ui.test.*
 import pt.isel.reversi.app.pages.game.utils.cellView
