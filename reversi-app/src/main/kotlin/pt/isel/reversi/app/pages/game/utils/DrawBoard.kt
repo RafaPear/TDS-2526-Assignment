@@ -21,11 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.BOARD_COLOR
 import pt.isel.reversi.app.PRIMARY
-import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.Piece
 import pt.isel.reversi.core.board.PieceType
+import pt.isel.reversi.core.storage.GameState
 
 // Main Color Definitions
 val TEXT_COLOR = Color.White           // Texto (pontuação)
@@ -44,9 +44,11 @@ const val GHOST_PIECE_ALPHA = 0.3f
 
 @Composable
 fun DrawBoard(
-    game: Game,
+    target: Boolean,
+    gameState: GameState,
     modifier: Modifier = Modifier,
     freeze: Boolean = false,
+    getAvailablePlays: () -> List<Coordinate>,
     onCellClick: (coordinate: Coordinate) -> Unit
 ) {
     Box(
@@ -56,32 +58,30 @@ fun DrawBoard(
             .padding(all = 10.dp)
             .testTag(tag = testTagBoard())
     ) {
-        val state = game.gameState
-
-        if (state != null)
-            Grid(game, modifier, freeze) { coordinate -> onCellClick(coordinate) }
+        Grid(target, gameState, modifier, freeze, getAvailablePlays) { coordinate -> onCellClick(coordinate) }
     }
 }
 
 /** Composable that draws the board grid */
 @Composable
 fun Grid(
-    game: Game,
+    target: Boolean,
+    gameState: GameState,
     modifier: Modifier = Modifier,
     freeze: Boolean = false,
+    getAvailablePlays: () -> List<Coordinate>,
     onCellClick: (coordinate: Coordinate) -> Unit
 ) {
-    val board: Board = game.gameState?.board ?: return
+    val board: Board = gameState.board
     val side = board.side
-    val target = game.target
-    val playerTurn = game.gameState?.lastPlayer?.swap()
+    val playerTurn = gameState.lastPlayer.swap()
 
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val availablePlays = game.getAvailablePlays()
+        val availablePlays = if (target) getAvailablePlays() else emptyList<Coordinate>()
 
         val infiniteTransition = rememberInfiniteTransition()
         val alphaAnim by infiniteTransition.animateFloat(

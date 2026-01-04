@@ -1,4 +1,4 @@
-package pt.isel.reversi.app.gamePageTeste
+package pt.isel.reversi.app.gamePageTest.gamePageViewTests
 
 import androidx.compose.ui.test.*
 import kotlinx.coroutines.runBlocking
@@ -26,7 +26,9 @@ class DrawBoardTest {
                 )
             }
             DrawBoard(
-                game = game,
+                target = game.target,
+                gameState = game.gameState!!,
+                getAvailablePlays = {game.getAvailablePlays()},
                 onCellClick = { fail("onCellClick should not be called during this test") }
             )
         }
@@ -52,7 +54,9 @@ class DrawBoardTest {
 
         setContent {
             DrawBoard(
-                game = game,
+                target = game.target,
+                gameState = game.gameState!!,
+                getAvailablePlays = {game.getAvailablePlays()},
                 onCellClick = { fail("onCellClick should not be called during this test") }
             )
         }
@@ -86,7 +90,9 @@ class DrawBoardTest {
 
         setContent {
             DrawBoard(
-                game = game,
+                target = game.target,
+                gameState = game.gameState!!,
+                getAvailablePlays = {game.getAvailablePlays()},
                 onCellClick = { coordinate ->
                     if (coordinate == coordinateToClick) {
                         onCellClickCalled = true
@@ -118,7 +124,9 @@ class DrawBoardTest {
 
         setContent {
             DrawBoard(
-                game = game,
+                target = game.target,
+                gameState = game.gameState!!,
+                getAvailablePlays = {game.getAvailablePlays()},
                 freeze = true,
                 onCellClick = { coordinate ->
                     if (coordinate == coordinateToClick) {
@@ -152,7 +160,9 @@ class DrawBoardTest {
 
         setContent {
             DrawBoard(
-                game = game,
+                target = game.target,
+                gameState = game.gameState!!,
+                getAvailablePlays = {game.getAvailablePlays()},
                 onCellClick = { coordinate ->
                     if (coordinate == coordinateToClick) {
                         onCellClickCalled = true
@@ -186,7 +196,9 @@ class DrawBoardTest {
 
         setContent {
             DrawBoard(
-                game = game,
+                target = game.target,
+                gameState = game.gameState!!,
+                getAvailablePlays = {game.getAvailablePlays()},
                 onCellClick = { fail("onCellClick should not be called during this test") }
             )
         }

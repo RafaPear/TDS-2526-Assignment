@@ -8,20 +8,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
-import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import pt.isel.reversi.app.pages.lobby.LobbyViewModel
-import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.utils.NavButton
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.utils.PageIndicators
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.utils.Search
 import pt.isel.reversi.core.Game
@@ -102,6 +94,11 @@ fun ColumnScope.LobbyCarousel(
             currentGameName = currentGameName,
             pagerState = pagerState,
             games = gamesToShow,
+            onNavButtonClick = { page ->
+                scope.launch {
+                    pagerState.animateScroll(page)
+                }
+            },
         ) { game, page ->
             scope.launch {
                 if (page != pagerState.currentPage)
@@ -109,38 +106,6 @@ fun ColumnScope.LobbyCarousel(
                 delay(150L)
                 onGameClick(game)
             }
-        }
-
-        if (gamesToShow.size > 1) {
-            if (pagerState.currentPage > 0) {
-                NavButton(
-                    icon = Icons.AutoMirrored.Rounded.ArrowBackIos,
-                    alignment = Alignment.CenterStart,
-                    onClick = {
-                        scope.launch {
-                            pagerState.animateScroll(pagerState.currentPage - 1)
-                        }
-                    }
-                )
-            }
-            if (pagerState.currentPage < gamesToShow.size - 1) {
-                NavButton(
-                    icon = Icons.AutoMirrored.Rounded.ArrowForwardIos,
-                    alignment = Alignment.CenterEnd,
-                    onClick = {
-                        scope.launch {
-                            pagerState.animateScroll(pagerState.currentPage + 1)
-                        }
-                    }
-                )
-            }
-        } else if (gamesToShow.isEmpty()) {
-            Text(
-                text = "Nenhum jogo encontrado",
-                fontSize = 18.sp,
-                color = Color.White.copy(alpha = 0.6f),
-                modifier = Modifier.align(Alignment.Center)
-            )
         }
     }
 

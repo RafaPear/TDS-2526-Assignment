@@ -6,11 +6,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
+import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.drawCard.GameCard
+import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.utils.NavButton
 import pt.isel.reversi.core.Game
 import kotlin.math.absoluteValue
 
@@ -19,6 +27,7 @@ fun BoxWithConstraintsScope.LobbyCarouselView(
     currentGameName: String?,
     pagerState: PagerState,
     games: List<Game>,
+    onNavButtonClick: (Int) -> Unit,
     onGameClick: (Game, Int) -> Unit
 ) {
     val availableWidth = this.maxWidth
@@ -62,5 +71,34 @@ fun BoxWithConstraintsScope.LobbyCarouselView(
             onClick = { onGameClick(game, page) },
         )
     }
+
+    if (games.size > 1) {
+        if (pagerState.currentPage > 0) {
+            NavButton(
+                icon = Icons.AutoMirrored.Rounded.ArrowBackIos,
+                alignment = Alignment.CenterStart,
+                onClick = {
+                    onNavButtonClick(pagerState.currentPage - 1)
+                }
+            )
+        }
+        if (pagerState.currentPage < games.size - 1) {
+            NavButton(
+                icon = Icons.AutoMirrored.Rounded.ArrowForwardIos,
+                alignment = Alignment.CenterEnd,
+                onClick = {
+                    onNavButtonClick(pagerState.currentPage + 1)
+                }
+            )
+        }
+    } else if (games.isEmpty()) {
+        Text(
+            text = "Nenhum jogo encontrado",
+            fontSize = 18.sp,
+            color = Color.White.copy(alpha = 0.6f),
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
+
 }
 

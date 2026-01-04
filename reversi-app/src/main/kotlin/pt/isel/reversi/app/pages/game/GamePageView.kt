@@ -19,6 +19,7 @@ fun GamePageView(
     modifier: Modifier = Modifier,
     game: Game,
     freeze: Boolean,
+    getAvailablePlays: () -> List<Coordinate>,
     onCellClick: (coordinate: Coordinate) -> Unit,
     setTargetMode: (target: Boolean) -> Unit,
     pass: () -> Unit,
@@ -32,7 +33,13 @@ fun GamePageView(
             Box(
                 modifier = Modifier.weight(0.7f),
             ) {
-                DrawBoard(game, freeze = freeze) { onCellClick(it) }
+                val gameState = game.gameState ?: return@Box
+                DrawBoard(
+                    game.target,
+                    gameState,
+                    freeze = freeze,
+                    getAvailablePlays = { getAvailablePlays() }
+                ) { onCellClick(it) }
             }
 
             Spacer(modifier = Modifier.width(width = 16.dp))
