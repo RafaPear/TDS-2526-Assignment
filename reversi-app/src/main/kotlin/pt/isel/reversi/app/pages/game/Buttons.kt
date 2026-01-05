@@ -6,7 +6,15 @@ import androidx.compose.ui.platform.testTag
 import pt.isel.reversi.app.ReversiButton
 import pt.isel.reversi.app.ReversiScope
 
-/** Composable button with auto-sizing text */
+/**
+ * Toggle button for target mode, showing available moves on the board.
+ * Displays "Target ON" or "Target OFF" based on the current state.
+ *
+ * @param target Whether target mode is currently enabled.
+ * @param modifier Optional composable modifier for layout adjustments.
+ * @param freeze Whether the button is disabled due to game frozen state.
+ * @param onClick Callback invoked when the button is clicked.
+ */
 @Composable
 fun ReversiScope.TargetButton(target: Boolean, modifier: Modifier = Modifier, freeze: Boolean, onClick: () -> Unit) {
     val targetText = if (target) "ON" else "OFF"

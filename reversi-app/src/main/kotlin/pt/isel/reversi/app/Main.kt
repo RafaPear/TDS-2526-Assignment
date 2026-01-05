@@ -29,6 +29,12 @@ import reversi.reversi_app.generated.resources.Res
 import reversi.reversi_app.generated.resources.reversi
 import java.lang.System.setProperty
 
+/**
+ * Entry point for the desktop Reversi application. Initializes app dependencies
+ * and launches the Compose window with the current `AppState`.
+ *
+ * @param args Optional command-line arguments forwarded to initialization.
+ */
 fun main(args: Array<String>) {
     val initializedArgs = initializeAppArgs(args) ?: return
     val (audioPool) = initializedArgs
@@ -184,6 +190,12 @@ fun volumeDbToPercent(volume: Float, min: Float, max: Float): String {
     return percent.toInt().toString()
 }
 
+/**
+ * Simple about page presenting project and authorship information.
+ *
+ * @param appState Global state holder used for navigation and theming.
+ * @param modifier Optional modifier to adjust layout in previews or reuse.
+ */
 @Composable
 fun AboutPage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
 
@@ -211,6 +223,9 @@ fun AboutPage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * Logs the current game state for debugging, including players, scores, and board layout.
+ */
 fun Game.printDebugState() {
     LOGGER.info("========== ESTADO ATUAL DO JOGO ==========")
     LOGGER.info("Nome do jogo: ${currGameName ?: "(local)"}")

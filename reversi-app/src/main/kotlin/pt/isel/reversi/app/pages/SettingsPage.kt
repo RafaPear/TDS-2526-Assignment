@@ -19,6 +19,13 @@ import pt.isel.reversi.app.gameAudio.loadGameAudioPool
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.setAppState
 
+/**
+ * Section header composable for organizing settings into logical groups.
+ * Displays a title and divider line with the section content below.
+ *
+ * @param title The section title/header.
+ * @param content Lambda for the section's content composables.
+ */
 @Composable
 private fun ReversiScope.SettingsSection(
     title: String,
@@ -28,7 +35,6 @@ private fun ReversiScope.SettingsSection(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Título da Secção com cor primária e divisor
         ReversiText(
             text = title,
             color = getTheme().primaryColor,
@@ -39,21 +45,23 @@ private fun ReversiScope.SettingsSection(
             color = getTheme().textColor.copy(alpha = 0.1f),
             thickness = 1.dp
         )
-        // Conteúdo da secção
         content()
     }
 }
 
+/**
+ * Settings page displaying application configuration options.
+ * Includes theme selection and audio volume control.
+ *
+ * @param appState Global application state for accessing and updating settings.
+ */
 @Composable
 fun SettingsPage(appState: MutableState<AppState>) {
-    // Aceder ao tema atual e pool de áudio via Scope
     val currentTheme = appState.value.theme
     val audioPool = appState.value.audioPool
 
-    // Estado do Volume
     var volume by remember { mutableStateOf(audioPool.getMasterVolume() ?: 0f) }
 
-    // Estado do Menu de Temas
     var themeMenuExpanded by remember { mutableStateOf(false) }
 
     val availableThemes = AppThemes.entries.map { it.appTheme }
@@ -62,12 +70,10 @@ fun SettingsPage(appState: MutableState<AppState>) {
         appState = appState,
         title = "Definições",
         previousPageContent = {
-            // Volta para a página anterior guardada no estado
             PreviousPage { appState.setAppState(page = getCurrentState().backPage) }
         }
     ) { padding ->
 
-        // BOX para centralização responsiva
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -77,10 +83,10 @@ fun SettingsPage(appState: MutableState<AppState>) {
             Column(
                 modifier = Modifier
                     .padding(top = 24.dp, bottom = 24.dp)
-                    .widthIn(max = 500.dp) // O segredo para o design Desktop profissional
+                    .widthIn(max = 500.dp)
                     .fillMaxWidth(0.9f)
-                    .verticalScroll(rememberScrollState()), // Permite scroll em ecrãs pequenos
-                verticalArrangement = Arrangement.spacedBy(32.dp), // Espaço maior entre secções
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(32.dp),
                 horizontalAlignment = Alignment.Start
             ) {
 
@@ -119,7 +125,6 @@ fun SettingsPage(appState: MutableState<AppState>) {
                     )
                 }
 
-                // --- SECÇÃO 2: PERSONALIZAÇÃO (TEMAS) ---
                 SettingsSection(title = "Aspeto Visual") {
                     ReversiText(
                         "Tema da Aplicação",
@@ -127,7 +132,6 @@ fun SettingsPage(appState: MutableState<AppState>) {
                         modifier = Modifier.padding(bottom = 8.dp),
                     )
 
-                    // O Dropdown de Temas
                     Box(modifier = Modifier.fillMaxWidth()) {
                         OutlinedButton(
                             onClick = { themeMenuExpanded = true },
@@ -143,8 +147,7 @@ fun SettingsPage(appState: MutableState<AppState>) {
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // Mostra o nome do tema atual
-                                ReversiText(currentTheme.name,) // Assume que o tema tem uma propriedade .name
+                                ReversiText(currentTheme.name,)
                                 Icon(
                                     imageVector = Icons.Default.Palette,
                                     contentDescription = "Trocar tema",
@@ -157,8 +160,6 @@ fun SettingsPage(appState: MutableState<AppState>) {
                             expanded = themeMenuExpanded,
                             onDismissRequest = { themeMenuExpanded = false }
                         ) {
-                            // Itera sobre os teus temas reais aqui
-                            // Exemplo genérico:
                             availableThemes.forEach { theme ->
                                 ReversiDropdownMenuItem(
                                     text = theme.name,

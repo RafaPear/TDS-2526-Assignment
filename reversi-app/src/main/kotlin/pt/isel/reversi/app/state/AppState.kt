@@ -7,10 +7,15 @@ import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.utils.audio.AudioPool
 
 /**
- * State of the application.
- * @param game The current game state.
- * @param page The current page being displayed.
- * @param error The current error, for remove error on display set to null.
+ * Central application state holding game, navigation, UI, and audio configuration.
+ *
+ * @property game The current game instance and state.
+ * @property page The currently displayed page in the application.
+ * @property error The current error exception to display, or null if no error.
+ * @property backPage The previous page for back navigation (defaults to MAIN_MENU).
+ * @property isLoading Whether the application is in a loading state.
+ * @property audioPool The audio pool managing sound effects and background music.
+ * @property theme The currently applied application theme.
  */
 data class AppState(
     val game: Game,

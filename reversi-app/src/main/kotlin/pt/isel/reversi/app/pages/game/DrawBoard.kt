@@ -28,8 +28,21 @@ import pt.isel.reversi.core.board.Piece
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.storage.GameState
 
-const val GHOST_PIECE_ALPHA = 0.5f // Aumentei ligeiramente para melhor visibilidade em cores exóticas
+/** Transparency level for ghost pieces showing potential moves. */
+const val GHOST_PIECE_ALPHA = 0.5f
 
+/**
+ * Composable rendering the interactive Reversi game board.
+ * Displays the grid, pieces, and available moves (if target mode is enabled).
+ * Handles user clicks for piece placement with click blocking during animations.
+ *
+ * @param target Whether to show available move indicators.
+ * @param gameState Current game state containing board and player information.
+ * @param modifier Optional composable modifier for layout adjustments.
+ * @param freeze Whether to prevent user interaction with the board.
+ * @param getAvailablePlays Lambda returning list of available move coordinates.
+ * @param onCellClick Callback invoked when a board cell is clicked with the coordinate.
+ */
 @Composable
 fun ReversiScope.DrawBoard(
     target: Boolean,
@@ -52,7 +65,17 @@ fun ReversiScope.DrawBoard(
     }
 }
 
-/** Composable that draws the board grid */
+/**
+ * Renders the board grid with cells, pieces, and animated indicators for valid moves.
+ * Supports animation feedback for available moves in target mode.
+ *
+ * @param target Whether to show available move indicators with animation.
+ * @param gameState Current game state containing board and player information.
+ * @param modifier Optional composable modifier for layout adjustments.
+ * @param freeze Whether to prevent user interaction with cells.
+ * @param getAvailablePlays Lambda returning list of available move coordinates.
+ * @param onCellClick Callback invoked when a board cell is clicked.
+ */
 @Composable
 fun ReversiScope.Grid(
     target: Boolean,
@@ -71,7 +94,7 @@ fun ReversiScope.Grid(
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val availablePlays = if (target) getAvailablePlays() else emptyList<Coordinate>()
+        val availablePlays = if (target) getAvailablePlays() else emptyList()
 
         val infiniteTransition = rememberInfiniteTransition()
         val alphaAnim by infiniteTransition.animateFloat(
@@ -155,7 +178,6 @@ fun ReversiScope.cellView(
     ) {
         val type = piece?.value ?: return@Box
 
-        // AQUI: Obtemos as cores dinâmicas do tema atual
         val theme = getTheme()
         val pieceColor = when (type) {
             PieceType.BLACK -> theme.darkPieceColor
@@ -175,14 +197,14 @@ fun ReversiScope.cellView(
             if (!piece.isGhostPiece) {
                 drawPiece(radius, center, pieceColor, drawScope = this)
             } else {
-                // Ghost Piece simplificada usando a cor do tema com transparência
+
                 drawCircle(
                     color = pieceColor.copy(alpha = GHOST_PIECE_ALPHA),
                     radius = radius * radiusModifier,
                     center = center,
                     alpha = alphaModifier,
                 )
-                // Opcional: Desenhar um pequeno outline para ghost pieces claras em fundos claros
+
                 drawCircle(
                     color = pieceColor.copy(alpha = alphaModifier * 0.5f),
                     radius = radius * radiusModifier,
@@ -200,16 +222,13 @@ private fun drawPiece(
     color: Color,
     drawScope: DrawScope
 ) {
-    // Sombra da peça (mantemos preto transparente pois é sombra)
     val shadowColor = Color.Black.copy(alpha = 0.3f)
     drawScope.drawCircle(
         color = shadowColor,
         radius = radius,
-        center = center + Offset(10f, 10f), // Sombra ligeiramente mais subtil
+        center = center + Offset(10f, 10f),
     )
 
-    // AQUI: Cálculo dinâmico da cor lateral (efeito 3D)
-    // Escurece a cor original em 30% para criar a borda, independentemente da cor escolhida
     val sideColor = Color(
         red = (color.red * 0.7f).coerceIn(0f, 1f),
         green = (color.green * 0.7f).coerceIn(0f, 1f),
@@ -223,7 +242,6 @@ private fun drawPiece(
         center = center + Offset(4f, 4f),
     )
 
-    // Parte superior da peça (Cor do tema)
     drawScope.drawCircle(
         color = color,
         radius = radius,

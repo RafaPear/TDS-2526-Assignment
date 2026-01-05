@@ -4,6 +4,12 @@ import pt.isel.reversi.core.storage.GameStorageType
 import pt.isel.reversi.utils.Config
 import pt.isel.reversi.utils.makePathString
 
+/**
+ * Configuration holder for core game parameters loaded from properties files.
+ * Manages board dimensions, character representations, and storage configuration.
+ *
+ * @property map The underlying configuration map with string keys and values.
+ */
 class CoreConfig(override val map: Map<String, String>) : Config {
     /** Side length of the game board. */
     val BOARD_SIDE = map["BOARD_SIDE"]?.toIntOrNull() ?: 8
@@ -14,8 +20,10 @@ class CoreConfig(override val map: Map<String, String>) : Config {
     /** Character representing empty spaces on the board. */
     val EMPTY_CHAR = map["EMPTY_CHAR"]?.firstOrNull() ?: '.'
 
+    /** Directory path where game saves are stored. */
     val SAVES_FOLDER = map["SAVES_FOLDER"] ?: makePathString("saves")
 
+    /** Configured storage type for game state persistence. */
     val STORAGE_TYPE = GameStorageType.fromConfigValue(map["STORAGE_TYPE"].toString())
 
     override fun getDefaultConfigFileEntries(): Map<String, String> {

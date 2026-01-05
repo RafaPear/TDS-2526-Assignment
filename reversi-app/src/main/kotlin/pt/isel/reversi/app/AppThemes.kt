@@ -206,6 +206,12 @@ private val gameboyTheme = AppTheme(
     lightPieceColor = Color(0xFF8BAC0F)
 )
 
+/**
+ * Enumeration of all available application themes.
+ * Each theme provides a complete color scheme and audio configuration.
+ *
+ * @property appTheme The AppTheme instance for this enumeration value.
+ */
 enum class AppThemes(val appTheme: AppTheme) {
     DARK(darkTheme),
     LIGHT(lightTheme),

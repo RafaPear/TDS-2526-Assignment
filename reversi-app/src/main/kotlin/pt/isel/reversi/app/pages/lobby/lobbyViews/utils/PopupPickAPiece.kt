@@ -20,7 +20,14 @@ import pt.isel.reversi.app.ReversiText
 import pt.isel.reversi.app.getTheme
 import pt.isel.reversi.core.board.PieceType
 
-
+/**
+ * Modal popup for selecting a piece color before joining a multiplayer game.
+ * Displays available pieces as interactive circular buttons with visual feedback.
+ *
+ * @param pieces List of piece types available to choose from.
+ * @param onPick Callback invoked when a piece is selected.
+ * @param onDismiss Callback invoked when the popup is closed without selection.
+ */
 @Composable
 fun ReversiScope.PopupPickAPiece(
     pieces: List<PieceType>,

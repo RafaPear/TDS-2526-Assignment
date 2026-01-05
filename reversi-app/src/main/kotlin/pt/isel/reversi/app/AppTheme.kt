@@ -2,7 +2,25 @@ package pt.isel.reversi.app
 
 import androidx.compose.ui.graphics.Color
 
-
+/**
+ * Data class representing a theme configuration for the Reversi application.
+ * Contains colors for UI elements and audio resources for different game states.
+ *
+ * @property name The name of the theme.
+ * @property backgroundMusic Resource name for background music.
+ * @property gameMusic Resource name for gameplay music.
+ * @property placePieceSound Resource name for the piece placement sound effect.
+ * @property textColor Color used for text elements.
+ * @property buttonTextColor Color used for button text.
+ * @property backgroundColor Primary background color.
+ * @property primaryColor Primary accent color.
+ * @property secondaryColor Secondary accent color.
+ * @property boardColor Color of the game board.
+ * @property boardBgColor Background color of the game board.
+ * @property boardSideColor Color of the board's sides/borders.
+ * @property darkPieceColor Color for dark-colored pieces.
+ * @property lightPieceColor Color for light-colored pieces.
+ */
 data class AppTheme(
     val name: String,
     val backgroundMusic: String = "background-music",

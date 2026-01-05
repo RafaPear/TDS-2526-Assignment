@@ -18,8 +18,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 
+/** Scaling factor for the back button icon when hovered. */
 const val SCALE_MULTIPLIER = 2.0f
 
+/**
+ * Back navigation button with hover animation and scaling effects.
+ * Includes smooth transitions for scale and offset when hovering.
+ *
+ * @param onBack Callback function invoked when the back button is clicked.
+ */
 @Composable
 fun ReversiScope.PreviousPage(onBack: () -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }

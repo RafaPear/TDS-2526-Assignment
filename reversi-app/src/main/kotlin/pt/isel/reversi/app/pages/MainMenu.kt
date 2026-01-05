@@ -19,18 +19,30 @@ import pt.isel.reversi.app.state.getStateAudioPool
 import pt.isel.reversi.app.state.setPage
 import pt.isel.reversi.utils.LOGGER
 
+/** Padding around main menu content. */
 val MAIN_MENU_PADDING = 20.dp
 
+/** Auto-sizing configuration for main menu button text. */
 val MAIN_MENU_AUTO_SIZE_BUTTON_TEXT = TextAutoSize.StepBased(
     minFontSize = 10.sp, maxFontSize = 30.sp
 )
 
+/** Vertical spacing between main menu buttons. */
 val MAIN_MENU_BUTTON_SPACER = 30.dp
 
+/** Auto-sizing configuration for main menu title text. */
 val MAIN_MENU_AUTO_SIZE_TITLE_TEXT = TextAutoSize.StepBased(
     minFontSize = 30.sp, maxFontSize = 60.sp
 )
 
+/**
+ * Main menu screen of the application.
+ * Displays navigation buttons for starting a new game, joining lobby, accessing settings, and about page.
+ * Manages background music playback during menu display.
+ *
+ * @param appState Global application state for navigation and audio control.
+ * @param modifier Optional composable modifier for layout adjustments.
+ */
 @Composable
 fun MainMenu(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
     LaunchedEffect(appState.value.page) {

@@ -19,6 +19,14 @@ import pt.isel.reversi.utils.LOGGER
 private const val UI_DELAY_SHORT_MS = 100L
 private const val POLL_INTERVAL_MS = 1000L
 
+/**
+ * UI state for the lobby screen displaying available games.
+ *
+ * @property games List of loaded games available to join.
+ * @property lobbyState Current state of the lobby (empty, showing games, etc.).
+ * @property selectedGame The currently selected game for joining.
+ * @property canRefresh Whether the refresh button is enabled.
+ */
 data class LobbyUiState(
     val games: List<Game> = emptyList(),
     val lobbyState: LobbyState = LobbyState.NONE,
@@ -26,6 +34,13 @@ data class LobbyUiState(
     val canRefresh: Boolean = false,
 )
 
+/**
+ * View model for the lobby screen managing game list, polling, and user interactions.
+ * Handles loading available games, polling for updates, and game selection.
+ *
+ * @property scope Coroutine scope for launching async lobby operations.
+ * @property appState Global application state for game and UI updates.
+ */
 class LobbyViewModel(
     val scope: CoroutineScope,
     val appState: MutableState<AppState>,
@@ -60,7 +75,7 @@ class LobbyViewModel(
                 }
             }
             knownNames = ids
-            LOGGER.info("Jogos carregados: ${loaded.map { it.currGameName }}")
+            LOGGER.info("Jogos carregados: ${loaded.size}")
             val newLobbyState = if (loaded.isEmpty()) LobbyState.EMPTY else LobbyState.SHOW_GAMES
             appState.setLoading(false)
             _uiState.value = _uiState.value.copy(

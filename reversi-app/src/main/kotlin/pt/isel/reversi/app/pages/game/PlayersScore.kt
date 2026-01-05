@@ -24,6 +24,12 @@ import pt.isel.reversi.app.getTheme
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.storage.GameState
 
+/**
+ * Displays the score card showing both players' piece counts and game status.
+ * Highlights the current player's turn and displays the winner when the game ends.
+ *
+ * @param state Current game state, or null if no game is active.
+ */
 @Composable
 fun ReversiScope.TextPlayersScore(
     state: GameState?,

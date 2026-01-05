@@ -12,7 +12,14 @@ import pt.isel.reversi.app.corroutines.launchGameRefreshCoroutine
 import pt.isel.reversi.app.state.getStateAudioPool
 import pt.isel.reversi.app.state.setPage
 
-
+/**
+ * Main game page displaying the Reversi board, player scores, and game controls.
+ * Manages game music playback and periodic game state refreshes for multiplayer games.
+ *
+ * @param viewModel The game page view model containing UI state and game logic.
+ * @param modifier Optional composable modifier for layout adjustments.
+ * @param freeze Whether to freeze the game board and prevent user interaction.
+ */
 @Composable
 fun GamePage(viewModel: GamePageViewModel, modifier: Modifier = Modifier, freeze: Boolean = false) {
     val appState = viewModel.appState

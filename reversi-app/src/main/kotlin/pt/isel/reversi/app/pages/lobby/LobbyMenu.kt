@@ -23,12 +23,26 @@ import pt.isel.reversi.app.reversiFadeAnimation
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.utils.LOGGER
 
+/**
+ * Enumeration of possible lobby screen states.
+ */
 enum class LobbyState {
-    NONE, EMPTY, SHOW_GAMES
+    /** Initial uninitialized state. */
+    NONE,
+    /** Lobby has no available games. */
+    EMPTY,
+    /** Lobby displaying available games for joining. */
+    SHOW_GAMES
 }
 
 private const val PAGE_TRANSITION_DURATION_MS = 500
 
+/**
+ * Lobby menu screen for browsing and joining saved multiplayer games.
+ * Displays available games in a carousel and handles game selection and joining.
+ *
+ * @param viewModel The lobby view model managing game list and selection logic.
+ */
 @Composable
 fun LobbyMenu(
     viewModel: LobbyViewModel,
@@ -79,7 +93,7 @@ fun LobbyMenu(
                 LOGGER.info("LobbyMenu - Current page: $page with ${games.size} games.")
                 when (page) {
                     LobbyState.NONE -> {}
-                    LobbyState.EMPTY -> Empty(reversiScope) { refreshAction() }
+                    LobbyState.EMPTY -> Empty { refreshAction() }
                     LobbyState.SHOW_GAMES -> LobbyCarousel(
                         currentGameName = appState.value.game.currGameName,
                         games = games,

@@ -25,13 +25,44 @@ import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.pages.MAIN_MENU_AUTO_SIZE_BUTTON_TEXT
 import pt.isel.reversi.app.state.AppState
 
-
+/**
+ * Receiver scope class providing composition helper functions and access to app state.
+ * Used as a receiver for composable lambdas to provide themed UI components.
+ *
+ * @property appState The current application state.
+ */
 class ReversiScope(val appState: AppState)
 
+/**
+ * Retrieves the current application state.
+ *
+ * @return The AppState held in this scope.
+ */
 fun ReversiScope.getCurrentState() = appState
 
+/**
+ * Retrieves the current application theme.
+ *
+ * @return The AppTheme from the current application state.
+ */
 fun ReversiScope.getTheme() = getCurrentState().theme
 
+/**
+ * Themed text composable following the application's color scheme.
+ * Supports auto-sizing and various text styling options.
+ *
+ * @param text The text content to display.
+ * @param color The text color (defaults to theme text color).
+ * @param autoSize Optional auto-sizing configuration for dynamic font scaling.
+ * @param fontSize Fixed font size (overrides auto-sizing if specified).
+ * @param modifier Composable modifier for layout adjustments.
+ * @param fontWeight Optional font weight for the text.
+ * @param maxLines Maximum number of lines to display.
+ * @param softWrap Whether to wrap text across multiple lines.
+ * @param fontStyle Font style (normal, italic, etc.).
+ * @param textAlign Horizontal text alignment.
+ * @param overflow Text overflow behavior.
+ */
 @Composable
 fun ReversiScope.ReversiText(
     text: String,
@@ -61,13 +92,23 @@ fun ReversiScope.ReversiText(
     )
 }
 
+/**
+ * Themed button component using the application's primary color.
+ * Supports custom shapes, borders, and disabled state styling.
+ *
+ * @param text The text label for the button.
+ * @param modifier Composable modifier for layout adjustments.
+ * @param onClick Callback invoked when the button is clicked.
+ * @param enabled Whether the button is clickable.
+ * @param shape The shape of the button corners.
+ * @param border Optional custom border stroke.
+ */
 @Composable
 fun ReversiScope.ReversiButton(
     text: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     enabled: Boolean = true,
-    // Usamos uma percentagem para o shape ser proporcional ao tamanho do botão
     shape: RoundedCornerShape = RoundedCornerShape(20.dp),
     border: BorderStroke? = null,
 ) {
@@ -82,7 +123,7 @@ fun ReversiScope.ReversiButton(
         enabled = enabled,
         shape = shape,
         border = if (border == null) BorderStroke(width = 1.dp, color = theme.buttonTextColor) else border,
-        // Adiciona um padding interno mínimo para o texto não tocar nos bordos
+
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
     ) {
         ReversiText(
@@ -95,6 +136,15 @@ fun ReversiScope.ReversiButton(
     }
 }
 
+/**
+ * Themed dropdown menu with application color scheme.
+ * Provides a container for dropdown menu items with consistent styling.
+ *
+ * @param expanded Whether the menu is currently displayed.
+ * @param onDismissRequest Callback invoked when the menu should close.
+ * @param modifier Composable modifier for layout adjustments.
+ * @param content Lambda for menu items content.
+ */
 @Composable
 fun ReversiScope.ReversiDropDownMenu(
     expanded: Boolean,
@@ -115,9 +165,18 @@ fun ReversiScope.ReversiDropDownMenu(
     }
 }
 
+/**
+ * Themed dropdown menu item for use within ReversiDropDownMenu.
+ * Provides consistent styling for menu options.
+ *
+ * @param text The text label for the menu item.
+ * @param onClick Callback invoked when the menu item is selected.
+ * @param modifier Composable modifier for layout adjustments.
+ * @param enabled Whether the menu item is selectable.
+ */
 @Composable
 fun ReversiScope.ReversiDropdownMenuItem(
-    text: String, // Simplificado para String para manter o estilo do tema
+    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -143,6 +202,19 @@ fun ReversiScope.ReversiDropdownMenuItem(
     )
 }
 
+/**
+ * Themed text input field following the application's design system.
+ * Supports placeholder, label, and single/multi-line modes.
+ *
+ * @param value Current text value in the field.
+ * @param onValueChange Callback invoked when the text content changes.
+ * @param placeholder Optional placeholder content.
+ * @param label Optional label content.
+ * @param singleLine Whether the field accepts only a single line of input.
+ * @param modifier Composable modifier for layout adjustments.
+ * @param onDone Callback invoked when the user completes input (IME action).
+ * @param enabled Whether the field is editable.
+ */
 @Composable
 fun ReversiScope.ReversiTextField(
     value: String = "",

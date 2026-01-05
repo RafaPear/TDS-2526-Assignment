@@ -11,7 +11,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
+/**
+ * Loading overlay composable displaying a circular progress indicator with loading message.
+ * Covers the entire screen with a semi-transparent overlay and prevents user interaction.
+ *
+ * @param modifier Optional modifier for layout adjustments.
+ */
 @Composable
 fun ReversiScope.Loading(modifier: Modifier = Modifier) {
     Box (

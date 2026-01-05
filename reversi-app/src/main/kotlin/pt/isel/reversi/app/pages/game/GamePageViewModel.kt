@@ -12,6 +12,13 @@ import pt.isel.reversi.core.exceptions.ErrorType.Companion.toReversiException
 import pt.isel.reversi.utils.LOGGER
 import kotlin.coroutines.cancellation.CancellationException
 
+/**
+ * View model for the game page managing game state, UI updates, and user interactions.
+ * Handles game move execution, state polling for multiplayer games, and sound effects.
+ *
+ * @property appState Global application state containing game and UI configuration.
+ * @property scope Coroutine scope for launching async game operations.
+ */
 class GamePageViewModel(val appState: MutableState<AppState>, val scope: CoroutineScope) {
     private val _uiState = mutableStateOf(value = appState.value.game)
     val uiState: State<Game> = _uiState

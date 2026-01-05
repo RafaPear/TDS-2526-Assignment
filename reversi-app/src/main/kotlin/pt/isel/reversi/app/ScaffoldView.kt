@@ -16,6 +16,11 @@ import pt.isel.reversi.app.exceptions.ErrorMessage
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.setPage
 
+/**
+ * Default previous page button that navigates back to the stored back page.
+ *
+ * @param appState Global application state for navigation.
+ */
 @Composable
 fun ReversiScope.previousPageContentDefault(appState: MutableState<AppState>) {
     PreviousPage {
@@ -23,6 +28,17 @@ fun ReversiScope.previousPageContentDefault(appState: MutableState<AppState>) {
     }
 }
 
+/**
+ * Main scaffold composable providing consistent layout structure for pages.
+ * Includes top app bar with title and navigation, content area, and error handling.
+ *
+ * @param appState Global application state for navigation and theming.
+ * @param backgroundTopBar Background color for the top app bar.
+ * @param title Title text displayed in the top app bar.
+ * @param loadingModifier Modifier for the loading state.
+ * @param previousPageContent Optional custom previous page navigation button.
+ * @param content Main content composable lambda.
+ */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ScaffoldView(

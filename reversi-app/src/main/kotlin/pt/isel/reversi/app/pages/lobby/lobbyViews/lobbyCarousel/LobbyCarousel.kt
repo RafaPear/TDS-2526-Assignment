@@ -38,6 +38,17 @@ private suspend fun PagerState.animateScroll(page: Int) {
     )
 }
 
+/**
+ * Carousel component for browsing saved multiplayer games.
+ * Supports search filtering, pagination, and game status indication.
+ *
+ * @param currentGameName Name of the currently active game for highlighting.
+ * @param games List of all available games to display.
+ * @param viewModel The lobby view model managing game state.
+ * @param reversiScope The ReversiScope receiver for theming and utilities.
+ * @param buttonRefresh Optional composable for rendering a refresh button.
+ * @param onGameClick Callback invoked when a game card is selected.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ColumnScope.LobbyCarousel(

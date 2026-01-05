@@ -10,6 +10,14 @@ import pt.isel.reversi.app.state.*
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.utils.LOGGER
 
+/**
+ * Creates the application menu bar with File, View, Dev, and Help menus.
+ * Provides navigation to different pages and application controls.
+ *
+ * @param appState Global application state for navigation and configuration.
+ * @param windowState Window state for toggling fullscreen mode.
+ * @param exitAction Callback function to execute on application exit.
+ */
 @Composable
 fun FrameWindowScope.MakeMenuBar(appState: MutableState<AppState>, windowState: WindowState, exitAction: () -> Unit) {
     MenuBar {
