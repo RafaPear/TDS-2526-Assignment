@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,11 +15,13 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.isel.reversi.app.ReversiScope
+import pt.isel.reversi.app.ReversiText
 import pt.isel.reversi.core.board.PieceType
 
 
 @Composable
-fun PopupPickAPiece(
+fun ReversiScope.PopupPickAPiece(
     pieces: List<PieceType>,
     onPick: (PieceType) -> Unit,
     onDismiss: () -> Unit = {}
@@ -46,7 +47,7 @@ fun PopupPickAPiece(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(
+                ReversiText(
                     text = "Escolha a sua peça",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,

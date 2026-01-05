@@ -1,46 +1,44 @@
 package pt.isel.reversi.app.pages.game
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import pt.isel.reversi.app.BACKGROUND_MUSIC
-import pt.isel.reversi.app.MEGALOVANIA
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import pt.isel.reversi.app.PreviousPage
 import pt.isel.reversi.app.ScaffoldView
-import pt.isel.reversi.app.pages.game.utils.BOARD_BACKGROUND_COLOR
-import pt.isel.reversi.app.state.getStateAudioPool
-import pt.isel.reversi.app.state.setPage
+import pt.isel.reversi.app.corroutines.launchGameRefreshCoroutine
+import pt.isel.reversi.app.getTheme
+import pt.isel.reversi.app.state.*
 
 
 @Composable
-fun GamePage(viewModel: GamePageViewModel, modifier: Modifier = Modifier, freeze: Boolean = false) {
-    val appState = viewModel.appState
-    val game = viewModel.uiState.value
+fun GamePage(appState: MutableState<AppState>, modifier: Modifier = Modifier, freeze: Boolean = false) {
+    val coroutineAppScope = rememberCoroutineScope()
 
     // Launch the game refresh coroutine
-    DisposableEffect(game.currGameName) {
+    LaunchedEffect(appState.value.page) {
+        val game = appState.value.game
         if (game.currGameName != null && game.gameState?.players?.size != 2) {
-            viewModel.startPolling()
+            launchGameRefreshCoroutine(50L, appState)
         }
 
         appState.getStateAudioPool().run {
-            if (!isPlaying(MEGALOVANIA)) {
-                stop(BACKGROUND_MUSIC)
-                stop(MEGALOVANIA)
-                play(MEGALOVANIA)
+            val theme = appState.value.theme
+            if (!isPlaying(theme.gameMusic)) {
+                stop(theme.backgroundMusic)
+                stop(theme.gameMusic)
+                play(theme.gameMusic)
             }
-        }
-
-        onDispose {
-            viewModel.stopPolling()
-            viewModel.save()
         }
     }
 
-    val name = game.currGameName?.let { "Game: $it" }
+    val name = appState.value.game.currGameName?.let { "Game: $it" }
 
     ScaffoldView(
         appState = appState,
@@ -49,15 +47,54 @@ fun GamePage(viewModel: GamePageViewModel, modifier: Modifier = Modifier, freeze
             PreviousPage { appState.setPage(appState.value.backPage) }
         }
     ) { padding ->
-        GamePageView(
+        Column(
             modifier = modifier.fillMaxSize()
-                .background(BOARD_BACKGROUND_COLOR)
-                .padding(paddingValues = padding),
-            game = game,
-            freeze = freeze,
-            getAvailablePlays = { viewModel.getAvailablePlays() },
-            onCellClick = { viewModel.playMove(it) },
-            setTargetMode = { viewModel.setTarget(!game.target) },
-        )
+                .padding(paddingValues = padding)
+                .testTag(tag = testTagGamePage()),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(all = 16.dp),
+            ) {
+                Box(
+                    modifier = modifier.weight(0.7f),
+                ) {
+                    DrawBoard(appState.value.game, freeze = freeze) { coordinate ->
+                        coroutineAppScope.launch {
+                            try {
+                                appState.setGame(
+                                    game = appState.value.game.play(coordinate)
+                                )
+                                appState.getStateAudioPool().run {
+                                    stop(getTheme().placePieceSound)
+                                    play(getTheme().placePieceSound)
+                                }
+                            } catch (e: Exception) {
+                                appState.setError(error = e)
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(width = 16.dp))
+
+                // Coluna dos jogadores e botões
+                Column(
+                    modifier = modifier.weight(0.3f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    TextPlayersScore(state = appState.value.game.gameState)
+
+                    val target = appState.value.game.target
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    TargetButton(target, freeze = freeze) {
+                        appState.setGame(
+                            game = appState.value.game.setTargetMode(!appState.value.game.target)
+                        )
+                    }
+                }
+            }
+        }
     }
 }

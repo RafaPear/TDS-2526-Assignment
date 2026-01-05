@@ -22,6 +22,7 @@ import pt.isel.reversi.app.state.Page
 @Composable
 fun AppScreenSwitcher(appState: MutableState<AppState>, switchAction: @Composable (BoxScope.(page: Page) -> Unit)) {
     val targetPage = appState.value.page
+    val theme = appState.value.theme
 
     AnimatedContent(
         targetState = targetPage,
@@ -34,7 +35,7 @@ fun AppScreenSwitcher(appState: MutableState<AppState>, switchAction: @Composabl
             if (forward) reversiGoInAnimation(duration, iOSEasing)
             else reversiGoOutAnimation(duration, iOSEasing)
         },
-        modifier = Modifier.fillMaxSize().background(MAIN_BACKGROUND_COLOR),
+        modifier = Modifier.fillMaxSize().background(theme.backgroundColor),
         label = "PageTransition"
     ) { page ->
         Box(modifier = Modifier.fillMaxSize()) {

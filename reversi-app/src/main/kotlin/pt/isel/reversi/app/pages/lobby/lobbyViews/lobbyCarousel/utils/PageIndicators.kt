@@ -6,7 +6,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -15,9 +14,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.isel.reversi.app.ReversiScope
+import pt.isel.reversi.app.ReversiText
 
 @Composable
-fun PageIndicators(total: Int, current: Int) {
+fun ReversiScope.PageIndicators(total: Int, current: Int) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -51,7 +52,7 @@ fun PageIndicators(total: Int, current: Int) {
             else
                 "${current + 1} de $total"
 
-        Text(
+        ReversiText(
             text = text,
             fontSize = 14.sp,
             color = Color.White.copy(alpha = 0.6f)

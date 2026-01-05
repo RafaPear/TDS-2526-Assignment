@@ -1,6 +1,7 @@
 package pt.isel.reversi.app.state
 
 import androidx.compose.runtime.MutableState
+import pt.isel.reversi.app.AppTheme
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.ErrorType.Companion.toReversiException
@@ -60,6 +61,7 @@ fun MutableState<AppState>.setAppState(
     error: Exception? = null,
     backPage: Page? = null,
     audioPool: AudioPool = value.audioPool,
+    theme: AppTheme = value.theme,
 ) {
     LOGGER.info("Set entire app state")
 
@@ -76,7 +78,8 @@ fun MutableState<AppState>.setAppState(
 
     value = value.copy(
         game = game,
-        audioPool = audioPool
+        audioPool = audioPool,
+        theme = theme,
     )
 }
 
@@ -99,10 +102,6 @@ fun MutableState<AppState>.setError(error: Exception?) {
     val newError = error as? ReversiException ?: error?.toReversiException(ErrorType.CRITICAL)
     value = value.copy(error = newError)
 }
-
-//fun setError(appState: MutableState<AppState>, error: Exception): AppState {
-//    return setError(appState, error.toReversiException(ErrorType.CRITICAL))
-//}
 
 /**
  * Determines the back page based on the new page being set.

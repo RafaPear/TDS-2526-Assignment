@@ -6,7 +6,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,6 +21,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.isel.reversi.app.ReversiScope
+import pt.isel.reversi.app.ReversiText
+import pt.isel.reversi.app.getTheme
 import pt.isel.reversi.app.pages.game.utils.DrawBoard
 import pt.isel.reversi.app.pages.lobby.CARD_BG
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.CardStatus
@@ -33,7 +39,7 @@ fun scorePanelTestTag(gameId: String) = "score_panel_$gameId"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GameCard(
+fun ReversiScope.GameCard(
     game: Game,
     enabled: Boolean,
     cardData: CardStatus,
@@ -52,7 +58,7 @@ fun GameCard(
         modifier = modifier.shadow(16.dp, RoundedCornerShape(24.dp))
             .testTag(cardTestTag(name)),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = CARD_BG),
+        colors = CardDefaults.cardColors(containerColor = getTheme().secondaryColor),
         border = BorderStroke(1.dp, Color.White.copy(0.1f))
     ) {
         Column(
@@ -84,7 +90,7 @@ fun GameCard(
 
 
 @Composable
-private fun HeaderBadge(statusText: String, statusColor: Color, name: String) {
+private fun ReversiScope.HeaderBadge(statusText: String, statusColor: Color, name: String) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -92,8 +98,7 @@ private fun HeaderBadge(statusText: String, statusColor: Color, name: String) {
             .testTag(headerBadgeTestTag(name)),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        println(name)
-        Text(
+        ReversiText(
             text = name,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
@@ -106,12 +111,12 @@ private fun HeaderBadge(statusText: String, statusColor: Color, name: String) {
 }
 
 @Composable
-private fun StatusBadge(text: String, color: Color, modifier: Modifier = Modifier) {
+private fun ReversiScope.StatusBadge(text: String, color: Color, modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(10.dp), color = color.copy(0.2f)
     ) {
-        Text(
+        ReversiText(
             text = text,
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
@@ -122,7 +127,7 @@ private fun StatusBadge(text: String, color: Color, modifier: Modifier = Modifie
 }
 
 @Composable
-private fun ScorePanel(modifier: Modifier, board: Board) {
+private fun ReversiScope.ScorePanel(modifier: Modifier, board: Board) {
     Row(
         modifier = modifier.fillMaxWidth().background(Color(0xFF2D2D2D), RoundedCornerShape(16.dp))
             .border(1.dp, Color.White.copy(0.1f), RoundedCornerShape(16.dp)).padding(8.dp),
@@ -134,7 +139,7 @@ private fun ScorePanel(modifier: Modifier, board: Board) {
 }
 
 @Composable
-private fun ScoreItem(type: PieceType, score: Int) {
+private fun ReversiScope.ScoreItem(type: PieceType, score: Int) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -146,7 +151,7 @@ private fun ScoreItem(type: PieceType, score: Int) {
             )
         )
         Spacer(Modifier.height(8.dp))
-        Text(
+        ReversiText(
             text = score.toString(), fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White
         )
     }

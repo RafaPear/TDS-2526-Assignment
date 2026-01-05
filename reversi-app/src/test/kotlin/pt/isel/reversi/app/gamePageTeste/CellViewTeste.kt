@@ -1,9 +1,11 @@
-package pt.isel.reversi.app.gamePageTest.gamePageViewTests
+package pt.isel.reversi.app.gamePageTeste
 
 import androidx.compose.ui.test.*
-import pt.isel.reversi.app.pages.game.utils.cellView
-import pt.isel.reversi.app.pages.game.utils.testTagCellView
-import pt.isel.reversi.app.pages.game.utils.testTagPiece
+import pt.isel.reversi.app.ReversiScope
+import pt.isel.reversi.app.pages.game.cellView
+import pt.isel.reversi.app.pages.game.testTagCellView
+import pt.isel.reversi.app.pages.game.testTagPiece
+import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.Piece
 import pt.isel.reversi.core.board.PieceType
@@ -20,12 +22,14 @@ import kotlin.test.fail
  */
 @OptIn(ExperimentalTestApi::class)
 class CellViewTeste {
+    val reversiScope = ReversiScope(AppState.EMPTY_APP_STATE)
+
     @Test
     fun `cellView with piece null expect no piece view`() = runComposeUiTest {
         val expectedCoordinates = Coordinate(1, 1)
 
         setContent {
-            cellView(
+            reversiScope.cellView(
                 coordinate = expectedCoordinates,
                 piece = null,
                 onClick = { fail("onClick should not be called") }
@@ -43,7 +47,7 @@ class CellViewTeste {
             val expectedCoordinates = Coordinate(1, 1)
             val expectedValue = PieceType.BLACK
             setContent {
-                cellView(
+                reversiScope.cellView(
                     coordinate = expectedCoordinates,
                     piece = Piece(coordinate = expectedCoordinates, expectedValue, isGhostPiece = false),
                     onClick = { fail("onClick should not be called") }
@@ -64,7 +68,7 @@ class CellViewTeste {
         val expectedCoordinates = Coordinate(1, 1)
         val expectedValue = PieceType.BLACK
         setContent {
-            cellView(
+            reversiScope.cellView(
                 coordinate = expectedCoordinates,
                 piece = Piece(coordinate = expectedCoordinates, expectedValue, isGhostPiece = true),
                 onClick = { fail("onClick should not be called") }
@@ -83,7 +87,7 @@ class CellViewTeste {
     fun `cellView with empty cell and freeze true expect not clickable`() = runComposeUiTest {
         val expectedCoordinates = Coordinate(1, 1)
         setContent {
-            cellView(
+            reversiScope.cellView(
                 coordinate = expectedCoordinates,
                 piece = null,
                 freeze = true,
@@ -101,7 +105,7 @@ class CellViewTeste {
         val expectedCoordinates = Coordinate(1, 1)
         val expectedValue = PieceType.BLACK
         setContent {
-            cellView(
+            reversiScope.cellView(
                 coordinate = expectedCoordinates,
                 piece = Piece(coordinate = expectedCoordinates, expectedValue, isGhostPiece = true),
                 freeze = true,

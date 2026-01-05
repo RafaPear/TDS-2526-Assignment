@@ -13,8 +13,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import pt.isel.reversi.app.MAIN_BACKGROUND_COLOR
 import pt.isel.reversi.app.ScaffoldView
+import pt.isel.reversi.app.getTheme
 import pt.isel.reversi.app.pages.lobby.lobbyViews.Empty
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.LobbyCarousel
 import pt.isel.reversi.app.pages.lobby.lobbyViews.utils.PopupPickAPiece
@@ -33,7 +33,6 @@ private const val PAGE_TRANSITION_DURATION_MS = 500
 fun LobbyMenu(
     viewModel: LobbyViewModel,
 ) {
-
     val uiState = viewModel.uiState.value
     val games = uiState.games
     val lobbyState = uiState.lobbyState
@@ -57,6 +56,7 @@ fun LobbyMenu(
     }
 
     ScaffoldView(appState, title = "Lobby - Jogos Guardados") { padding ->
+        val reversiScope = this
         AnimatedContent(
             targetState = lobbyState,
             transitionSpec = {
@@ -65,7 +65,7 @@ fun LobbyMenu(
             },
             modifier = Modifier
                 .fillMaxSize()
-                .background(MAIN_BACKGROUND_COLOR),
+                .background(getTheme().backgroundColor),
             label = "PageTransition"
         ) { page ->
             Column(
@@ -76,13 +76,15 @@ fun LobbyMenu(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
+                LOGGER.info("LobbyMenu - Current page: $page with ${games.size} games.")
                 when (page) {
                     LobbyState.NONE -> {}
-                    LobbyState.EMPTY -> Empty { refreshAction() }
+                    LobbyState.EMPTY -> Empty(reversiScope) { refreshAction() }
                     LobbyState.SHOW_GAMES -> LobbyCarousel(
                         currentGameName = appState.value.game.currGameName,
                         games = games,
                         viewModel,
+                        reversiScope = reversiScope,
                         buttonRefresh = { refreshAction() }
                     ) { game ->
                         viewModel.selectGame(game)

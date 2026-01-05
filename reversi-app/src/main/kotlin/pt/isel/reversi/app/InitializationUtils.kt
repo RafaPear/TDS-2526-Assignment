@@ -1,7 +1,6 @@
 package pt.isel.reversi.app
 
 import pt.isel.reversi.app.gameAudio.loadGameAudioPool
-import pt.isel.reversi.utils.LOGGER
 import pt.isel.reversi.utils.audio.AudioPool
 import pt.isel.reversi.utils.setLoggerFilePath
 import pt.rafap.ktflag.cmd.args.CommandArg
@@ -56,7 +55,6 @@ fun initializeAppArgs(args: Array<String>): InitializedArgs? {
     if (logToFileName != null) setLoggerFilePath()
 
     val audioEnabled = parsedArgs[noAudioArg] == null
-    LOGGER.info("Audio enabled: $audioEnabled")
-    val audioPool = if (audioEnabled) loadGameAudioPool() else AudioPool(emptyList())
+    val audioPool = if (audioEnabled) loadGameAudioPool(AppThemes.DARK.appTheme) else AudioPool(emptyList())
     return InitializedArgs(audioPool)
 }

@@ -2,7 +2,6 @@ package pt.isel.reversi.app.pages
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.TextAutoSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -11,10 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.isel.reversi.app.BACKGROUND_MUSIC
 import pt.isel.reversi.app.ReversiButton
+import pt.isel.reversi.app.ReversiText
 import pt.isel.reversi.app.ScaffoldView
-import pt.isel.reversi.app.pages.game.utils.TEXT_COLOR
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.Page
 import pt.isel.reversi.app.state.getStateAudioPool
@@ -37,10 +35,12 @@ val MAIN_MENU_AUTO_SIZE_TITLE_TEXT = TextAutoSize.StepBased(
 fun MainMenu(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
     LaunchedEffect(appState.value.page) {
         val audioPool = appState.getStateAudioPool()
-        if (!audioPool.isPlaying(BACKGROUND_MUSIC)) {
+        val theme = appState.value.theme
+
+        if (!audioPool.isPlaying(theme.backgroundMusic)) {
             LOGGER.info("Playing background music")
             audioPool.stopAll()
-            audioPool.play(BACKGROUND_MUSIC)
+            audioPool.play(theme.backgroundMusic)
         }
     }
     ScaffoldView(
@@ -53,36 +53,47 @@ fun MainMenu(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // Título
-            Text(
+            ReversiText(
                 text = "Reversi",
-                color = TEXT_COLOR,
                 autoSize = MAIN_MENU_AUTO_SIZE_TITLE_TEXT,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
 
             Spacer(Modifier.height(MAIN_MENU_PADDING))
 
-            ReversiButton(text = "Novo Jogo") {
-                appState.setPage(Page.NEW_GAME)
-            }
+            ReversiButton(
+                text = "Novo Jogo",
+                onClick = {
+                    appState.setPage(Page.NEW_GAME)
+                },
+            )
 
             Spacer(Modifier.height(MAIN_MENU_BUTTON_SPACER))
 
-            ReversiButton(text = "Lobby") {
-                appState.setPage(Page.LOBBY)
-            }
+            ReversiButton(
+                text = "Lobby",
+                onClick = {
+                    appState.setPage(Page.LOBBY)
+                },
+            )
 
             Spacer(Modifier.height(MAIN_MENU_BUTTON_SPACER))
 
-            ReversiButton(text = "Definições") {
-                appState.setPage(Page.SETTINGS)
-            }
+            ReversiButton(
+                text = "Definições",
+                onClick = {
+                    appState.setPage(Page.SETTINGS)
+                },
+            )
 
             Spacer(Modifier.height(MAIN_MENU_BUTTON_SPACER))
 
-            ReversiButton(text = "Sobre") {
-                appState.setPage(Page.ABOUT)
-            }
+            ReversiButton(
+                text = "Sobre",
+                onClick = {
+                    appState.setPage(Page.ABOUT)
+                },
+            )
         }
     }
 }

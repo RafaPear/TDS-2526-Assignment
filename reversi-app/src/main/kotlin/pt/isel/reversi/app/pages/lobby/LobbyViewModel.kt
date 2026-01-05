@@ -4,7 +4,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.*
-import pt.isel.reversi.app.HIT_SOUND
 import pt.isel.reversi.app.exceptions.GameCorrupted
 import pt.isel.reversi.app.exceptions.GameIsFull
 import pt.isel.reversi.app.state.*
@@ -61,6 +60,7 @@ class LobbyViewModel(
                 }
             }
             knownNames = ids
+            LOGGER.info("Jogos carregados: ${loaded.map { it.currGameName }}")
             val newLobbyState = if (loaded.isEmpty()) LobbyState.EMPTY else LobbyState.SHOW_GAMES
             appState.setLoading(false)
             _uiState.value = _uiState.value.copy(
@@ -85,6 +85,8 @@ class LobbyViewModel(
 
     fun startPolling() {
         if (pollingJob != null) throw IllegalStateException("Polling already started")
+
+        LOGGER.info("Starting lobby polling.")
 
         scope.launch {
             try {
@@ -222,7 +224,6 @@ class LobbyViewModel(
 
                 LOGGER.info("Entrou no jogo '${joinedGame.currGameName}' como peça $pieceType.")
 
-                appState.getStateAudioPool().play(HIT_SOUND)
                 appState.setAppState(joinedGame, Page.GAME, backPage = Page.LOBBY)
                 selectGame(null)
             } finally {

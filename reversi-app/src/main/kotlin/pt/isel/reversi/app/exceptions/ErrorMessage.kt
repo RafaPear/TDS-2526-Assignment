@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -27,6 +26,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import pt.isel.reversi.app.ReversiScope
+import pt.isel.reversi.app.ReversiText
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.setError
 import pt.isel.reversi.core.exceptions.ErrorType
@@ -38,7 +39,7 @@ import pt.isel.reversi.utils.LOGGER
  * @param modifier Optional modifier for styling the composable.
  */
 @Composable
-fun ErrorMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
+fun ReversiScope.ErrorMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
     //TODO: Differentiate error types with different UI elements
 
     // Evite logging on every recomposition, only log when the error changes
@@ -62,7 +63,7 @@ fun ErrorMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier
 }
 
 @Composable
-fun WarningMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
+fun ReversiScope.WarningMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
     val errorMessage = appState.value.error?.message ?: return
 
     val overlayColor = Color.Black.copy(alpha = 0.6f)
@@ -94,14 +95,13 @@ fun WarningMessage(appState: MutableState<AppState>, modifier: Modifier = Modifi
                 modifier = Modifier.size(48.dp)
             )
 
-
-            Text(
+            ReversiText(
                 text = errorMessage,
                 color = Color.Black,
                 fontSize = 18.sp,
+                modifier = Modifier.fillMaxWidth(),
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
             )
 
             Button(
@@ -117,7 +117,7 @@ fun WarningMessage(appState: MutableState<AppState>, modifier: Modifier = Modifi
                     .fillMaxWidth()
                     .height(48.dp)
             ) {
-                Text(text = "OK", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                ReversiText(text = "OK", fontSize = 16.sp, fontWeight = FontWeight.Bold,)
             }
         }
     }
@@ -130,7 +130,7 @@ fun WarningMessage(appState: MutableState<AppState>, modifier: Modifier = Modifi
  * @param modifier Optional modifier for styling the composable.
  */
 @Composable
-fun ToastMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
+fun ReversiScope.ToastMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
     val offsetY = remember { Animatable(-100f) }
     val error = appState.value.error
     val message = error?.message
@@ -156,12 +156,12 @@ fun ToastMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier
                 .background(infoBackgroundColor)
                 .height(IntrinsicSize.Min)
         ) {
-            Text(
+            ReversiText(
                 text = message ?: return@Box,
                 color = infoTextColor,
-                fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 10.dp)
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
+                fontWeight = FontWeight.Bold,
             )
         }
     }

@@ -1,11 +1,10 @@
-package pt.isel.reversi.app.pages.game.utils
+package pt.isel.reversi.app.pages.game
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.TextAutoSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,36 +14,33 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.isel.reversi.app.ReversiScope
+import pt.isel.reversi.app.ReversiText
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.storage.GameState
 
 @Composable
-fun TextPlayersScore(
+fun ReversiScope.TextPlayersScore(
     state: GameState?,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
+        ReversiText(
             "Jogadores",
-            fontWeight = FontWeight.Bold,
             autoSize = TextAutoSize.StepBased(maxFontSize = 50.sp),
-            maxLines = 1,
-            softWrap = false
+            fontWeight = FontWeight.Bold,
         )
 
         Spacer(Modifier.height(16.dp))
 
         if (state == null) {
-            Text(
+            ReversiText(
                 "Sem jogo ativo",
-                fontStyle = FontStyle.Italic,
                 autoSize = TextAutoSize.StepBased(maxFontSize = 50.sp),
-                maxLines = 1,
-                softWrap = false
+                fontStyle = FontStyle.Italic,
             )
         } else {
             val players = listOf(
@@ -67,27 +63,24 @@ fun TextPlayersScore(
                     }
                 }
 
-                Text(
-                    text = annotatedText,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag(testTagPlayerScore(player)),
-                    textAlign = TextAlign.Start,
+                ReversiText(
+                    text = annotatedText.toString(),
                     autoSize = TextAutoSize.StepBased(
                         minFontSize = 10.sp,
                         maxFontSize = 50.sp
                     ),
-                    maxLines = 1,
-                    softWrap = false
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(testTagPlayerScore(player)),
                 )
             }
 
             state.winner?.let {
-                Text(
+                ReversiText(
                     "Vencedor: ${it.type}",
                     color = Color.Green,
+                    autoSize = TextAutoSize.StepBased(),
                     fontWeight = FontWeight.Bold,
-                    autoSize = TextAutoSize.StepBased()
                 )
             }
         }

@@ -13,19 +13,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.exceptions.ErrorMessage
-import pt.isel.reversi.app.pages.game.utils.TEXT_COLOR
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.setPage
 
-fun previousPageContentDefault(
-    appState: MutableState<AppState>
-): @Composable () -> Unit = {
+@Composable
+fun ReversiScope.previousPageContentDefault(appState: MutableState<AppState>) {
     PreviousPage {
         appState.setPage(appState.value.backPage)
     }
 }
 
-//**
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ScaffoldView(
@@ -33,10 +30,12 @@ fun ScaffoldView(
     backgroundTopBar: Color = Color.Transparent,
     title: String = "",
     loadingModifier: Modifier = Modifier,
-    previousPageContent: @Composable () -> Unit = previousPageContentDefault(appState),
+    previousPageContent: (@Composable ReversiScope.() -> Unit)? = null,
     content: @Composable ReversiScope.(paddingValues: PaddingValues) -> Unit
 ) {
-    Scaffold(modifier = Modifier.background(MAIN_BACKGROUND_COLOR), containerColor = Color.Transparent, topBar = {
+    val theme = appState.value.theme
+    val scope = ReversiScope(appState.value)
+    Scaffold(modifier = Modifier.background(theme.backgroundColor), containerColor = Color.Transparent, topBar = {
         CenterAlignedTopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = backgroundTopBar,
@@ -44,7 +43,7 @@ fun ScaffoldView(
             title = {
                 Text(
                     text = title,
-                    color = TEXT_COLOR,
+                    color = theme.textColor,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     autoSize = TextAutoSize.StepBased(
@@ -55,15 +54,18 @@ fun ScaffoldView(
                 )
             },
             navigationIcon = {
-                previousPageContent()
-            },
+                if (previousPageContent != null) scope.previousPageContent()
+                else scope.previousPageContentDefault(appState)
+            }
         )
-    }, snackbarHost = { appState.value.error?.let { ErrorMessage(appState) } }
+    }, snackbarHost = { appState.value.error?.let { scope.ErrorMessage(appState) } }
     ) { paddingValues ->
-        Box {
-            content(paddingValues)
-            if (appState.value.isLoading) {
-                Loading(loadingModifier)
+        with(scope) {
+            Box {
+                content(paddingValues)
+                if (appState.value.isLoading) {
+                    Loading(loadingModifier)
+                }
             }
         }
     }

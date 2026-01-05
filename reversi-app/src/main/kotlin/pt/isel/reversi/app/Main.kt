@@ -3,16 +3,11 @@ package pt.isel.reversi.app
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -20,8 +15,8 @@ import org.jetbrains.compose.resources.painterResource
 import pt.isel.reversi.app.exceptions.GameNotStartedYet
 import pt.isel.reversi.app.pages.MainMenu
 import pt.isel.reversi.app.pages.NewGamePage
+import pt.isel.reversi.app.pages.SettingsPage
 import pt.isel.reversi.app.pages.game.GamePage
-import pt.isel.reversi.app.pages.game.GamePageViewModel
 import pt.isel.reversi.app.pages.lobby.LobbyMenu
 import pt.isel.reversi.app.pages.lobby.LobbyViewModel
 import pt.isel.reversi.app.state.*
@@ -51,7 +46,7 @@ fun main(args: Array<String>) {
                     page = Page.MAIN_MENU,
                     error = null,
                     audioPool = audioPool,
-                    theme = AppTheme(),
+                    theme = AppThemes.DARK.appTheme,
                 )
             )
         }
@@ -80,16 +75,16 @@ fun main(args: Array<String>) {
             window.minimumSize = java.awt.Dimension(600, 700)
 
             MakeMenuBar(appState, windowState, ::safeExitApplication)
-
             AppScreenSwitcher(appState) { page ->
+                LOGGER.info("Navigating to page: $page")
                 when (page) {
                     Page.MAIN_MENU -> MainMenu(appState)
-                    Page.GAME -> GamePage(GamePageViewModel(appState, scope))
+                    Page.GAME -> GamePage(appState)
                     Page.SETTINGS -> SettingsPage(appState)
                     Page.ABOUT -> AboutPage(appState)
                     Page.NEW_GAME -> NewGamePage(appState)
                     Page.SAVE_GAME -> SaveGamePage(appState)
-                    Page.LOBBY -> LobbyMenu( LobbyViewModel(scope, appState) )
+                    Page.LOBBY -> LobbyMenu(LobbyViewModel(scope, appState))
                 }
             }
         }
@@ -140,11 +135,11 @@ fun SaveGamePage(appState: MutableState<AppState>) {
             ) {
                 Spacer(Modifier.height(height = 24.dp))
 
-                OutlinedTextField(
+                ReversiTextField(
                     value = gameName ?: "",
                     enabled = appState.value.game.currGameName == null,
                     onValueChange = { gameName = it },
-                    label = { Text("Nome do jogo", color = TEXT_COLOR) },
+                    label = { ReversiText("Nome do jogo", color = getTheme().textColor) },
                     singleLine = true
                 )
 
@@ -166,71 +161,12 @@ fun SaveGamePage(appState: MutableState<AppState>) {
                         }
                     },
                     colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                        containerColor = PRIMARY
+                        containerColor = getTheme().primaryColor
                     )
                 ) {
-                    Text("Guardar", color = TEXT_COLOR)
+                    ReversiText("Guardar", color = getTheme().primaryColor)
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun SettingsPage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
-
-    ScaffoldView(
-        appState = appState,
-        title = "Definições",
-        previousPageContent = {
-            PreviousPage { appState.setPage(appState.value.backPage) }
-        }
-    ) { padding ->
-        Column(
-            modifier = modifier.fillMaxSize().padding(paddingValues = padding),
-            verticalArrangement = Arrangement.spacedBy(15.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("Opções futuras: som, tema, rede, etc.", color = TEXT_COLOR)
-            val currentMasterVolume = appState.getStateAudioPool().getMasterVolume()
-            var volume by remember { mutableStateOf(currentMasterVolume ?: 0f) }
-
-            // Convert volume in dB [-20, 0] to percentage [0, 100]
-            val number = when (volume) {
-                0f -> " (Default)"
-                -20f -> " (disabled)"
-                else -> " (${
-                    volumeDbToPercent(
-                        volume,
-                        -20f,
-                        0f
-                    )
-                }%)"
-            }
-
-            Text(
-                "Master Volume: $number",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                color = TEXT_COLOR
-            )
-            Slider(
-                value = volume, valueRange = -20f..0f, onValueChange = {
-                    volume = it
-                    val audioPool = appState.getStateAudioPool()
-                    if (volume == -20f) {
-                        audioPool.mute(true)
-                    } else {
-                        audioPool.mute(false)
-                        audioPool.setMasterVolume(volume)
-                    }
-                },
-                colors = androidx.compose.material3.SliderDefaults.colors(
-                    thumbColor = PRIMARY,
-                    activeTrackColor = PRIMARY
-                )
-            )
-
         }
     }
 }
@@ -263,12 +199,12 @@ fun AboutPage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(height = 24.dp))
-            Text("Projeto Reversi desenvolvido no ISEL.", color = TEXT_COLOR)
-            Text("Autores: ", color = TEXT_COLOR)
-            Text(" - Rafael Pereira - NUMERO", color = TEXT_COLOR)
-            Text(" - Ian Frunze - NUMERO", color = TEXT_COLOR)
-            Text(" - Tito Silva - NUMERO", color = TEXT_COLOR)
-            Text("Versão: DEV Build", color = TEXT_COLOR)
+            ReversiText("Projeto Reversi desenvolvido no ISEL.", color = getTheme().textColor)
+            ReversiText("Autores: ", color = getTheme().textColor)
+            ReversiText(" - Rafael Pereira - NUMERO", color = getTheme().textColor)
+            ReversiText(" - Ian Frunze - NUMERO", color = getTheme().textColor)
+            ReversiText(" - Tito Silva - NUMERO", color = getTheme().textColor)
+            ReversiText("Versão: DEV Build", color = getTheme().textColor)
 
         }
     }

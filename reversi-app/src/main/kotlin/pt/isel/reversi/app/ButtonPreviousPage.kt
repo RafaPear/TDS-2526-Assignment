@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 const val SCALE_MULTIPLIER = 2.0f
 
 @Composable
-fun PreviousPage(onBack: () -> Unit) {
+fun ReversiScope.PreviousPage(onBack: () -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
 
@@ -49,7 +49,7 @@ fun PreviousPage(onBack: () -> Unit) {
                     interactionSource = interactionSource,
                     indication = null,
                 ) { onBack() },
-            tint = TEXT_COLOR,
+            tint = getTheme().textColor,
         )
     }
 }

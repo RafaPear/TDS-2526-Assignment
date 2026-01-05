@@ -1,10 +1,12 @@
-package pt.isel.reversi.app.gamePageTest.gamePageViewTests
+package pt.isel.reversi.app.gamePageTeste
 
 import androidx.compose.ui.test.*
 import kotlinx.coroutines.runBlocking
-import pt.isel.reversi.app.pages.game.utils.DrawBoard
-import pt.isel.reversi.app.pages.game.utils.testTagBoard
-import pt.isel.reversi.app.pages.game.utils.testTagCellView
+import pt.isel.reversi.app.ReversiScope
+import pt.isel.reversi.app.pages.game.DrawBoard
+import pt.isel.reversi.app.pages.game.testTagBoard
+import pt.isel.reversi.app.pages.game.testTagCellView
+import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.startNewGame
@@ -13,6 +15,8 @@ import kotlin.test.fail
 
 @OptIn(ExperimentalTestApi::class)
 class DrawBoardTest {
+    val reversiScope = ReversiScope(AppState.EMPTY_APP_STATE)
+
     @Test
     fun `DrawBoard test if all cells are displayed`() = runComposeUiTest {
         val expectedSide = 4
@@ -25,10 +29,8 @@ class DrawBoardTest {
                     currGameName = null
                 )
             }
-            DrawBoard(
-                target = game.target,
-                gameState = game.gameState!!,
-                getAvailablePlays = {game.getAvailablePlays()},
+            reversiScope.DrawBoard(
+                game = game,
                 onCellClick = { fail("onCellClick should not be called during this test") }
             )
         }
@@ -53,10 +55,8 @@ class DrawBoardTest {
         val expectedPiecesCount = board.totalBlackPieces + board.totalWhitePieces
 
         setContent {
-            DrawBoard(
-                target = game.target,
-                gameState = game.gameState!!,
-                getAvailablePlays = {game.getAvailablePlays()},
+            reversiScope.DrawBoard(
+                game = game,
                 onCellClick = { fail("onCellClick should not be called during this test") }
             )
         }
@@ -89,10 +89,8 @@ class DrawBoardTest {
         var onCellClickCalled = false
 
         setContent {
-            DrawBoard(
-                target = game.target,
-                gameState = game.gameState!!,
-                getAvailablePlays = {game.getAvailablePlays()},
+            reversiScope.DrawBoard(
+                game = game,
                 onCellClick = { coordinate ->
                     if (coordinate == coordinateToClick) {
                         onCellClickCalled = true
@@ -123,10 +121,8 @@ class DrawBoardTest {
         var onCellClickCalled = false
 
         setContent {
-            DrawBoard(
-                target = game.target,
-                gameState = game.gameState!!,
-                getAvailablePlays = {game.getAvailablePlays()},
+            reversiScope.DrawBoard(
+                game = game,
                 freeze = true,
                 onCellClick = { coordinate ->
                     if (coordinate == coordinateToClick) {
@@ -159,10 +155,8 @@ class DrawBoardTest {
         var onCellClickCalled = false
 
         setContent {
-            DrawBoard(
-                target = game.target,
-                gameState = game.gameState!!,
-                getAvailablePlays = {game.getAvailablePlays()},
+            reversiScope.DrawBoard(
+                game = game,
                 onCellClick = { coordinate ->
                     if (coordinate == coordinateToClick) {
                         onCellClickCalled = true
@@ -195,10 +189,8 @@ class DrawBoardTest {
         val expectedGhostPiecesAndPiecesCount = availablePlays.size + piecesCount
 
         setContent {
-            DrawBoard(
-                target = game.target,
-                gameState = game.gameState!!,
-                getAvailablePlays = {game.getAvailablePlays()},
+            reversiScope.DrawBoard(
+                game = game,
                 onCellClick = { fail("onCellClick should not be called during this test") }
             )
         }

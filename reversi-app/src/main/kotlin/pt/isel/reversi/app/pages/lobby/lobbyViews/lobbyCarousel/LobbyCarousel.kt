@@ -8,12 +8,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
+import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import pt.isel.reversi.app.ReversiScope
+import pt.isel.reversi.app.ReversiText
 import pt.isel.reversi.app.pages.lobby.LobbyViewModel
+import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.utils.NavButton
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.utils.PageIndicators
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.utils.Search
 import pt.isel.reversi.core.Game
@@ -35,6 +44,7 @@ fun ColumnScope.LobbyCarousel(
     currentGameName: String?,
     games: List<Game>,
     viewModel: LobbyViewModel,
+    reversiScope: ReversiScope,
     buttonRefresh: @Composable () -> Unit = {},
     onGameClick: (Game) -> Unit
 ) {
@@ -78,38 +88,70 @@ fun ColumnScope.LobbyCarousel(
         }
     }
 
-    Row {
-        Search(searchQuery) { query ->
-            scope.launch { pagerState.scrollToPage(0) }
-            searchQuery = query
+    with(reversiScope) {
+
+        Row {
+            Search(searchQuery) { query ->
+                scope.launch { pagerState.scrollToPage(0) }
+                searchQuery = query
+            }
+
+            buttonRefresh()
+
         }
 
-        buttonRefresh()
-    }
+        Spacer(Modifier.weight(1f))
 
-    Spacer(Modifier.weight(1f))
-
-    BoxWithConstraints {
-        LobbyCarouselView(
-            currentGameName = currentGameName,
-            pagerState = pagerState,
-            games = gamesToShow,
-            onNavButtonClick = { page ->
+        BoxWithConstraints {
+            LobbyCarouselView(
+                currentGameName = currentGameName,
+                pagerState = pagerState,
+                games = gamesToShow,
+                reversiScope = reversiScope,
+            ) { game, page ->
                 scope.launch {
-                    pagerState.animateScroll(page)
+                    if (page != pagerState.currentPage)
+                        pagerState.animateScroll(page)
+                    delay(150L)
+                    onGameClick(game)
                 }
-            },
-        ) { game, page ->
-            scope.launch {
-                if (page != pagerState.currentPage)
-                    pagerState.animateScroll(page)
-                delay(150L)
-                onGameClick(game)
+            }
+
+            if (gamesToShow.size > 1) {
+                if (pagerState.currentPage > 0) {
+                    NavButton(
+                        icon = Icons.AutoMirrored.Rounded.ArrowBackIos,
+                        alignment = Alignment.CenterStart,
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScroll(pagerState.currentPage - 1)
+                            }
+                        }
+                    )
+                }
+                if (pagerState.currentPage < gamesToShow.size - 1) {
+                    NavButton(
+                        icon = Icons.AutoMirrored.Rounded.ArrowForwardIos,
+                        alignment = Alignment.CenterEnd,
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScroll(pagerState.currentPage + 1)
+                            }
+                        }
+                    )
+                }
+            } else if (gamesToShow.isEmpty()) {
+                ReversiText(
+                    text = "Nenhum jogo encontrado",
+                    color = Color.White.copy(alpha = 0.6f),
+                    fontSize = 18.sp,
+                    modifier = Modifier.align(Alignment.Center),
+                )
             }
         }
+
+        Spacer(Modifier.weight(1f))
+
+        PageIndicators(gamesToShow.size, pagerState.currentPage)
     }
-
-    Spacer(Modifier.weight(1f))
-
-    PageIndicators(gamesToShow.size, pagerState.currentPage)
 }
