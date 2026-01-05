@@ -3,9 +3,12 @@ package pt.isel.reversi.app.gamePageTest
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import pt.isel.reversi.app.PLACE_PIECE_SOUND
+import pt.isel.reversi.app.initializeAppArgs
 import pt.isel.reversi.app.pages.game.GamePageViewModel
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.Page
+import pt.isel.reversi.app.state.getStateAudioPool
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.PieceType
@@ -37,11 +40,12 @@ class GamePageViewModelTests {
         )
     }
 
+    val audioPool = initializeAppArgs(emptyArray())?.audioPool ?: AudioPool(emptyList())
     val expectedAppState = AppState(
         game = game,
-        page = Page.GAME,
+        page = Page.MAIN_MENU,
         error = null,
-        audioPool = AudioPool(emptyList())
+        audioPool = audioPool
     )
 
     @Test
@@ -88,6 +92,26 @@ class GamePageViewModelTests {
         testScheduler.advanceUntilIdle()
 
         assertEquals(expectedGame, uut.uiState.value)
+    }
+
+    @Test
+    fun `verify that play move plays audio`() = runTest {
+        val appState = mutableStateOf(expectedAppState)
+        val uut = GamePageViewModel(appState, this)
+        val coordinate = uut.getAvailablePlays().first()
+
+        appState.value.game.play(coordinate)
+        testScheduler.advanceUntilIdle()
+
+        uut.playMove(coordinate, save = false)
+
+        testScheduler.advanceUntilIdle()
+
+        appState.getStateAudioPool().run {
+            getAudioTrack(PLACE_PIECE_SOUND)?.let { audioTrack ->
+                assert(audioTrack.isPlaying())
+            }
+        }
     }
 
     @Test
