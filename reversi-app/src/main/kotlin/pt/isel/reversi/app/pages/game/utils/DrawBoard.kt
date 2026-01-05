@@ -55,7 +55,7 @@ fun DrawBoard(
         modifier = modifier
             .aspectRatio(1f)
             .background(BOARD_SIDE_COLOR, shape = RoundedCornerShape(12.dp))
-            .padding(all = 10.dp)
+            .padding(all = 6.dp)
             .testTag(tag = testTagBoard())
     ) {
         Grid(target, gameState, modifier, freeze, getAvailablePlays) { coordinate -> onCellClick(coordinate) }

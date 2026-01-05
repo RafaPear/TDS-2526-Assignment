@@ -10,13 +10,24 @@ import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.exceptions.ErrorType
+import pt.isel.reversi.core.loadCoreConfig
+import pt.isel.reversi.core.loadGame
 import pt.isel.reversi.core.startNewGame
 import pt.isel.reversi.utils.audio.AudioPool
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 class GamePageViewModelTests {
+
+    fun cleanup(func: suspend () -> Unit) {
+        val conf = loadCoreConfig()
+        File(conf.SAVES_FOLDER).deleteRecursively()
+        runBlocking { func() }
+        File(conf.SAVES_FOLDER).deleteRecursively()
+    }
+
     val game = runBlocking {
         startNewGame(
             side = 4,
@@ -160,6 +171,44 @@ class GamePageViewModelTests {
             assert(true) // Expected exception
         } finally {
             uut.stopPolling()
+        }
+    }
+
+    @Test
+    fun `verify startPolling works correctly with game refresh`() = runTest {
+        cleanup {
+            //Create a fake online game
+            val appState = mutableStateOf(
+                expectedAppState.copy(
+                    game = startNewGame(
+                        side = 4,
+                        players = listOf(Player(type = PieceType.BLACK)),
+                        firstTurn = PieceType.BLACK,
+                        currGameName = "TestGame"
+                    )
+                )
+            )
+            testScheduler.advanceUntilIdle()
+            loadGame(appState.value.game.currGameName!!)
+            testScheduler.advanceUntilIdle()
+            val oldGame = appState.value.game
+
+            // Create the ViewModel
+            val uut = GamePageViewModel(appState, this)
+
+            // Simulate an external move by another player
+            val expectedGame = oldGame.play(uut.getAvailablePlays().first())
+
+            // Start polling and advance time to allow for refresh
+            uut.startPolling()
+            testScheduler.advanceUntilIdle()
+            assert(uut.isPollingActive())
+            uut.stopPolling()
+            testScheduler.advanceUntilIdle()
+            assert(!uut.isPollingActive())
+
+            // Verify that the game state was refreshed
+            assertEquals(expectedGame.gameState, uut.uiState.value.gameState)
         }
     }
 }

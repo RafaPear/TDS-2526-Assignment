@@ -13,16 +13,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.isel.reversi.app.pages.game.utils.DrawBoard
 import pt.isel.reversi.app.pages.lobby.CARD_BG
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.CardStatus
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.PieceType
 
+fun cardTestTag(gameId: String) = "game_card_$gameId"
+
+fun headerBadgeTestTag(gameId: String) = "header_badge_$gameId"
+
+fun scorePanelTestTag(gameId: String) = "score_panel_$gameId"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +49,8 @@ fun GameCard(
     Card(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.shadow(16.dp, RoundedCornerShape(24.dp)),
+        modifier = modifier.shadow(16.dp, RoundedCornerShape(24.dp))
+            .testTag(cardTestTag(name)),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = CARD_BG),
         border = BorderStroke(1.dp, Color.White.copy(0.1f))
@@ -58,23 +66,33 @@ fun GameCard(
         ) {
             HeaderBadge(statusText, statusColor, name)
 
-            BoardPreview(
-                board = state.board, modifier = Modifier.weight(4f).padding(vertical = 12.dp)
+            DrawBoard(
+                false,
+                state,
+                modifier = Modifier.weight(4f),
+                true,
+                {emptyList()},
+                {}
             )
 
-            ScorePanel(Modifier, state.board)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ScorePanel(Modifier.testTag(scorePanelTestTag(name)), state.board)
         }
     }
 }
+
 
 @Composable
 private fun HeaderBadge(statusText: String, statusColor: Color, name: String) {
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .testTag(headerBadgeTestTag(name)),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
+        println(name)
         Text(
             text = name,
             fontSize = 20.sp,

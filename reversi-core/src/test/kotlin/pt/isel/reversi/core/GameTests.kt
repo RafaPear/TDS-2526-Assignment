@@ -18,6 +18,13 @@ import kotlin.test.assertFailsWith
 
 class GameTests {
 
+    fun cleanup(func: suspend () -> Unit) {
+        val conf = loadCoreConfig()
+        File(conf.SAVES_FOLDER).deleteRecursively()
+        runBlocking { func() }
+        File(conf.SAVES_FOLDER).deleteRecursively()
+    }
+
     @Test
     fun `startNewGame with already existing name in storage fails`() {
         cleanup {
@@ -37,13 +44,6 @@ class GameTests {
                 )
             }
         }
-    }
-
-    fun cleanup(func: suspend () -> Unit) {
-        val conf = loadCoreConfig()
-        File(conf.SAVES_FOLDER).deleteRecursively()
-        runBlocking { func() }
-        File(conf.SAVES_FOLDER).deleteRecursively()
     }
 
     @Test
