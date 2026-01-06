@@ -91,7 +91,7 @@ fun SettingsPage(appState: MutableState<AppState>) {
             ) {
 
                 // --- SECÇÃO 1: ÁUDIO ---
-                SettingsSection(title = "Áudio e Som") {
+                SettingsSection(title = "Áudio") {
 
                     val volumePercent = volumeDbToPercent(volume, -20f, 0f)
                     val volumeLabel = if (volume <= -20f) "Mudo" else "$volumePercent%"
@@ -164,8 +164,19 @@ fun SettingsPage(appState: MutableState<AppState>) {
                                 ReversiDropdownMenuItem(
                                     text = theme.name,
                                     onClick = {
+                                        if (theme == currentTheme) {
+                                            themeMenuExpanded = false
+                                            return@ReversiDropdownMenuItem
+                                        }
                                         audioPool.destroy()
                                         appState.setAppState(theme = theme, audioPool = loadGameAudioPool(theme))
+                                        val newAudioPool = appState.value.audioPool
+                                        if (volume <= -20f) {
+                                            newAudioPool.mute(true)
+                                        } else {
+                                            newAudioPool.mute(false)
+                                            newAudioPool.setMasterVolume(volume)
+                                        }
                                         themeMenuExpanded = false
                                     }
                                 )
