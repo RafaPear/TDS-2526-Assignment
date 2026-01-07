@@ -117,10 +117,10 @@ fun ReversiScope.ReversiText(
 fun ReversiScope.ReversiButton(
     text: String,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
     enabled: Boolean = true,
     shape: RoundedCornerShape = RoundedCornerShape(20.dp),
     border: BorderStroke? = null,
+    onClick: () -> Unit,
 ) {
     val theme = getTheme()
     Button(

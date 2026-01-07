@@ -57,17 +57,19 @@ fun ScaffoldView(
                 containerColor = backgroundTopBar,
             ),
             title = {
-                Text(
-                    text = title,
-                    color = theme.textColor,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    autoSize = TextAutoSize.StepBased(
-                        maxFontSize = 50.sp
-                    ),
-                    maxLines = 1,
-                    softWrap = false,
-                )
+                with(scope) {
+                    ReversiText(
+                        text = title,
+                        color = theme.textColor,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        autoSize = TextAutoSize.StepBased(
+                            maxFontSize = 50.sp
+                        ),
+                        maxLines = 1,
+                        softWrap = false,
+                    )
+                }
             },
             navigationIcon = {
                 if (previousPageContent != null) scope.previousPageContent()

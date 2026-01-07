@@ -126,7 +126,7 @@ private fun ReversiScope.PlayerScoreRow(
             Surface(
                 shape = CircleShape,
                 color = if (type == PieceType.BLACK) getTheme().darkPieceColor else getTheme().lightPieceColor,
-                border = BorderStroke(1.dp, if (type == PieceType.BLACK) getTheme().lightPieceColor else getTheme().darkPieceColor),
+                border = BorderStroke(1.dp, getTheme().lightPieceColor),
                 modifier = Modifier.size(24.dp)
             ) {}
 

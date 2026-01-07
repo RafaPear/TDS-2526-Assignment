@@ -6,6 +6,7 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
+import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.app.state.*
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.utils.LOGGER
@@ -36,6 +37,11 @@ fun FrameWindowScope.MakeMenuBar(appState: MutableState<AppState>, windowState: 
             }
             Item("Jogo Atual") {
                 appState.setPage(Page.GAME)
+            }
+            Item("Sair do jogo atual") {
+                runBlocking{ appState.value.game.saveEndGame() }
+                appState.setGame(Game())
+                appState.setPage(Page.MAIN_MENU)
             }
             Separator()
             Item("Sair") {

@@ -5,7 +5,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
@@ -22,6 +24,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -83,6 +86,7 @@ fun ReversiScope.WarningMessage(appState: MutableState<AppState>, modifier: Modi
                 .clip(RoundedCornerShape(12.dp))
                 .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp))
                 .background(warningBackgroundColor)
+                .verticalScroll(rememberScrollState())
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -102,6 +106,9 @@ fun ReversiScope.WarningMessage(appState: MutableState<AppState>, modifier: Modi
                 modifier = Modifier.fillMaxWidth(),
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center,
+                overflow = TextOverflow.Visible,
+                softWrap = true,
+                maxLines = Int.MAX_VALUE
             )
 
             Button(

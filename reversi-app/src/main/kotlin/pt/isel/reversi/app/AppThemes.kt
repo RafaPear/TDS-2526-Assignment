@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 private val darkTheme = AppTheme(
     name = "Dark Default",
-    backgroundMusic = "background-music",
+    backgroundMusic = "WiiParty",
     gameMusic = "MEGALOVANIA",
     placePieceSound = "putPiece",
     textColor = Color(0xFFFFFFFF),
@@ -21,7 +21,7 @@ private val darkTheme = AppTheme(
 
 private val lightTheme = AppTheme(
     name = "Light Default",
-    backgroundMusic = "background-music",
+    backgroundMusic = "WiiParty",
     gameMusic = "MEGALOVANIA",
     placePieceSound = "putPiece",
     textColor = Color(0xFF000000),
@@ -72,7 +72,7 @@ private val spotifyTheme = AppTheme(
 
 private val discordTheme = AppTheme(
     name = "Discord Blurple",
-    backgroundMusic = "background-music",
+    backgroundMusic = "WiiParty",
     gameMusic = "MEGALOVANIA",
     placePieceSound = "putPiece",
     textColor = Color(0xFFFFFFFF),
@@ -89,7 +89,7 @@ private val discordTheme = AppTheme(
 
 private val githubTheme = AppTheme(
     name = "GitHub Dark",
-    backgroundMusic = "background-music",
+    backgroundMusic = "WiiParty",
     gameMusic = "MEGALOVANIA",
     placePieceSound = "putPiece",
     textColor = Color(0xFFC9D1D9),
@@ -106,7 +106,7 @@ private val githubTheme = AppTheme(
 
 private val draculaTheme = AppTheme(
     name = "Dracula",
-    backgroundMusic = "background-music",
+    backgroundMusic = "WiiParty",
     gameMusic = "MEGALOVANIA",
     placePieceSound = "putPiece",
     textColor = Color(0xFFF8F8F2),
@@ -140,7 +140,7 @@ private val cyberpunkTheme = AppTheme(
 
 private val retroTerminalTheme = AppTheme(
     name = "Matrix Terminal",
-    backgroundMusic = "background-music",
+    backgroundMusic = "WiiParty",
     gameMusic = "MEGALOVANIA",
     placePieceSound = "putPiece",
     textColor = Color(0xFF00FF00),
@@ -157,7 +157,7 @@ private val retroTerminalTheme = AppTheme(
 
 private val coffeeTheme = AppTheme(
     name = "Coffee Shop",
-    backgroundMusic = "background-music",
+    backgroundMusic = "WiiParty",
     gameMusic = "MEGALOVANIA",
     placePieceSound = "putPiece",
     textColor = Color(0xFF4E342E),
@@ -174,8 +174,8 @@ private val coffeeTheme = AppTheme(
 
 private val oceanTheme = AppTheme(
     name = "Deep Ocean",
-    backgroundMusic = "background-music",
-    gameMusic = "WiiParty",
+    backgroundMusic = "WiiParty",
+    gameMusic = "MEGALOVANIA",
     placePieceSound = "putPiece",
     textColor = Color(0xFFE0F7FA),
     buttonTextColor = Color(0xFF000000),
@@ -191,7 +191,7 @@ private val oceanTheme = AppTheme(
 
 private val gameboyTheme = AppTheme(
     name = "Retro GameBoy",
-    backgroundMusic = "background-music",
+    backgroundMusic = "WiiParty",
     gameMusic = "MEGALOVANIA",
     placePieceSound = "putPiece",
     textColor = Color(0xFF0F380F),

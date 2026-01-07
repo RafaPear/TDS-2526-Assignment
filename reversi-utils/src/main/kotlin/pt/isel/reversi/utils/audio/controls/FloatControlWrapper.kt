@@ -11,6 +11,7 @@ import javax.sound.sampled.FloatControl
  * @throws IllegalArgumentException if the specified control type is not supported by the Clip.
  * @throws ClassCastException if the control retrieved is not a FloatControl.
  */
+@Suppress("Unused")
 abstract class FloatControlWrapper(clip: Clip, controlType: FloatControl.Type) {
     protected val control: FloatControl = clip.getControl(controlType) as FloatControl
     val defaultValue: Float = control.value
@@ -30,7 +31,9 @@ abstract class FloatControlWrapper(clip: Clip, controlType: FloatControl.Type) {
      * @param value The new value to set for the control.
      */
     fun updateValue(value: Float) {
-        control.value = value.coerceIn(minimumValue, maximumValue)
+        val oldValue = control.value
+        val newValue = value.coerceIn(minimumValue, maximumValue)
+        control.shift(oldValue, newValue, 1000)
     }
 
     /**
@@ -46,7 +49,7 @@ abstract class FloatControlWrapper(clip: Clip, controlType: FloatControl.Type) {
      * Resets the control to its default value.
      */
     fun resetValue() {
-        control.value = defaultValue
+        updateValue(defaultValue)
     }
 
     class MasterVolumeControl(clip: Clip) : FloatControlWrapper(clip, FloatControl.Type.MASTER_GAIN)

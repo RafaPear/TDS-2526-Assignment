@@ -19,8 +19,10 @@ import pt.isel.reversi.app.*
 import pt.isel.reversi.app.gameAudio.loadGameAudioPool
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.setAppState
+import pt.isel.reversi.app.state.setError
 import pt.isel.reversi.app.state.setLoading
 import pt.isel.reversi.core.loadGame
+import pt.isel.reversi.utils.LOGGER
 
 /**
  * Section header composable for organizing settings into logical groups.
@@ -62,7 +64,11 @@ private fun ReversiScope.SettingsSection(
 fun SettingsPage(appState: MutableState<AppState>) {
     val draftState = remember { mutableStateOf(appState.value.copy()) }
     var currentVol by remember {
-        mutableStateOf(appState.value.audioPool.getMasterVolume() ?: 0f)
+        val masterVol = appState.value.audioPool.getMasterVolume()
+        val isMuted = appState.value.audioPool.isPoolMuted()
+
+        if (isMuted) mutableStateOf(-20f)
+        else mutableStateOf(masterVol ?: 0f)
     }
 
     ScaffoldView(
@@ -203,40 +209,31 @@ private suspend fun applySettings(
     draft: AppState,
     volume: Float
 ) {
-    delay(500) // Simulate loading time
     val current = appState.value
-    val themeChangedAudio = draft.theme.backgroundMusic != current.theme.backgroundMusic ||
-            draft.theme.gameMusic != current.theme.gameMusic
-
     val oldTheme = current.theme
 
     val playingAudios = current.audioPool.getPlayingAudios()
 
-    val finalAudioPool = if (themeChangedAudio) {
-        current.audioPool.destroy()
-        loadGameAudioPool(draft.theme)
-    } else current.audioPool
-
-    if (volume <= -20f) {
-        finalAudioPool.mute(true)
-    } else {
-        finalAudioPool.mute(false)
-        finalAudioPool.setMasterVolume(volume)
+    val loadedAudioPool = loadGameAudioPool(draft.theme) { error ->
+        appState.setError(error)
     }
+
+    current.audioPool.merge(loadedAudioPool)
+
+    parseVolume(volume, current)
 
     val currGame = current.game
     val currGameName = currGame.currGameName
     val newGame = if (currGameName != null) {
         currGame.saveEndGame()
         loadGame(currGameName, draft.playerName, currGame.myPiece)
-    }
-    else currGame
+    } else currGame
 
     appState.setAppState(
         game = newGame,
         playerName = draft.playerName,
         theme = draft.theme,
-        audioPool = finalAudioPool
+        audioPool = current.audioPool
     )
 
     for (audio in playingAudios) {
@@ -245,9 +242,23 @@ private suspend fun applySettings(
             oldTheme.gameMusic -> draft.theme.gameMusic
             else -> null
         }
-        if (audioToPlay != null) {
-            if (!finalAudioPool.isPlaying(audioToPlay))
-                finalAudioPool.play(audioToPlay)
+        if (audioToPlay != null && !current.audioPool.isPlaying(audioToPlay)) {
+            current.audioPool.play(audioToPlay)
+            LOGGER.info("Resuming audio: $audioToPlay")
         }
+    }
+
+    val loadedAudios = current.audioPool.pool.map { it.id }
+    LOGGER.info("Loaded audios after applying settings: $loadedAudios")
+
+    delay(500)
+}
+
+private fun parseVolume(volume: Float, current: AppState) {
+    if (volume <= -20f) {
+        current.audioPool.mute(true)
+    } else {
+        current.audioPool.mute(false)
+        current.audioPool.setMasterVolume(volume)
     }
 }

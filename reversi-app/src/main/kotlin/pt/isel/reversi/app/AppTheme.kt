@@ -36,4 +36,10 @@ data class AppTheme(
     val boardSideColor: Color = Color(0xFF000000),
     val darkPieceColor: Color = Color(0xFF000000),
     val lightPieceColor: Color = Color(0xFFFFFFFF),
-)
+) {
+    fun getAudioNames(): List<String> =
+        listOf(backgroundMusic, gameMusic, placePieceSound)
+
+    fun getAudioMusicNames(): List<String> =
+        listOf(backgroundMusic, gameMusic)
+}

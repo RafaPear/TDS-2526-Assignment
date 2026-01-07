@@ -220,18 +220,21 @@ fun ReversiScope.cellView(
 
     }
 }
-
 private fun drawPiece(
     radius: Float,
     center: Offset,
     color: Color,
     drawScope: DrawScope
 ) {
-    val shadowColor = Color.Black.copy(alpha = 0.3f)
+    val depth = radius * 0.3f
+    val shadowOffset = Offset(depth * 2, depth * 2)
+
+    val shadowColor = Color.Black.copy(alpha = 0.25f)
+
     drawScope.drawCircle(
         color = shadowColor,
         radius = radius,
-        center = center + Offset(10f, 10f),
+        center = center + shadowOffset
     )
 
     val sideColor = Color(
@@ -244,12 +247,12 @@ private fun drawPiece(
     drawScope.drawCircle(
         color = sideColor,
         radius = radius,
-        center = center + Offset(4f, 4f),
+        center = center + Offset(depth, depth)
     )
 
     drawScope.drawCircle(
         color = color,
         radius = radius,
-        center = center - Offset(2f, 2f),
+        center = center
     )
 }

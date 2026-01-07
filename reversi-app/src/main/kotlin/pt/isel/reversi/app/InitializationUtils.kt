@@ -72,6 +72,7 @@ fun initializeAppArgs(args: Array<String>): InitializedArgs? {
     if (logToFileName != null) setLoggerFilePath()
 
     val audioEnabled = parsedArgs[noAudioArg] == null
-    val audioPool = if (audioEnabled) loadGameAudioPool(AppThemes.DARK.appTheme) else AudioPool(emptyList())
+    val loadedPool = loadGameAudioPool(AppThemes.DARK.appTheme) {}
+    val audioPool = if (audioEnabled) loadedPool else loadedPool.also { it.mute(true) }
     return InitializedArgs(audioPool)
 }
