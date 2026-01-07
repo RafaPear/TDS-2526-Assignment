@@ -7,6 +7,7 @@ import kotlinx.coroutines.*
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.getStateAudioPool
 import pt.isel.reversi.app.state.setAppState
+import pt.isel.reversi.app.state.setGame
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.utils.LOGGER
@@ -26,10 +27,11 @@ class GamePageViewModel(val appState: MutableState<AppState>, val scope: Corouti
     private var pollingJob: Job? = null
 
     init{
-        LOGGER.info("GamePageViewModel created")
+        LOGGER.info("GamePageViewModel created: ${this@GamePageViewModel}")
     }
-    fun saveAndQuit() {
-        appState.setAppState(game = uiState.value, page = appState.value.backPage)
+
+    fun save() {
+        appState.setGame(game = uiState.value)
     }
 
     fun startPolling() {
@@ -55,9 +57,8 @@ class GamePageViewModel(val appState: MutableState<AppState>, val scope: Corouti
                 LOGGER.info("Game polling cancelled.")
             } catch (e: Exception) {
                 LOGGER.warning("Auto-refreshing game state gave an error ${e.message}")
-                appState.setAppState(error = e, game = _uiState.value)
             } finally {
-                LOGGER.info("Stop auto-refreshing game state coroutine")
+                LOGGER.info("Stop auto-refreshing game state coroutine: ${this@GamePageViewModel}")
             }
         }.also { pollingJob = it }
     }

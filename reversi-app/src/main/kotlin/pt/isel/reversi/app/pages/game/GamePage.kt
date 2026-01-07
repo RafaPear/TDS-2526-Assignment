@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import pt.isel.reversi.app.PreviousPage
 import pt.isel.reversi.app.ScaffoldView
 import pt.isel.reversi.app.state.getStateAudioPool
+import pt.isel.reversi.app.state.setPage
 
 /**
  * Main game page displaying the Reversi board, player scores, and game controls.
@@ -24,7 +25,7 @@ fun GamePage(viewModel: GamePageViewModel, modifier: Modifier = Modifier, freeze
     val game = viewModel.uiState.value
 
     // Launch the game refresh coroutine
-    DisposableEffect(game.currGameName) {
+    DisposableEffect(viewModel) {
         if (game.currGameName != null && game.gameState?.players?.size != 2 && !viewModel.isPollingActive()) {
             viewModel.startPolling()
         }
@@ -40,6 +41,7 @@ fun GamePage(viewModel: GamePageViewModel, modifier: Modifier = Modifier, freeze
 
         onDispose {
             viewModel.stopPolling()
+            viewModel.save()
         }
     }
 
@@ -49,7 +51,7 @@ fun GamePage(viewModel: GamePageViewModel, modifier: Modifier = Modifier, freeze
         appState = appState,
         title = name ?: "Reversi",
         previousPageContent = {
-            PreviousPage { viewModel.saveAndQuit() }
+            PreviousPage { appState.setPage(appState.value.backPage) }
         }
     ) { padding ->
         GamePageView(

@@ -102,6 +102,7 @@ fun ReversiScope.WarningMessage(appState: MutableState<AppState>, modifier: Modi
                 modifier = Modifier.fillMaxWidth(),
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center,
+                maxLines = 5,
             )
 
             Button(

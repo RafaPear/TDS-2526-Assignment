@@ -75,7 +75,9 @@ fun MutableState<AppState>.setAppState(
 
     if (error !is ReversiException && error != null)
         setError(error.toReversiException(ErrorType.CRITICAL))
-
+    else if (error is ReversiException)
+        setError(error)
+    
     value = value.copy(
         game = game,
         audioPool = audioPool,
