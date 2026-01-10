@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.ReversiScope
 import pt.isel.reversi.app.ReversiText
 import pt.isel.reversi.app.getTheme
+import pt.isel.reversi.app.invert
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.storage.GameState
@@ -109,7 +110,7 @@ private fun ReversiScope.PlayerScoreRow(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(if (isTurn) Color.White.copy(alpha = 0.1f) else Color.Transparent)
+            .background(getTheme().textColor.invert().copy(alpha = 0.4f))
             .border(
                 width = if (isTurn) 2.dp else 0.dp,
                 color = if (isTurn) Color.Green.copy(alpha = 0.5f) else Color.Transparent,

@@ -31,10 +31,10 @@ allprojects {
 
         dokkaSourceSets.configureEach {
             documentedVisibilities(
-                VisibilityModifier.Public, // Same for both Kotlin and Java
-                VisibilityModifier.Private, // Same for both Kotlin and Java
-                VisibilityModifier.Protected, // Same for both Kotlin and Java
-                VisibilityModifier.Internal // Kotlin-specific internal modifier
+                VisibilityModifier.Public,
+                VisibilityModifier.Private,
+                VisibilityModifier.Protected,
+                VisibilityModifier.Internal
             )
             val moduleDoc = file("MODULE.md")
             if (moduleDoc.exists()) {
@@ -78,18 +78,31 @@ dependencies {
     dokka(rootProject)
 }
 
+// Copy CLI fat jar
 val reversiCliJar =
     tasks.register<Copy>("copyReversiCliJar") {
         dependsOn(":reversi-cli:build")
         from(project(":reversi-cli").layout.buildDirectory.dir("libs"))
         into(layout.buildDirectory.dir("libs"))
+        include("*.jar")
     }
 
+// Copy App fat jar and native app bundles
 val reversiAppJar =
     tasks.register<Copy>("copyReversiAppJar") {
         dependsOn(":reversi-app:build")
-        from(project(":reversi-app").layout.buildDirectory.dir("libs"))
-        into(layout.buildDirectory.dir("libs"))
+
+        // Copy fat jar
+        from(project(":reversi-app").layout.buildDirectory.dir("libs")) {
+            include("*.jar")
+        }
+
+        // Copy native distributions (the .app, .exe, etc.)
+        from(project(":reversi-app").layout.buildDirectory.dir("compose/binaries/main/app")) {
+            include("**/*")
+        }
+
+        into(layout.buildDirectory.dir("distributions"))
     }
 
 // Garante que os jars dos subprojetos aparecem no build do root

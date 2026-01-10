@@ -82,8 +82,9 @@ fun SettingsPage(appState: AppState) {
     var currentVol by remember {
         val masterVol = appState.audioPool.getMasterVolume()
         val isMuted = appState.audioPool.isPoolMuted()
+        val min = appState.audioPool.getMasterVolumeRange()?.first
 
-        if (isMuted) mutableStateOf(-20f)
+        if (isMuted) mutableStateOf(min ?: -20f)
         else mutableStateOf(masterVol ?: 0f)
     }
 
@@ -272,8 +273,9 @@ private fun ReversiScope.AudioSection(
     onVolumeChange: (Float) -> Unit
 ) {
     SettingsSection(title = "Áudio") {
-        val volumePercent = volumeDbToPercent(currentVol, -20f, 0f)
-        val volumeLabel = if (currentVol <= -20f) "Mudo" else "$volumePercent%"
+        val (minVol, maxVol) = appState.audioPool.getMasterVolumeRange() ?: (-20f to 0f)
+        val volumePercent = volumeDbToPercent(currentVol, minVol, maxVol)
+        val volumeLabel = if (currentVol <= minVol) "Mudo" else "$volumePercent%"
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -285,11 +287,12 @@ private fun ReversiScope.AudioSection(
 
         Slider(
             value = currentVol,
-            valueRange = -20f..0f,
+            valueRange = minVol..maxVol,
             onValueChange = onVolumeChange,
             colors = SliderDefaults.colors(
                 thumbColor = appState.theme.primaryColor,
-                activeTrackColor = appState.theme.primaryColor
+                activeTrackColor = appState.theme.primaryColor,
+                inactiveTrackColor = appState.theme.textColor.copy(alpha = 0.3f)
             )
         )
     }
@@ -430,7 +433,8 @@ private suspend fun applySettings(
 }
 
 private fun parseVolume(volume: Float, current: AppState) {
-    if (volume <= -20f) {
+    val minVol = current.audioPool.getMasterVolumeRange()?.first ?: -20f
+    if (volume <= minVol) {
         current.audioPool.mute(true)
     } else {
         current.audioPool.mute(false)

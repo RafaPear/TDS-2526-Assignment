@@ -1,6 +1,5 @@
 package pt.isel.reversi.app.pages.game
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -57,7 +56,6 @@ fun GamePage(viewModel: GamePageViewModel, modifier: Modifier = Modifier, freeze
     ) { padding ->
         GamePageView(
             modifier = modifier.fillMaxSize()
-                .background(appState.value.theme.backgroundColor)
                 .padding(paddingValues = padding),
             game = game,
             freeze = freeze,

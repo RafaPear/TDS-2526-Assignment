@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.Font
-import pt.isel.reversi.app.pages.MAIN_MENU_AUTO_SIZE_BUTTON_TEXT
+import pt.isel.reversi.app.pages.mainmenu.MAIN_MENU_AUTO_SIZE_BUTTON_TEXT
 import pt.isel.reversi.app.state.AppState
 import reversi.reversi_app.generated.resources.Montserrat_Bold
 import reversi.reversi_app.generated.resources.Montserrat_Regular
@@ -267,3 +267,11 @@ fun ReversiScope.ReversiTextField(
     )
 }
 
+fun Color.invert(): Color {
+    return Color(
+        red = 1f - this.red,
+        green = 1f - this.green,
+        blue = 1f - this.blue,
+        alpha = this.alpha
+    )
+}

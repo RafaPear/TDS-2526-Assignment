@@ -11,7 +11,19 @@ class PlainFormatter : java.util.logging.Formatter() {
             record.sourceMethodName
         )
 
-        return "[${record.level}] ($origin) ${record.message}${System.lineSeparator()}"
+        val instant = java.time.Instant.ofEpochMilli(record.millis)
+        val localTime = java.time.LocalDateTime.ofInstant(
+            instant,
+            java.time.ZoneId.systemDefault()
+        )
+
+        val hour = localTime.hour
+        val minute = localTime.minute
+        val second = localTime.second
+
+        val timestamp = String.format("%02d:%02d:%02d", hour, minute, second)
+
+        return "[${record.level}] $timestamp ($origin) ${record.message}${System.lineSeparator()}"
     }
 
     private fun buildOrigin(className: String?, methodName: String?): String {

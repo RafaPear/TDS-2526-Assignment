@@ -1,8 +1,9 @@
 package pt.isel.reversi.app
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -10,10 +11,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.painterResource
 import pt.isel.reversi.app.exceptions.ErrorMessage
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.setPage
@@ -29,6 +33,7 @@ fun ReversiScope.previousPageContentDefault(appState: AppState) {
         setPage(appState, appState.backPage.value)
     }
 }
+
 
 /**
  * Main scaffold composable providing consistent layout structure for pages.
@@ -53,40 +58,66 @@ fun ScaffoldView(
 ) {
     val theme = appState.theme.value
     val scope = ReversiScope(appState.value)
-    Scaffold(modifier = Modifier.background(theme.backgroundColor), containerColor = Color.Transparent, topBar = {
-        CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = backgroundTopBar,
-            ),
-            title = {
-                with(scope) {
-                    ReversiText(
-                        text = title,
-                        color = theme.textColor,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        autoSize = TextAutoSize.StepBased(
-                            maxFontSize = 50.sp
-                        ),
-                        maxLines = 1,
-                        softWrap = false,
-                    )
-                }
+    val backgroundImage = appState.value.theme.backgroundImage
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Background layer
+
+        // Scaffold layer
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            containerColor = Color.Transparent,
+            topBar = {
+                CenterAlignedTopAppBar(
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = backgroundTopBar,
+                    ),
+                    title = {
+                        with(scope) {
+                            ReversiText(
+                                text = title,
+                                color = theme.textColor,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                                autoSize = TextAutoSize.StepBased(
+                                    maxFontSize = 50.sp
+                                ),
+                                maxLines = 1,
+                                softWrap = false,
+                            )
+                        }
+                    },
+                    navigationIcon = {
+                        if (!appState.value.isLoading) {
+                            if (previousPageContent != null) scope.previousPageContent()
+                            else scope.previousPageContentDefault(appState)
+                        }
+                    }
+                )
             },
-            navigationIcon = {
-                if (!appState.value.isLoading) {
-                    if (previousPageContent != null) scope.previousPageContent()
-                    else scope.previousPageContentDefault(appState)
+            snackbarHost = { appState.value.error?.let { scope.ErrorMessage(appState) } }
+        ) { paddingValues ->
+            with(scope) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    backgroundImage?.let { imageRes ->
+                        Image(
+                            painter = painterResource(imageRes),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .alpha(0.2f),
+                            contentScale = ContentScale.FillHeight
+                        )
+                    }
                 }
-            }
-        )
-    }, snackbarHost = { appState.value.error?.let { scope.ErrorMessage(appState) } }
-    ) { paddingValues ->
-        with(scope) {
-            Box {
-                content(paddingValues)
-                if (appState.value.isLoading) {
-                    Loading(loadingModifier)
+                Box {
+                    content(paddingValues)
+                    if (appState.value.isLoading) {
+                        Loading(loadingModifier)
+                    }
                 }
             }
         }

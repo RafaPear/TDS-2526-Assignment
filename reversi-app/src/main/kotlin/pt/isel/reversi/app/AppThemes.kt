@@ -1,6 +1,9 @@
 package pt.isel.reversi.app
 
 import androidx.compose.ui.graphics.Color
+import reversi.reversi_app.generated.resources.Res
+import reversi.reversi_app.generated.resources.benfica_background
+import reversi.reversi_app.generated.resources.matrix_background
 
 private val darkTheme = AppTheme(
     name = "Dark Default",
@@ -36,174 +39,74 @@ private val lightTheme = AppTheme(
     lightPieceColor = Color(0xFFFFFFFF)
 )
 
-private val youTubeTheme = AppTheme(
-    name = "YouTube Dark",
-    backgroundMusic = "WiiParty",
-    gameMusic = "Drill2",
-    placePieceSound = "putPiece",
-    textColor = Color(0xFFFFFFFF),
-    buttonTextColor = Color(0xFFFFFFFF),
-    backgroundColor = Color(0xFF0F0F0F),
-    primaryColor = Color(0xFFFF0000),
-    secondaryColor = Color(0xFF272727),
-    boardColor = Color(0xFF272727),
-    boardBgColor = Color(0xFF0F0F0F),
-    boardSideColor = Color(0xFFFF0000),
-    darkPieceColor = Color(0xFF000000),
-    lightPieceColor = Color(0xFFFF0000)
-)
-
-private val spotifyTheme = AppTheme(
-    name = "Spotify Vibe",
-    backgroundMusic = "WiiParty",
-    gameMusic = "Drill2",
-    placePieceSound = "putPiece",
-    textColor = Color(0xFFFFFFFF),
-    buttonTextColor = Color(0xFF000000),
-    backgroundColor = Color(0xFF121212),
-    primaryColor = Color(0xFF1DB954),
-    secondaryColor = Color(0xFF282828),
-    boardColor = Color(0xFF1DB954),
-    boardBgColor = Color(0xFF191414),
-    boardSideColor = Color(0xFFFFFFFF),
-    darkPieceColor = Color(0xFF000000),
-    lightPieceColor = Color(0xFFFFFFFF)
-)
-
-private val discordTheme = AppTheme(
-    name = "Discord Blurple",
-    backgroundMusic = "WiiParty",
-    gameMusic = "MEGALOVANIA",
-    placePieceSound = "putPiece",
-    textColor = Color(0xFFFFFFFF),
-    buttonTextColor = Color(0xFFFFFFFF),
-    backgroundColor = Color(0xFF36393F),
-    primaryColor = Color(0xFF5865F2),
-    secondaryColor = Color(0xFF2F3136),
-    boardColor = Color(0xFF40444B),
-    boardBgColor = Color(0xFF202225),
-    boardSideColor = Color(0xFF5865F2),
-    darkPieceColor = Color(0xFF23272A),
-    lightPieceColor = Color(0xFF5865F2)
-)
-
-private val githubTheme = AppTheme(
-    name = "GitHub Dark",
-    backgroundMusic = "WiiParty",
-    gameMusic = "MEGALOVANIA",
-    placePieceSound = "putPiece",
-    textColor = Color(0xFFC9D1D9),
-    buttonTextColor = Color(0xFFFFFFFF),
-    backgroundColor = Color(0xFF0D1117),
-    primaryColor = Color(0xFF238636),
-    secondaryColor = Color(0xFF161B22),
-    boardColor = Color(0xFF21262D),
-    boardBgColor = Color(0xFF0D1117),
-    boardSideColor = Color(0xFF58A6FF),
-    darkPieceColor = Color(0xFF010409),
-    lightPieceColor = Color(0xFF238636)
-)
-
-private val draculaTheme = AppTheme(
-    name = "Dracula",
-    backgroundMusic = "WiiParty",
-    gameMusic = "MEGALOVANIA",
-    placePieceSound = "putPiece",
-    textColor = Color(0xFFF8F8F2),
-    buttonTextColor = Color(0xFF282A36),
-    backgroundColor = Color(0xFF282A36),
-    primaryColor = Color(0xFFBD93F9),
-    secondaryColor = Color(0xFF44475A),
-    boardColor = Color(0xFF6272A4),
-    boardBgColor = Color(0xFF282A36),
-    boardSideColor = Color(0xFFFF79C6),
-    darkPieceColor = Color(0xFF21222C),
-    lightPieceColor = Color(0xFFFF79C6)
-)
-
-private val cyberpunkTheme = AppTheme(
-    name = "Cyberpunk 2077",
-    backgroundMusic = "cyberpunk-background-music",
-    gameMusic = "cyberpunk-game-music",
-    placePieceSound = "putPiece",
-    textColor = Color(0xFF00F0FF),
-    buttonTextColor = Color(0xFF000000),
-    backgroundColor = Color(0xFF000000),
-    primaryColor = Color(0xFFFCEE0A),
-    secondaryColor = Color(0xFF1A1A1A),
-    boardColor = Color(0xFF00F0FF),
-    boardBgColor = Color(0xFF050505),
-    boardSideColor = Color(0xFFFF0099),
-    darkPieceColor = Color(0xFFFCEE0A),
-    lightPieceColor = Color(0xFFFF0099)
-)
-
-private val retroTerminalTheme = AppTheme(
-    name = "Matrix Terminal",
-    backgroundMusic = "WiiParty",
-    gameMusic = "MEGALOVANIA",
+private val matrixTheme = AppTheme(
+    name = "Matrix",
+    backgroundMusic = "matrix-background-music",
+    gameMusic = "matrix-game-music",
     placePieceSound = "putPiece",
     textColor = Color(0xFF00FF00),
     buttonTextColor = Color(0xFF000000),
+    backgroundImage = Res.drawable.matrix_background,
     backgroundColor = Color(0xFF000000),
     primaryColor = Color(0xFF00FF00),
-    secondaryColor = Color(0xFF003300),
-    boardColor = Color(0xFF00FF00),
-    boardBgColor = Color(0xFF001100),
+    secondaryColor = Color(0xFF0A0A0A),
+    boardColor = Color(0xFF003300),
+    boardBgColor = Color(0xFF000000),
     boardSideColor = Color(0xFF00FF00),
     darkPieceColor = Color(0xFF001100),
     lightPieceColor = Color(0xFF00FF00)
 )
 
-private val coffeeTheme = AppTheme(
-    name = "Coffee Shop",
-    backgroundMusic = "WiiParty",
-    gameMusic = "MEGALOVANIA",
+private val cyberpunkTheme = AppTheme(
+    name = "Cyberpunk",
+    backgroundMusic = "cyberpunk-background",
+    gameMusic = "cyberpunk-battle",
     placePieceSound = "putPiece",
-    textColor = Color(0xFF4E342E),
-    buttonTextColor = Color(0xFFFFFFFF),
-    backgroundColor = Color(0xFFD7CCC8),
-    primaryColor = Color(0xFF795548),
-    secondaryColor = Color(0xFFA1887F),
-    boardColor = Color(0xFF5D4037),
-    boardBgColor = Color(0xFF3E2723),
-    boardSideColor = Color(0xFF8D6E63),
-    darkPieceColor = Color(0xFF3E2723),
-    lightPieceColor = Color(0xFFEFEBE9)
-)
-
-private val oceanTheme = AppTheme(
-    name = "Deep Ocean",
-    backgroundMusic = "WiiParty",
-    gameMusic = "MEGALOVANIA",
-    placePieceSound = "putPiece",
-    textColor = Color(0xFFE0F7FA),
+    textColor = Color(0xFF00F0FF),
     buttonTextColor = Color(0xFF000000),
-    backgroundColor = Color(0xFF006064),
-    primaryColor = Color(0xFF00BCD4),
-    secondaryColor = Color(0xFF00838F),
-    boardColor = Color(0xFF4DD0E1),
-    boardBgColor = Color(0xFF004D40),
-    boardSideColor = Color(0xFFB2EBF2),
-    darkPieceColor = Color(0xFF00251A),
-    lightPieceColor = Color(0xFF80DEEA)
+    backgroundColor = Color(0xFF0D0221),
+    primaryColor = Color(0xFFFCEE0A),
+    secondaryColor = Color(0xFF1A0933),
+    boardColor = Color(0xFF2D1B69),
+    boardBgColor = Color(0xFF0D0221),
+    boardSideColor = Color(0xFFFF0099),
+    darkPieceColor = Color(0xFFFCEE0A),
+    lightPieceColor = Color(0xFFFF0099)
 )
 
-private val gameboyTheme = AppTheme(
-    name = "Retro GameBoy",
+private val benficaTheme = AppTheme(
+    name = "Benfica",
+    backgroundMusic = "benfica-background-music",
+    gameMusic = "benfica-game-music",
+    placePieceSound = "benfica-putPiece",
+     backgroundImage = Res.drawable.benfica_background,
+    textColor = Color(0xFFFFFFFF),
+    buttonTextColor = Color(0xFFFFFFFF),
+    backgroundColor = Color(0xFF1A0000),
+    primaryColor = Color(0xFFDC143C),
+    secondaryColor = Color(0xFF2D0000),
+    boardColor = Color(0xFF8B0000),
+    boardBgColor = Color(0xFF1A0000),
+    boardSideColor = Color(0xFFFF4444),
+    darkPieceColor = Color(0xFF330000),
+    lightPieceColor = Color(0xFFFF4444)
+)
+
+private val nordTheme = AppTheme(
+    name = "Nord Aurora",
     backgroundMusic = "WiiParty",
     gameMusic = "MEGALOVANIA",
     placePieceSound = "putPiece",
-    textColor = Color(0xFF0F380F),
-    buttonTextColor = Color(0xFF9BBC0F),
-    backgroundColor = Color(0xFF9BBC0F),
-    primaryColor = Color(0xFF306230),
-    secondaryColor = Color(0xFF8BAC0F),
-    boardColor = Color(0xFF0F380F),
-    boardBgColor = Color(0xFF306230),
-    boardSideColor = Color(0xFF0F380F),
-    darkPieceColor = Color(0xFF0F380F),
-    lightPieceColor = Color(0xFF8BAC0F)
+    textColor = Color(0xFFECEFF4),
+    buttonTextColor = Color(0xFF2E3440),
+    backgroundColor = Color(0xFF2E3440),
+    primaryColor = Color(0xFF88C0D0),
+    secondaryColor = Color(0xFF3B4252),
+    boardColor = Color(0xFF434C5E),
+    boardBgColor = Color(0xFF2E3440),
+    boardSideColor = Color(0xFF88C0D0),
+    darkPieceColor = Color(0xFF4C566A),
+    lightPieceColor = Color(0xFFD8DEE9)
 )
 
 /**
@@ -215,14 +118,8 @@ private val gameboyTheme = AppTheme(
 enum class AppThemes(val appTheme: AppTheme) {
     DARK(darkTheme),
     LIGHT(lightTheme),
-    YOUTUBE(youTubeTheme),
-    SPOTIFY(spotifyTheme),
-    DISCORD(discordTheme),
-    GITHUB(githubTheme),
-    DRACULA(draculaTheme),
+    BENFICA(benficaTheme),
+    MATRIX(matrixTheme),
     CYBERPUNK(cyberpunkTheme),
-    TERMINAL(retroTerminalTheme),
-    COFFEE(coffeeTheme),
-    OCEAN(oceanTheme),
-    GAMEBOY(gameboyTheme);
+    NORD(nordTheme)
 }

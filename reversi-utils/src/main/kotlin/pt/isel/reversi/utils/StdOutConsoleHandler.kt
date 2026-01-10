@@ -1,8 +1,8 @@
 package pt.isel.reversi.utils
 
 import java.util.logging.Handler
-import java.util.logging.LogRecord
 import java.util.logging.Level
+import java.util.logging.LogRecord
 
 class StdOutConsoleHandler : Handler() {
 

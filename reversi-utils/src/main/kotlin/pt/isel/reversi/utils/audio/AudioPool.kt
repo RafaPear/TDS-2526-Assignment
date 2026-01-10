@@ -16,6 +16,14 @@ class AudioPool(startPool: List<AudioWrapper>) {
         LOGGER.info("AudioPool created with ${pool.size} audio tracks")
         resetBalance()
         resetMasterVolume()
+
+        val range = getMasterVolumeRange()
+        if (range != null){
+            val (min, max) = range
+            var halfway = (min + max) / 2
+            halfway -= halfway / 2
+            setMasterVolume(halfway)
+        }
     }
 
     /**
@@ -191,6 +199,15 @@ class AudioPool(startPool: List<AudioWrapper>) {
     }
 
     /**
+     * Gets the master volume range (min and max) of the first audio track in the pool.
+     * @return A Pair containing the minimum and maximum master volume, or null if the pool is empty.
+     */
+    fun getMasterVolumeRange(): Pair<Float, Float>? {
+        val first = pool.firstOrNull() ?: return null
+        return Pair(first.masterGainControl.minimumValue, 0f)
+    }
+
+    /**
      * Resets the master volume of all audio tracks in the pool to the default value.
      */
     fun resetMasterVolume() {
@@ -226,6 +243,15 @@ class AudioPool(startPool: List<AudioWrapper>) {
      */
     fun getBalance(): Float? {
         return pool.firstOrNull()?.balanceControl?.getValue()
+    }
+
+    /**
+     * Gets the balance range (min and max) of the first audio track in the pool.
+     * @return A Pair containing the minimum and maximum balance, or null if the pool is empty.
+     */
+    fun getBalanceRange(): Pair<Float, Float>? {
+        val first = pool.firstOrNull() ?: return null
+        return Pair(first.balanceControl.minimumValue, first.balanceControl.maximumValue)
     }
 
     /**

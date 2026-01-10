@@ -67,8 +67,13 @@ fun ColumnScope.LobbyCarousel(
     LaunchedEffect(pagerState.currentPage, gamesToShow) {
         if (gamesToShow.isEmpty()) return@LaunchedEffect
         val game = gamesToShow.getOrNull(pagerState.currentPage) ?: return@LaunchedEffect
+        val leftGame = gamesToShow.getOrNull(pagerState.currentPage - 1)
+        val rightGame = gamesToShow.getOrNull(pagerState.currentPage + 1)
+
         val gameName = game.currGameName
-        LOGGER.info("lobbyCarousel: Refresh iniciado para $gameName")
+        val leftGameName = leftGame?.currGameName
+        val rightGameName = rightGame?.currGameName
+        LOGGER.info("lobbyCarousel: Refresh iniciado para $gameName, $leftGameName, $rightGameName")
 
         val delayMillis = when (getCardStatus(game, currentGameName)) {
             CardStatus.EMPTY,
@@ -81,10 +86,12 @@ fun ColumnScope.LobbyCarousel(
         try {
             while (isActive) {
                 viewModel.refreshGame(game)
+                if (leftGame != null)  viewModel.refreshGame(leftGame)
+                if (rightGame != null) viewModel.refreshGame(rightGame)
                 delay(delayMillis)
             }
         } finally {
-            LOGGER.info("lobbyCarousel: Refresh terminado para $gameName")
+            LOGGER.info("lobbyCarousel: Refresh terminado para $gameName, $leftGameName, $rightGameName")
         }
     }
 

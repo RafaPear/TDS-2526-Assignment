@@ -32,44 +32,49 @@ dependencies {
     testImplementation(libs.kotlin.test)
 }
 
+
+
 compose.desktop {
     application {
         mainClass = "pt.isel.reversi.app.MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = rootProject.name
+
+            targetFormats(
+                TargetFormat.Dmg,
+                TargetFormat.Msi,
+                TargetFormat.Deb
+            )
+
+            packageName = "reversi"
             packageVersion = rootProject.version.toString()
+
             macOS {
-                dockName = "Reversi App"
-                iconFile.set(project.file("src/main/composeResources/drawable/reversi.png"))
+                dockName = "Reversi"
+                bundleID = "pt.isel.reversi.app"
+
+                // Ícone da aplicação
+                iconFile.set(project.file("src/main/resources/reversi.icns"))
+
+                // Configurações adicionais para o ícone funcionar
+                packageBuildVersion = rootProject.version.toString()
+
+                // Info.plist customizado para forçar o ícone
+                infoPlist {
+                    extraKeysRawXml = """
+                        <key>CFBundleIconFile</key>
+                        <string>reversi.icns</string>
+                        <key>LSApplicationCategoryType</key>
+                        <string>public.app-category.games</string>
+                    """.trimIndent()
+                }
+            }
+
+            // Disable ProGuard for release builds
+            buildTypes.release.proguard {
+                isEnabled.set(false)
             }
         }
-    }
-}
-
-// === Fat Jar executável ===
-tasks.register<Jar>("fatJar") {
-    group = "build"
-    description = "Assembles an executable fat jar including all dependencies."
-
-    archiveBaseName.set("reversi-app")
-    archiveVersion.set("v1.0.1")
-    archiveClassifier.set("")
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    from(sourceSets.main.get().output)
-
-    dependsOn(configurations.runtimeClasspath)
-    from({
-        configurations.runtimeClasspath.get()
-            .filter { it.name.endsWith(".jar") }
-            .map { zipTree(it) }
-    })
-
-    manifest {
-        attributes["Main-Class"] = "pt.isel.reversi.app.MainKt"
     }
 }
 
@@ -77,9 +82,8 @@ kotlin {
     jvmToolchain(21)
 }
 
-// === Usa o fatJar como o jar padrão ===
 tasks {
     build {
-        dependsOn("fatJar")
+        dependsOn("createDistributable")
     }
 }

@@ -12,13 +12,13 @@ import androidx.compose.ui.window.*
 import kotlinx.coroutines.*
 import org.jetbrains.compose.resources.painterResource
 import pt.isel.reversi.app.exceptions.GameNotStartedYet
-import pt.isel.reversi.app.pages.MainMenu
 import pt.isel.reversi.app.pages.NewGamePage
 import pt.isel.reversi.app.pages.SettingsPage
 import pt.isel.reversi.app.pages.game.GamePage
 import pt.isel.reversi.app.pages.game.GamePageViewModel
 import pt.isel.reversi.app.pages.lobby.LobbyMenu
 import pt.isel.reversi.app.pages.lobby.LobbyViewModel
+import pt.isel.reversi.app.pages.mainmenu.MainMenu
 import pt.isel.reversi.app.state.*
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.exceptions.ErrorType
@@ -35,9 +35,9 @@ import java.lang.System.setProperty
  * @param args Optional command-line arguments forwarded to initialization.
  */
 fun main(args: Array<String>) {
+    setProperty("apple.awt.application.name", "Reversi-DEV")
     val initializedArgs = initializeAppArgs(args) ?: return
     val (audioPool) = initializedArgs
-    setProperty("apple.awt.application.name", "Reversi-DEV")
 
     application {
         val windowState = rememberWindowState(
