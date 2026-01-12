@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.*
 import pt.isel.reversi.app.state.Page
-import pt.isel.reversi.app.state.getStateAudioPool
 import pt.isel.reversi.utils.TRACKER
 
 val MAIN_MENU_AUTO_SIZE_BUTTON_TEXT =
@@ -26,13 +25,9 @@ fun ReversiScope.MainMenu(
     onLeave: () -> Unit,
 ) {
     TRACKER.trackPageEnter()
-    LaunchedEffect(appState.page) {
-        val audioPool = getStateAudioPool(appState)
-        val theme = appState.theme
-        if (!audioPool.isPlaying(theme.backgroundMusic)) {
-            audioPool.stopAll()
-            audioPool.play(theme.backgroundMusic)
-        }
+    //TODO: Rever esta corroutina
+    LaunchedEffect(appState.pagesState.page) {
+        viewModel.playMenuAudio()
     }
 
     ScaffoldView(

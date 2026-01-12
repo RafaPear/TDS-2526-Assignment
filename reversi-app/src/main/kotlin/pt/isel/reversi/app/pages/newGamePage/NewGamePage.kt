@@ -13,15 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
 import pt.isel.reversi.app.*
-import pt.isel.reversi.app.exceptions.NoPieceSelected
 import pt.isel.reversi.core.Game
-import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
-import pt.isel.reversi.core.startNewGame
-import pt.isel.reversi.core.storage.MatchPlayers
-import pt.isel.reversi.utils.LOGGER
 
 /**
  * New game page for creating a local game with piece selection.
@@ -34,10 +28,9 @@ fun ReversiScope.NewGamePage(
     viewModel: NewGameViewModel,
     playerNameChange: (String) -> Unit,
     onLeave: () -> Unit,
-    createGame: (Game) -> Unit,
 ) {
-    val coroutineAppScope = rememberCoroutineScope()
     val title = "Novo Jogo"
+
     ScaffoldView(
         setError = { error -> viewModel.setError(error) },
         error = viewModel.uiState.value.screenState.error,
@@ -48,42 +41,7 @@ fun ReversiScope.NewGamePage(
         }
     ) { padding ->
         NewGamePageView(Modifier.padding(padding), playerNameChange) { game, boardSize ->
-            val currGameName = game.currGameName
-
-            val myPiece: PieceType = game.myPiece ?: run {
-                viewModel.setError(NoPieceSelected())
-                return@NewGamePageView
-            }
-
-            coroutineAppScope.launch {
-                try {
-                    val newGame = if (currGameName.isNullOrBlank()) {
-                        startNewGame(
-                            side = boardSize,
-                            players = MatchPlayers(
-                                Player(PieceType.BLACK),
-                                Player(PieceType.WHITE)
-                            ),
-                            firstTurn = myPiece,
-                        )
-                    } else {
-                        val name = appState.playerName ?: myPiece.name
-                        startNewGame(
-                            side = boardSize,
-                            players = MatchPlayers(
-                                Player(myPiece, name = name)
-                            ),
-                            firstTurn = myPiece,
-                            currGameName = currGameName.trim(),
-                        )
-                    }
-
-                    LOGGER.info("Novo jogo '${currGameName?.ifBlank { "(local)" } ?: "(local)"} ' iniciado.")
-                    createGame(newGame)
-                } catch (e: Exception) {
-                    viewModel.setError(e)
-                }
-            }
+            viewModel.tryCreateGame(game, boardSize)
         }
     }
 }

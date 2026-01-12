@@ -40,8 +40,9 @@ class GamePageViewModel(
     private val scope: CoroutineScope,
     private val setGame: (Game) -> Unit,
     private val audioPlayMove: () -> Unit,
-    globalError: ReversiException? = null,
-): ViewModel {
+    private val globalError: ReversiException? = null,
+    private val setGlobalError: (Exception?) -> Unit,
+) : ViewModel {
     private val _uiState = mutableStateOf(
         GameUiState(
             game = game,
@@ -62,7 +63,10 @@ class GamePageViewModel(
     }
 
     override fun setError(error: Exception?) {
-        _uiState.setError(error)
+        if (globalError != null) {
+            setGlobalError(error)
+        } else
+            _uiState.setError(error)
     }
 
     fun startPolling() {

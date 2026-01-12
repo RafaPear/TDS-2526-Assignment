@@ -29,8 +29,9 @@ class SettingsViewModel(
     private val setTheme: (AppTheme) -> Unit,
     private val setPlayerName: (String?) -> Unit,
     private val audioPool: AudioPool,
-    globalError: ReversiException? = null
-): ViewModel {
+    private val globalError: ReversiException? = null,
+    private val setGlobalError: (Exception?) -> Unit,
+) : ViewModel {
     private val _uiState = mutableStateOf(
         SettingsUiState(
             screenState = ScreenState(error = globalError)
@@ -40,7 +41,10 @@ class SettingsViewModel(
     override val uiState: State<SettingsUiState> = _uiState
 
     override fun setError(error: Exception?) =
-        _uiState.setError(error)
+        if (globalError != null) {
+            setGlobalError(error)
+        } else
+            _uiState.setError(error)
 
     suspend fun applySettings(
         oldTheme: AppTheme,

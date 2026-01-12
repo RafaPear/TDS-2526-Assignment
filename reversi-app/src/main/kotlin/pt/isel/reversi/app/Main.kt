@@ -59,18 +59,16 @@ fun main(args: Array<String>) {
 
         // start storage health check coroutine
 
-        val pageState = remember { mutableStateOf(Page.MAIN_MENU) }
-        val backPageState = remember { mutableStateOf(Page.NONE) }
         val themeState = remember { mutableStateOf(AppThemes.DARK.appTheme) }
         val game = remember { mutableStateOf(Game()) }
         val audioPool = remember { mutableStateOf(initializedArgs.audioPool) }
         val playerName = remember { mutableStateOf<String?>(null) }
         val globalError = remember { mutableStateOf<ReversiException?>(null) }
+        val pagesState = remember { mutableStateOf(PagesState(Page.MAIN_MENU, Page.NONE)) }
 
         val appState = AppState(
             game = game.value,
-            page = pageState.value,
-            backPage = backPageState.value,
+            pagesState = pagesState.value,
             audioPool = audioPool.value,
             theme = themeState.value,
             globalError = globalError.value,
@@ -100,7 +98,7 @@ fun main(args: Array<String>) {
 
                 LOGGER.info("Cancelling application coroutines...")
                 appJob.cancel()
-                pageState.setPage(Page.NONE)
+                pagesState.setPage(Page.NONE)
                 runBlocking {
                     LOGGER.info("Waiting for application coroutines to finish...")
                     appJob.join()
@@ -143,7 +141,7 @@ fun main(args: Array<String>) {
             MakeMenuBar(
                 appState,
                 windowState,
-                setPage = { pageState.setPage(it) },
+                setPage = { pagesState.setPage(it) },
                 setGame = { game.setGame(it) },
                 setTheme = { themeState.value = it },
                 setGlobalError = {
@@ -153,16 +151,22 @@ fun main(args: Array<String>) {
 
             val lastLoggedPage = remember { mutableStateOf<Page?>(null) }
 
-            val currentPage = pageState.value
+            val currentPage = pagesState.value.page
 
             // Create one ViewModel per page change
             val currentViewModel: ViewModel? = remember(currentPage, globalError.value) {
                 when (currentPage) {
-                    Page.MAIN_MENU -> MainMenuViewModel(scope = scope, globalError = globalError.value)
+                    Page.MAIN_MENU -> MainMenuViewModel(
+                        appState,
+                        globalError = globalError.value,
+                        setGlobalError = { globalError.setGlobalError(it) },
+                    )
+
                     Page.GAME -> GamePageViewModel(
                         game.value,
                         globalError = globalError.value,
                         scope = scope,
+                        setGlobalError = { globalError.setGlobalError(it) },
                         audioPlayMove = {
                             audioPool.value.run {
                                 stop(themeState.value.placePieceSound)
@@ -175,6 +179,7 @@ fun main(args: Array<String>) {
                     Page.SETTINGS -> SettingsViewModel(
                         scope,
                         setTheme = { themeState.value = it },
+                        setGlobalError = { globalError.setGlobalError(it) },
                         setPlayerName = {
                             Snapshot.withMutableSnapshot {
                                 playerName.value = it
@@ -192,15 +197,32 @@ fun main(args: Array<String>) {
                         globalError = globalError.value
                     )
 
-                    Page.ABOUT -> AboutPageViewModel(scope, globalError.value)
-                    Page.NEW_GAME -> NewGameViewModel(scope, globalError.value)
+                    Page.ABOUT -> AboutPageViewModel(
+                        globalError.value,
+                        setGlobalError = { globalError.setGlobalError(it) },
+                    )
+
+                    Page.NEW_GAME -> NewGameViewModel(
+                        scope,
+                        playerName.value,
+                        globalError.value,
+                        setGlobalError = { globalError.setGlobalError(it) },
+                        createGame = { newGame ->
+                            Snapshot.withMutableSnapshot {
+                                game.setGame(newGame)
+                                pagesState.setPage(Page.GAME, backPage = Page.MAIN_MENU)
+                            }
+                        }
+                    )
+
                     Page.LOBBY -> LobbyViewModel(
                         scope = scope,
                         appState = appState,
+                        setGlobalError = { globalError.setGlobalError(it) },
                         pickGame = {
                             Snapshot.withMutableSnapshot {
                                 game.setGame(it)
-                                pageState.setPage(Page.GAME)
+                                pagesState.setPage(Page.GAME, backPage = Page.MAIN_MENU)
                             }
                         },
                         globalError = globalError.value,
@@ -218,13 +240,13 @@ fun main(args: Array<String>) {
                 lastLoggedPage.value = currentPage
             }
 
-            AppScreenSwitcher(pageState.value, backPageState.value, themeState.value) { currentPage ->
+            AppScreenSwitcher(pagesState.value, themeState.value) { currentPage ->
                 with(ReversiScope(appState)) {
                     when (currentPage) {
                         Page.MAIN_MENU -> if (currentViewModel is MainMenuViewModel) {
                             MainMenu(
                                 viewModel = currentViewModel,
-                                setPage = { pageState.setPage(it) },
+                                setPage = { pagesState.setPage(it) },
                                 onLeave = {}
                             )
                         }
@@ -235,7 +257,7 @@ fun main(args: Array<String>) {
                                 onLeave = {
                                     Snapshot.withMutableSnapshot {
                                         game.setGame(it)
-                                        pageState.setPage(Page.MAIN_MENU)
+                                        pagesState.setPage(Page.MAIN_MENU)
                                     }
                                 }
                             )
@@ -245,7 +267,7 @@ fun main(args: Array<String>) {
                             SettingsPage(
                                 viewModel = currentViewModel,
                                 onLeave = {
-                                    pageState.setPage(Page.MAIN_MENU)
+                                    pagesState.setPage(pagesState.value.backPage)
                                 },
                             )
                         }
@@ -254,7 +276,7 @@ fun main(args: Array<String>) {
                             AboutPage(
                                 viewModel = currentViewModel,
                                 onLeave = {
-                                    pageState.setPage(Page.MAIN_MENU)
+                                    pagesState.setPage(pagesState.value.backPage)
                                 }
                             )
                         }
@@ -264,13 +286,7 @@ fun main(args: Array<String>) {
                                 viewModel = currentViewModel,
                                 playerNameChange = { name -> playerName.value = name },
                                 onLeave = {
-                                    pageState.setPage(Page.MAIN_MENU)
-                                },
-                                createGame = { newGame ->
-                                    Snapshot.withMutableSnapshot {
-                                        game.setGame(newGame)
-                                        pageState.setPage(Page.GAME)
-                                    }
+                                    pagesState.setPage(Page.MAIN_MENU)
                                 }
                             )
                         }
@@ -278,7 +294,9 @@ fun main(args: Array<String>) {
                         Page.LOBBY -> if (currentViewModel is LobbyViewModel) {
                             LobbyMenu(
                                 currentViewModel,
-                                onLeave = { pageState.setPage(Page.MAIN_MENU) }
+                                onLeave = {
+                                    pagesState.setPage(Page.MAIN_MENU)
+                                }
                             )
                         }
 

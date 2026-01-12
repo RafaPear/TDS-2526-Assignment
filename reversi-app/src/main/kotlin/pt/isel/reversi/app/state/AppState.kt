@@ -14,8 +14,7 @@ import pt.isel.reversi.utils.audio.AudioPool
  */
 data class AppState(
     val game: Game,
-    val page: Page,
-    val backPage: Page,
+    val pagesState: PagesState,
     val audioPool: AudioPool,
     val globalError: ReversiException?,
     val theme: AppTheme,
@@ -25,8 +24,7 @@ data class AppState(
         // Empty AppState for initialization
         fun empty(): AppState = AppState(
             game = Game(),
-            page = Page.MAIN_MENU,
-            backPage = Page.MAIN_MENU,
+            pagesState = PagesState(Page.MAIN_MENU, Page.NONE),
             audioPool = AudioPool(emptyList()),
             globalError = null,
             theme = AppThemes.DARK.appTheme,
@@ -59,3 +57,8 @@ interface ViewModel {
 
     fun setError(error: Exception?)
 }
+
+data class PagesState(
+    val page: Page,
+    val backPage: Page,
+)

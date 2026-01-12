@@ -7,6 +7,7 @@ import pt.isel.reversi.app.ReversiScope
 import pt.isel.reversi.app.pages.game.*
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.Page
+import pt.isel.reversi.app.state.PagesState
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
@@ -29,7 +30,7 @@ class GamePageTests {
 
     val appState = AppState.empty().copy(
         game = game,
-        page = Page.GAME
+        pagesState = PagesState(Page.GAME, Page.NONE)
     )
 
     @Test
@@ -37,7 +38,7 @@ class GamePageTests {
 
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GamePageViewModel(game, scope, {},{ },)
+            val gameViewModel = GamePageViewModel(game, scope, {},{ }, null,{})
             ReversiScope(appState).GamePage(gameViewModel, onLeave = { })
         }
 
@@ -66,7 +67,7 @@ class GamePageTests {
     fun `check if player score not change if freeze is true`() = runComposeUiTest {
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GamePageViewModel(game, scope, {} ,{ },)
+            val gameViewModel = GamePageViewModel(game, scope, {} ,{ },null,{})
             ReversiScope(appState).GamePage(gameViewModel, onLeave = { }, freeze = true)
         }
 
@@ -95,7 +96,7 @@ class GamePageTests {
 
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GamePageViewModel(game, scope, { }, {})
+            val gameViewModel = GamePageViewModel(game, scope, { }, {}, null,{})
             ReversiScope(appState).GamePage(gameViewModel, onLeave = { })
         }
 
@@ -131,7 +132,7 @@ class GamePageTests {
 
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GamePageViewModel(game, scope, { }, { })
+            val gameViewModel = GamePageViewModel(game, scope, { }, { }, null,{})
             ReversiScope(appState).GamePage(gameViewModel, onLeave = { }, freeze = true)
         }
 
@@ -167,7 +168,7 @@ class GamePageTests {
 
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GamePageViewModel(game, scope, { gameSaved = it }, { })
+            val gameViewModel = GamePageViewModel(game, scope, { gameSaved = it }, { }, null,{})
 
             ReversiScope(appState).GamePage(
                 viewModel = gameViewModel,

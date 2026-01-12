@@ -101,6 +101,7 @@ fun ReversiScope.AnimatedBackground() {
         }
     }
 }
+
 private fun createNewPiece(canAddSpecial: Boolean): MovingPiece {
     val size = Random.nextInt(20, 60).toFloat()
 

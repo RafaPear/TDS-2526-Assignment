@@ -2,7 +2,6 @@ package pt.isel.reversi.app.pages.aboutPage
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import kotlinx.coroutines.CoroutineScope
 import pt.isel.reversi.app.state.ScreenState
 import pt.isel.reversi.app.state.UiState
 import pt.isel.reversi.app.state.ViewModel
@@ -17,9 +16,9 @@ data class AboutUiState(
 }
 
 class AboutPageViewModel(
-    scope: CoroutineScope,
-    globalError: ReversiException? = null
-): ViewModel {
+    private val globalError: ReversiException? = null,
+    private val setGlobalError: (Exception?) -> Unit,
+    ) : ViewModel {
     private val _uiState = mutableStateOf(
         AboutUiState(
             screenState = ScreenState(error = globalError)
@@ -28,5 +27,7 @@ class AboutPageViewModel(
     override val uiState: State<AboutUiState> = _uiState
 
     override fun setError(error: Exception?) =
-        _uiState.setError(error)
-}
+        if (globalError != null) {
+            setGlobalError(error)
+        } else
+            _uiState.setError(error)}

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import pt.isel.reversi.app.state.Page
+import pt.isel.reversi.app.state.PagesState
 
 /**
  * Central component managing transitions between pages in the application.
@@ -26,13 +27,13 @@ import pt.isel.reversi.app.state.Page
 @Composable
 @Suppress("unused")
 fun AppScreenSwitcher(
-    targetPage: Page,
-    backPage: Page,
+    pagesState: PagesState,
     theme: AppTheme,
     contentAlignment: androidx.compose.ui.Alignment = androidx.compose.ui.Alignment.TopStart,
     switchAction: @Composable (BoxScope.(page: Page) -> Unit)
 ) {
     val duration = 500
+    val targetPage = pagesState.page
 
     AnimatedContent(
         targetState = targetPage,

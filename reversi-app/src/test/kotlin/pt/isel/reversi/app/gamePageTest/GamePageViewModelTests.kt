@@ -29,7 +29,8 @@ class GamePageViewModelTests {
             game,
             this,
             { },
-            {}
+            {},
+            null,{}
         )
 
         // Verify initial state
@@ -39,7 +40,7 @@ class GamePageViewModelTests {
 
     @Test
     fun `verify that get available plays works correctly`() = runTest {
-        val uut = GamePageViewModel(game, this, { }, {})
+        val uut = GamePageViewModel(game, this, { }, {}, null,{})
 
         val availablePlays = uut.getAvailablePlays()
         val expectedPlays = game.getAvailablePlays()
@@ -49,7 +50,7 @@ class GamePageViewModelTests {
 
     @Test
     fun `verify that set target mode works correctly`() = runTest {
-        val uut = GamePageViewModel(game, this, { }, {})
+        val uut = GamePageViewModel(game, this, { }, {}, null,{})
 
         val initialTarget = uut.uiState.value.game.target
         uut.setTarget(!initialTarget)
@@ -63,6 +64,8 @@ class GamePageViewModelTests {
             game,
             this,
             { },
+            {},
+            null,
             {}
         )
 
@@ -73,7 +76,7 @@ class GamePageViewModelTests {
 
     @Test
     fun `verify polling control methods work`() = runTest {
-        val uut = GamePageViewModel(game, this, { }, {})
+        val uut = GamePageViewModel(game, this, { }, {}, null,{})
 
         // Initially no polling
         assertEquals(false, uut.isPollingActive())
@@ -84,7 +87,7 @@ class GamePageViewModelTests {
 
     @Test
     fun `verify that starting polling twice throws exception`() = runTest {
-        val uut = GamePageViewModel(game, this, { }, {})
+        val uut = GamePageViewModel(game, this, { }, {}, null,{})
         uut.startPolling()
         try {
             uut.startPolling()

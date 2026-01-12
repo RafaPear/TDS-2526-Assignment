@@ -33,7 +33,7 @@ data class LobbyLoadedState(
  * @property canRefresh Whether the refresh button is enabled.
  */
 data class LobbyUiState(
-    val gameStates: List<LobbyLoadedState>  = emptyList(),
+    val gameStates: List<LobbyLoadedState> = emptyList(),
     val lobbyState: LobbyState = LobbyState.NONE,
     val selectedGame: LobbyLoadedState? = null,
     val canRefresh: Boolean = false,
@@ -60,8 +60,9 @@ class LobbyViewModel(
     val scope: CoroutineScope,
     val appState: AppState,
     val pickGame: (Game) -> Unit,
-    globalError: ReversiException? = null,
-): ViewModel {
+    private val globalError: ReversiException? = null,
+    private val setGlobalError: (Exception?) -> Unit,
+) : ViewModel {
     val _uiState = mutableStateOf(
         LobbyUiState(
             screenState = ScreenState(error = globalError)
@@ -84,7 +85,10 @@ class LobbyViewModel(
     }
 
     override fun setError(error: Exception?) {
-        _uiState.setError(error)
+        if (globalError != null) {
+            setGlobalError(error)
+        } else
+            _uiState.setError(error)
     }
 
     private suspend fun loadGamesAndUpdateState() {
@@ -126,6 +130,7 @@ class LobbyViewModel(
                 lobbyState = LobbyState.EMPTY,
                 canRefresh = false,
             )
+
         }
     }
 
@@ -144,7 +149,9 @@ class LobbyViewModel(
         scope.launch {
             try {
                 loadGamesAndUpdateState()
-                while (isActive) { pollLobbyUpdates() }
+                while (isActive) {
+                    pollLobbyUpdates()
+                }
                 throw IllegalStateException("Polling coroutine ended unexpectedly")
             } catch (_: CancellationException) {
                 LOGGER.info("Lobby polling cancelled.")
@@ -235,7 +242,7 @@ class LobbyViewModel(
                 val freeType = state.players.getFreeType()
                 if (freeType == null) {
                     LOGGER.warning("Jogo corrompido selecionado: $name")
-                    _uiState.setError( GameCorrupted("No available piece types in the selected game: $name."))
+                    _uiState.setError(GameCorrupted("No available piece types in the selected game: $name."))
                     return null
                 }
             }

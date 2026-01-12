@@ -13,17 +13,24 @@ import pt.isel.reversi.utils.LOGGER
  * @param backPage The new back page (auto-calculated if null).
  * @param backPageMutable The mutable state for the back page.
  */
-fun MutableState<Page>.setPage(page: Page, backPage: Page? = null, backPageMutable: MutableState<Page>? = null) {
-    if (page == value) {
+fun MutableState<PagesState>.setPage(page: Page, backPage: Page? = null) {
+    if (page == value.page) {
         LOGGER.info("Page is the same: ${page.name}, no changes made")
         return
     }
 
-    val newBackPage = if (page == Page.MAIN_MENU) Page.NONE else backPage ?: value
-    LOGGER.info("Set page ${page.name}")
-    value = page
-    if (backPage != null)
-        backPageMutable?.value = newBackPage
+    val newBackPage =
+        if (page == Page.MAIN_MENU) {
+            Page.NONE
+        } else {
+            backPage ?: value.page
+        }
+
+    LOGGER.info("Set page ${page.name}, backPage: ${newBackPage.name}")
+    value = value.copy(
+        page = page,
+        backPage = newBackPage
+    )
 }
 
 /**
@@ -68,4 +75,12 @@ fun <T : UiState> MutableState<T>.setError(error: Exception?, type: ErrorType = 
     val newScreenState = value.screenState.copy(error = newError)
     @Suppress("UNCHECKED_CAST")
     value = value.updateScreenState(newScreenState) as T
+}
+
+fun MutableState<ReversiException?>.setGlobalError(error: Exception?, type: ErrorType = ErrorType.CRITICAL) {
+    LOGGER.info("Set global error: ${error?.message ?: "null"}")
+    val newError = error as? ReversiException ?: error?.toReversiException(type)
+
+    @Suppress("UNCHECKED_CAST")
+    value = newError
 }
