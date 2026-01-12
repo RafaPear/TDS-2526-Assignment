@@ -1,7 +1,7 @@
 package pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel
 
 import androidx.compose.ui.graphics.Color
-import pt.isel.reversi.core.Game
+import pt.isel.reversi.app.pages.lobby.LobbyLoadedState
 
 /**
  * Enumeration of possible status states for game cards in the lobby carousel.
@@ -34,17 +34,16 @@ enum class CardStatus(val text: String, val color: Color) {
  * @param currentGameName The name of the currently active game.
  * @return The CardStatus representing the game's state.
  */
-fun getCardStatus(game: Game, currentGameName: String?): CardStatus {
+fun getCardStatus(game: LobbyLoadedState, currentGameName: String?): CardStatus {
     val gameState = game.gameState
 
     return when {
-        gameState == null -> CardStatus.CORRUPTED
-        currentGameName == game.currGameName ->
+        currentGameName == game.name ->
             CardStatus.CURRENT_GAME
 
-        gameState.players.size == 2 -> CardStatus.EMPTY
-        gameState.players.size == 1 -> CardStatus.WAITING_FOR_PLAYERS
-        gameState.players.isEmpty() -> CardStatus.FULL
+        gameState.players.isFull() -> CardStatus.FULL
+        gameState.players.isEmpty() -> CardStatus.EMPTY
+        gameState.players.isNotEmpty() -> CardStatus.WAITING_FOR_PLAYERS
         else -> CardStatus.CORRUPTED
     }
 }

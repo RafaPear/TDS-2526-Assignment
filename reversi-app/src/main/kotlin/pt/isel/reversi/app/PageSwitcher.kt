@@ -9,40 +9,48 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.Page
 
 /**
  * Central component managing transitions between pages in the application.
  * Slides right (forward) when navigating to higher-level pages, left (backward) when returning.
  *
- * @param appState Global application state containing current page and theme.
+ * @param targetPage The current/target page to display.
+ * @param backPage The previous page (kept for compatibility).
+ * @param theme The current app theme for styling.
+ * @param contentAlignment How to align overlapping content during transition.
  * @param switchAction Lambda defining content for each page within the animation container.
  */
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun AppScreenSwitcher(appState: MutableState<AppState>, switchAction: @Composable (BoxScope.(page: Page) -> Unit)) {
-    val targetPage = appState.value.page
-    val theme = appState.value.theme
+@Suppress("unused")
+fun AppScreenSwitcher(
+    targetPage: Page,
+    backPage: Page,
+    theme: AppTheme,
+    contentAlignment: androidx.compose.ui.Alignment = androidx.compose.ui.Alignment.TopStart,
+    switchAction: @Composable (BoxScope.(page: Page) -> Unit)
+) {
+    val duration = 500
 
     AnimatedContent(
         targetState = targetPage,
         transitionSpec = {
             val forward = targetPage.level > initialState.level
-
-            val duration = 500
             val iOSEasing = CubicBezierEasing(0.22f, 1f, 0.36f, 1f)
-
             if (forward) reversiGoInAnimation(duration, iOSEasing)
             else reversiGoOutAnimation(duration, iOSEasing)
         },
         modifier = Modifier.fillMaxSize().background(theme.backgroundColor),
-        label = "PageTransition"
+        label = "PageTransition",
+        contentAlignment = contentAlignment,
+        contentKey = { it }
     ) { page ->
         Box(modifier = Modifier.fillMaxSize()) {
-            if (page != appState.value.backPage || appState.value.page == Page.MAIN_MENU) switchAction(page)
+            if (page == targetPage || page == Page.MAIN_MENU) {
+                switchAction(page)
+            }
         }
     }
 }

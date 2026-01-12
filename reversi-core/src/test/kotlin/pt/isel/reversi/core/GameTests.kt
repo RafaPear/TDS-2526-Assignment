@@ -10,6 +10,8 @@ import pt.isel.reversi.core.exceptions.InvalidGameException
 import pt.isel.reversi.core.exceptions.InvalidNameAlreadyExists
 import pt.isel.reversi.core.exceptions.InvalidPlayException
 import pt.isel.reversi.core.storage.GameState
+import pt.isel.reversi.core.storage.MatchPlayers
+import pt.isel.reversi.utils.LOGGER
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,9 +22,9 @@ class GameTests {
 
     fun cleanup(func: suspend () -> Unit) {
         val conf = loadCoreConfig()
-        File(conf.SAVES_FOLDER).deleteRecursively()
+        File(conf.savesPath).deleteRecursively()
         runBlocking { func() }
-        File(conf.SAVES_FOLDER).deleteRecursively()
+        File(conf.savesPath).deleteRecursively()
     }
 
     @Test
@@ -30,7 +32,7 @@ class GameTests {
         cleanup {
             startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK)),
+                players = MatchPlayers(Player(PieceType.BLACK)),
                 firstTurn = PieceType.BLACK,
                 currGameName = "existingGame",
             )
@@ -38,7 +40,7 @@ class GameTests {
             assertFailsWith<InvalidNameAlreadyExists> {
                 startNewGame(
                     side = 4,
-                    players = listOf(Player(PieceType.WHITE)),
+                    players = MatchPlayers(Player(PieceType.WHITE)),
                     firstTurn = PieceType.WHITE,
                     currGameName = "existingGame",
                 )
@@ -69,7 +71,7 @@ class GameTests {
         cleanup {
             val uut = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.WHITE)),
+                players = MatchPlayers(Player(PieceType.WHITE)),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
             )
@@ -92,7 +94,7 @@ class GameTests {
         cleanup {
             val uut = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK)),
+                players = MatchPlayers(Player(PieceType.BLACK)),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
             )
@@ -119,9 +121,9 @@ class GameTests {
                 gameState = GameState(
                     lastPlayer = PieceType.BLACK,
                     board = expectedBoard,
-                    players = listOf(
-                        Player(PieceType.BLACK, 4),
-                        Player(PieceType.WHITE, 1)
+                    players = MatchPlayers(
+                        Player(PieceType.BLACK, points = 4),
+                        Player(PieceType.WHITE, points = 1)
                     )
                 ),
                 target = false,
@@ -130,10 +132,12 @@ class GameTests {
 
             val uut = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK), Player(PieceType.WHITE)),
+                players = MatchPlayers(Player(PieceType.BLACK), Player(PieceType.WHITE)),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
             ).play(Coordinate(1, 2))
+
+            LOGGER.info { "Expected Game State:\n${expectedGame.gameState}\nUUT Game State:\n${uut.gameState}" }
 
             assert(expectedGame.gameState == uut.gameState)
         }
@@ -155,7 +159,7 @@ class GameTests {
 
             val uut = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK), Player(PieceType.WHITE)),
+                players = MatchPlayers(Player(PieceType.BLACK), Player(PieceType.WHITE)),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
             )
@@ -174,9 +178,9 @@ class GameTests {
             val uut = Game(
                 target = false,
                 gameState = GameState(
-                    players = emptyList(),
+                    players = MatchPlayers(),
                     lastPlayer = PieceType.BLACK,
-                    board = Board(4).startPieces()
+                    board = Board(4).startPieces(),
                 ),
                 currGameName = null,
             )
@@ -193,9 +197,9 @@ class GameTests {
             var uut = Game(
                 target = false,
                 gameState = GameState(
-                    players = listOf(
-                        Player(PieceType.BLACK),
-                        Player(PieceType.WHITE)
+                    players = MatchPlayers(
+                        Player(PieceType.BLACK, "Player 1"),
+                        Player(PieceType.WHITE, "Player 2")
                     ),
                     board = Board(4)
                         .addPiece(Piece(Coordinate(1, 1), PieceType.BLACK))
@@ -203,6 +207,7 @@ class GameTests {
                     lastPlayer = PieceType.BLACK,
                 ),
                 currGameName = null,
+                myPiece = PieceType.BLACK
             ).pass()
 
             val expectedCountPass = 1
@@ -214,7 +219,7 @@ class GameTests {
             uut = uut.pass()
 
 
-            assertEquals(Player(PieceType.BLACK, 2), uut.gameState?.winner)
+            assertEquals(Player(PieceType.BLACK, points = 2), uut.gameState?.winner)
         }
     }
 
@@ -235,7 +240,7 @@ class GameTests {
             val uut = Game(
                 target = false,
                 gameState = GameState(
-                    players = emptyList(),
+                    players = MatchPlayers(),
                     lastPlayer = PieceType.BLACK,
                     board = Board(4).startPieces()
                 ),
@@ -252,31 +257,23 @@ class GameTests {
     fun `pass no local game with 2 players succeeds`() {
         cleanup {
             var uut = startNewGame(
-                players = listOf(
-                    Player(PieceType.BLACK),
-                ),
+                side = 4,
+                players = MatchPlayers(Player(PieceType.BLACK)),
                 currGameName = "testGame",
                 firstTurn = PieceType.BLACK,
-            ).copy(
-                gameState = GameState(
-                    players = listOf(
-                        Player(PieceType.BLACK)
-                    ),
-                    lastPlayer = PieceType.WHITE,
-                    board = Board(4)
-                        .addPiece(Piece(Coordinate(1, 1), PieceType.BLACK))
-                        .addPiece(Piece(Coordinate(1, 2), PieceType.BLACK))
-                ),
-                target = false,
             )
+            val gameState = uut.gameState!!.copy(
+                board = Board(4)
+                    .addPiece(Piece(Coordinate(1, 1), PieceType.BLACK))
+                    .addPiece(Piece(Coordinate(1, 2), PieceType.BLACK))
+            )
+            uut.saveOnlyBoard(gameState)
+            uut = uut.refresh()
 
-            uut.copy(
-                gameState = uut.gameState?.copy(
-                    players = listOf(uut.gameState.players[0].swap())
-                )
-            ).saveEndGame()
-
-            var uut2 = loadGame("testGame")
+            var uut2 = loadGame(
+                gameName = uut.currGameName!!,
+                desiredType = null
+            )
 
             uut.pass()
             uut2 = uut2.refresh()
@@ -284,33 +281,31 @@ class GameTests {
 
             uut2 = uut2.pass()
 
-            assertEquals(Player(PieceType.BLACK, 2), uut2.gameState?.winner)
+            assertEquals(Player(PieceType.BLACK, points = 2), uut2.gameState?.winner)
 
             uut = uut.refresh()
 
-            assertEquals(Player(PieceType.BLACK, 2), uut.gameState?.winner)
+            assertEquals(Player(PieceType.BLACK, points = 2), uut.gameState?.winner)
         }
     }
 
     @Test
     fun `startNewGame and load game with 1 player succeeds`() {
         cleanup {
-            val expectedPlayers = emptyList<Player>()
+            val player1 = Player(PieceType.BLACK, points = 2)
+            val expectedPlayers = MatchPlayers(player1)
             val expectedBoard = Board(4).startPieces()
             val expectedLastPlayer = PieceType.WHITE
 
-            startNewGame(
+            val game = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK)),
+                players = MatchPlayers(player1),
                 firstTurn = PieceType.BLACK,
                 currGameName = "existingGame",
             )
 
-            val storage = loadGame(
-                gameName = "existingGame"
-            ).storage
 
-            val loadedGame = storage.load("existingGame")?.let {
+            val loadedGame = game.storage.load("existingGame")?.let {
                 Game(
                     target = false,
                     gameState = it,
@@ -329,13 +324,13 @@ class GameTests {
         cleanup {
             val uut = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK), Player(PieceType.WHITE)),
+                players = MatchPlayers(Player(PieceType.BLACK), Player(PieceType.WHITE)),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
             )
 
             val expectedBoard = Board(4).startPieces()
-            val expectedPlayers = listOf(Player(PieceType.BLACK, 2), Player(PieceType.WHITE, 2))
+            val expectedPlayers = MatchPlayers(Player(PieceType.BLACK, points = 2), Player(PieceType.WHITE, points = 2))
             val expectedLastPlayer = PieceType.WHITE
 
             assertEquals(expectedBoard, uut.gameState?.board)
@@ -350,7 +345,7 @@ class GameTests {
             assertFailsWith<InvalidGameException> {
                 startNewGame(
                     side = 4,
-                    players = emptyList(),
+                    players = MatchPlayers(),
                     firstTurn = PieceType.BLACK,
                     currGameName = null,
                 )
@@ -363,13 +358,13 @@ class GameTests {
         cleanup {
             val uut = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK)),
+                players = MatchPlayers(Player(PieceType.BLACK)),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
             )
 
             val expectedBoard = Board(4).startPieces()
-            val expectedPlayers = listOf(Player(PieceType.BLACK, 2))
+            val expectedPlayers = MatchPlayers(Player(PieceType.BLACK, points = 2))
             val expectedLastPlayer = PieceType.WHITE
 
             assertEquals(expectedBoard, uut.gameState?.board)
@@ -383,7 +378,8 @@ class GameTests {
         cleanup {
             assertFailsWith<InvalidFileException> {
                 loadGame(
-                    gameName = "nonExistingGame"
+                    gameName = "nonExistingGame",
+                    desiredType = null
                 )
             }
         }
@@ -399,12 +395,15 @@ class GameTests {
         cleanup {
             startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK)),
+                players = MatchPlayers(Player(PieceType.BLACK)),
                 firstTurn = PieceType.BLACK,
                 currGameName = "testGame",
             )
 
-            val uut = loadGame("testGame")
+            val uut = loadGame(
+                gameName = "testGame",
+                desiredType = null
+            )
 
             assertFailsWith<InvalidPlayException> {
                 uut.play(Coordinate(1, 2))
@@ -422,12 +421,15 @@ class GameTests {
         cleanup {
             startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.WHITE)),
+                players = MatchPlayers(Player(PieceType.WHITE)),
                 firstTurn = PieceType.BLACK,
                 currGameName = "testGame",
             )
 
-            val uut = loadGame("testGame")
+            val uut = loadGame(
+                gameName = "testGame",
+                desiredType = null
+            )
 
             val expectedBoard = Board(4).startPieces()
                 .addPiece(Coordinate(1, 2), PieceType.BLACK)
@@ -449,12 +451,15 @@ class GameTests {
         cleanup {
             val uut = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK)),
+                players = MatchPlayers(Player(PieceType.BLACK)),
                 firstTurn = PieceType.BLACK,
                 currGameName = "testGame",
             )
 
-            loadGame("testGame")
+            loadGame(
+                gameName = "testGame",
+                desiredType = null
+            )
 
             val expectedBoard = Board(4).startPieces()
                 .addPiece(Coordinate(1, 2), PieceType.BLACK)
@@ -482,12 +487,15 @@ class GameTests {
 
             var uutB = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK)),
+                players = MatchPlayers(Player(PieceType.BLACK)),
                 firstTurn = PieceType.BLACK,
                 currGameName = "testGame",
             )
 
-            var uutW = loadGame("testGame")
+            var uutW = loadGame(
+                gameName = "testGame",
+                desiredType = null
+            )
 
             uutB = uutB.play(Coordinate(3, 4))
 
@@ -497,8 +505,8 @@ class GameTests {
             uutB = uutB.refresh()
             uutW = uutW.refresh()
 
-            assertEquals(expectedBlackPoints, uutB.gameState?.players[0]?.points)
-            assertEquals(expectedWhitePoints, uutW.gameState?.players[0]?.points)
+            assertEquals(expectedBlackPoints, uutB.gameState?.players?.getFirstPlayer()?.points)
+            assertEquals(expectedWhitePoints, uutW.gameState?.players?.getFirstPlayer()?.points)
             assertEquals(expectedPlayerTurn, uutB.gameState?.lastPlayer)
         }
     }
@@ -508,7 +516,7 @@ class GameTests {
         cleanup {
             val uut = startNewGame(
                 side = 4,
-                players = listOf(
+                players = MatchPlayers(
                     Player(PieceType.BLACK),
                     Player(PieceType.WHITE)
                 ),
@@ -529,12 +537,15 @@ class GameTests {
         cleanup {
             var uutB = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK)),
+                players = MatchPlayers(Player(PieceType.BLACK)),
                 firstTurn = PieceType.BLACK,
                 currGameName = "testGame",
             )
 
-            var uutW = loadGame("testGame")
+            var uutW = loadGame(
+                gameName = "testGame",
+                desiredType = null
+            )
 
             uutB = uutB.refresh()
             assertFailsWith<InvalidPlayException> {
@@ -557,7 +568,7 @@ class GameTests {
         cleanup {
             val uut = startNewGame(
                 side = 4,
-                players = listOf(
+                players = MatchPlayers(
                     Player(PieceType.BLACK),
                     Player(PieceType.WHITE)
                 ),
@@ -576,19 +587,20 @@ class GameTests {
         cleanup {
             var uutB = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK)),
-                firstTurn = PieceType.BLACK,
+                players = MatchPlayers(Player(PieceType.BLACK)),
+                firstTurn = PieceType.WHITE,
                 currGameName = "testGame",
             )
 
-            var uutW = loadGame("testGame")
+            var uutW = loadGame(
+                gameName = "testGame",
+                desiredType = null
+            )
 
-            uutB = uutB.play(Coordinate(1, 2))
+            uutW = uutW.play(uutW.getAvailablePlays().first())
 
-            uutW = uutW.refresh()
-
-            assertEquals(uutB.gameState?.board, uutW.gameState?.board)
-            assertEquals(uutB.gameState?.lastPlayer, uutW.gameState?.lastPlayer)
+            uutB = uutB.refresh()
+            assertEquals(uutW.gameState, uutB.gameState)
         }
     }
 
@@ -609,7 +621,7 @@ class GameTests {
             val uut = Game(
                 target = false,
                 gameState = GameState(
-                    players = emptyList(),
+                    players = MatchPlayers(),
                     lastPlayer = PieceType.BLACK,
                     board = Board(4).startPieces()
                 ),
@@ -625,11 +637,11 @@ class GameTests {
     @Test
     fun `saveEndGame in not local game succeeds`() {
         cleanup {
-            val uut = newGameForTest(
-                board = Board(4),
-                players = listOf(Player(PieceType.BLACK), Player(PieceType.WHITE)),
-                lastPlayer = PieceType.WHITE,
+            val uut = startNewGame(
+                players = MatchPlayers(Player(PieceType.BLACK), Player(PieceType.WHITE)),
+                firstTurn = PieceType.WHITE,
                 currGameName = "testGame",
+                side = 4
             )
 
             uut.saveEndGame()
@@ -637,7 +649,7 @@ class GameTests {
             val loadedGameState = uut.storage.load("testGame")
 
             val expectedGameState = uut.gameState?.copy(
-                players = listOf(Player(PieceType.BLACK), Player(PieceType.WHITE)),
+                players = MatchPlayers(Player(PieceType.BLACK)).refreshPlayers(uut.gameState.board),
             )
 
             assertEquals(expectedGameState, loadedGameState)
@@ -649,16 +661,19 @@ class GameTests {
         cleanup {
             val uut = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK), Player(PieceType.WHITE)),
+                players = MatchPlayers(Player(PieceType.BLACK), Player(PieceType.WHITE)),
                 firstTurn = PieceType.BLACK,
                 currGameName = "testGame",
             )
 
+            val expectedGameState = uut.gameState?.copy(
+                players = MatchPlayers(uut.gameState.players.getPlayerByType(PieceType.WHITE)),
+            )
             uut.saveEndGame()
 
             val loadedGameState = uut.storage.load("testGame")
 
-            assertEquals(uut.gameState, loadedGameState)
+            assertEquals(expectedGameState, loadedGameState)
         }
     }
 
@@ -667,7 +682,7 @@ class GameTests {
         cleanup {
             var uut = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK), Player(PieceType.WHITE)),
+                players = MatchPlayers(Player(PieceType.BLACK), Player(PieceType.WHITE)),
                 firstTurn = PieceType.BLACK,
                 currGameName = "testGame",
             )
@@ -679,7 +694,7 @@ class GameTests {
             val loadedGameState = uut.storage.load("testGame")
 
             assertEquals(uut.gameState?.board, loadedGameState?.board)
-            assert(loadedGameState?.players?.isEmpty()!!)
+            assert(loadedGameState?.players?.isFull()!!)
             assertEquals(uut.gameState?.lastPlayer, loadedGameState.lastPlayer)
         }
     }
@@ -689,7 +704,7 @@ class GameTests {
         cleanup {
             val uut = startNewGame(
                 side = 4,
-                players = listOf(Player(PieceType.BLACK), Player(PieceType.WHITE)),
+                players = MatchPlayers(Player(PieceType.BLACK), Player(PieceType.WHITE)),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
             )
@@ -697,6 +712,125 @@ class GameTests {
             assertFailsWith<InvalidFileException> {
                 uut.saveOnlyBoard(uut.gameState)
             }
+        }
+    }
+
+    @Test
+    fun `GameState changeName updates the correct player's name`() {
+        val player1 = Player(type = PieceType.BLACK, name = "Alice")
+        val player2 = Player(type = PieceType.WHITE, name = "Bob")
+        val expectedPlayer1 = player1.copy(name = "Charlie")
+        val expectedPlayer2 = player2.copy(name = "Diana")
+
+        val initialPlayers = MatchPlayers(
+            player1 = player1,
+            player2 = player2
+        )
+
+
+        val gameState = GameState(
+            players = initialPlayers,
+            lastPlayer = PieceType.BLACK,
+            board = Board(4).startPieces()
+        )
+
+        val updatedGameStateBlack = gameState.changeName(
+            newName = expectedPlayer1.name,
+            pieceType = expectedPlayer1.type
+        )
+
+        assertEquals(expectedPlayer1, updatedGameStateBlack.players.player1)
+        assertEquals(player2, updatedGameStateBlack.players.player2)
+
+        val updatedGameStateWhite = gameState.changeName(
+            newName = expectedPlayer2.name,
+            pieceType = expectedPlayer2.type
+        )
+
+        assertEquals(expectedPlayer2, updatedGameStateWhite.players.player2)
+        assertEquals(player1, updatedGameStateWhite.players.player1)
+    }
+
+    @Test
+    fun `GameState changeName with non-existing piece type does not change players`() {
+        val player1 = Player(type = PieceType.BLACK, name = "Alice")
+
+        val initialPlayers = MatchPlayers(
+            player1 = player1,
+        )
+
+        val gameState = GameState(
+            players = initialPlayers,
+            lastPlayer = PieceType.BLACK,
+            board = Board(4).startPieces()
+        )
+
+        val updatedGameState = gameState.changeName(
+            newName = "Charlie",
+            pieceType = PieceType.WHITE // Non-existing piece type in this context
+        )
+
+        assertEquals(initialPlayers, updatedGameState.players)
+    }
+
+    @Test
+    fun `GameState refreshPlayers updates players based on current board state`() {
+        val player1 = Player(type = PieceType.BLACK, name = "Alice", points = 0)
+        val player2 = Player(type = PieceType.WHITE, name = "Bob", points = 0)
+
+        val initialPlayers = MatchPlayers(
+            player1 = player1,
+            player2 = player2
+        )
+
+        val board = Board(4)
+            .addPiece(Coordinate(1, 1), PieceType.BLACK)
+            .addPiece(Coordinate(1, 2), PieceType.BLACK)
+            .addPiece(Coordinate(2, 1), PieceType.WHITE)
+
+        val gameState = GameState(
+            players = initialPlayers,
+            lastPlayer = PieceType.BLACK,
+            board = board
+        )
+
+        val refreshedGameState = gameState.refreshPlayers()
+
+        val expectedPlayer1Points = 2 // BLACK pieces
+        val expectedPlayer2Points = 1 // WHITE pieces
+
+        assertEquals(expectedPlayer1Points, refreshedGameState.players.player1?.points)
+        assertEquals(expectedPlayer2Points, refreshedGameState.players.player2?.points)
+    }
+
+    @Test
+    fun `saveOnlyBoard in not local game, verify if my name is preserved when my name is changed`() {
+        cleanup {
+            val initialMyPlayer = Player(PieceType.BLACK, name = "Player 1")
+            var initialPlayer2 = Player(PieceType.WHITE, name = "Player 2")
+            var uut = startNewGame(
+                side = 4,
+                players = MatchPlayers(initialMyPlayer, initialPlayer2),
+                firstTurn = initialMyPlayer.type,
+                currGameName = "testGame",
+            )
+
+            val expectedMyPlayer = initialMyPlayer.copy(name = "Changed Name").refresh(uut.gameState!!.board) // Refresh points
+            initialPlayer2 = initialPlayer2.refresh(uut.gameState.board) // Refresh points
+
+            uut = uut.copy(
+                gameState = uut.gameState.changeName(
+                    newName = expectedMyPlayer.name,
+                    pieceType = expectedMyPlayer.type
+                )
+            )
+
+            uut.saveOnlyBoard(uut.gameState)
+
+            val lsGameState = uut.storage.load(uut.currGameName!!)
+
+            assertEquals(expectedMyPlayer, lsGameState?.players?.getPlayerByType(expectedMyPlayer.type))
+            assertEquals(initialPlayer2, lsGameState?.players?.getPlayerByType(initialPlayer2.type))
         }
     }
 }

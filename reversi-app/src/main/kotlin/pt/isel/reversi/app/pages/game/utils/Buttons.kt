@@ -35,10 +35,10 @@ fun ReversiScope.TargetButton(target: Boolean, modifier: Modifier = Modifier, fr
  * @param onClick Callback invoked when the button is clicked.
  */
 @Composable
-fun ReversiScope.PassButton(modifier: Modifier = Modifier, freeze: Boolean, onClick: () -> Unit) {
+fun ReversiScope.PassButton(modifier: Modifier = Modifier, canPass: Boolean, freeze: Boolean, onClick: () -> Unit) {
     ReversiButton(
         text = "Pass",
         onClick = onClick,
-        enabled = !freeze,
+        enabled = !freeze && canPass,
     )
 }

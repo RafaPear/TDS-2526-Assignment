@@ -18,7 +18,7 @@ class ListGamesCmdTests {
     @Test
     fun `ListGamesCmd lists files in saves folder`() {
         cleanup {
-            val savesFolder = Game().config.SAVES_FOLDER
+            val savesFolder = Game().config.savesPath
             File(savesFolder).mkdirs()
             File(savesFolder, "game1.json").writeText("x")
             File(savesFolder, "game2.json").writeText("y")

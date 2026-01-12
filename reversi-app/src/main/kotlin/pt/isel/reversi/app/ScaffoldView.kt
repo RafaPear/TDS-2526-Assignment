@@ -1,32 +1,27 @@
 package pt.isel.reversi.app
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.TextAutoSize
-import androidx.compose.material3.*
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.painterResource
 import pt.isel.reversi.app.exceptions.ErrorMessage
-import pt.isel.reversi.app.state.AppState
-import pt.isel.reversi.app.state.setPage
+import pt.isel.reversi.app.state.Page
+import pt.isel.reversi.core.exceptions.ReversiException
 
-/**
- * Default previous page button that navigates back to the stored back page.
- *
- * @param appState Global application state for navigation.
- */
-@Composable
-fun ReversiScope.previousPageContentDefault(appState: MutableState<AppState>) {
-    PreviousPage {
-        appState.setPage(appState.value.backPage)
-    }
-}
 
 /**
  * Main scaffold composable providing consistent layout structure for pages.
@@ -41,45 +36,71 @@ fun ReversiScope.previousPageContentDefault(appState: MutableState<AppState>) {
  */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun ScaffoldView(
-    appState: MutableState<AppState>,
+fun ReversiScope.ScaffoldView(
+    setError: (Exception?) -> Unit,
     backgroundTopBar: Color = Color.Transparent,
+    error: ReversiException?,
+    isLoading: Boolean = false,
     title: String = "",
     loadingModifier: Modifier = Modifier,
-    previousPageContent: (@Composable ReversiScope.() -> Unit)? = null,
-    content: @Composable ReversiScope.(paddingValues: PaddingValues) -> Unit
+    previousPageContent: @Composable ReversiScope.() -> Unit,
+    content: @Composable ReversiScope.(paddingValues: PaddingValues) -> Unit,
 ) {
-    val theme = appState.value.theme
-    val scope = ReversiScope(appState.value)
-    Scaffold(modifier = Modifier.background(theme.backgroundColor), containerColor = Color.Transparent, topBar = {
-        CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = backgroundTopBar,
-            ),
-            title = {
-                Text(
-                    text = title,
-                    color = theme.textColor,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    autoSize = TextAutoSize.StepBased(
-                        maxFontSize = 50.sp
+    val theme = appState.theme
+    val backgroundImage = theme.backgroundImage
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Background layer
+
+        // Scaffold layer
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            containerColor = Color.Transparent,
+            topBar = {
+                CenterAlignedTopAppBar(
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = backgroundTopBar,
                     ),
-                    maxLines = 1,
-                    softWrap = false,
+                    title = {
+                        ReversiText(
+                            text = title,
+                            color = theme.textColor,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            autoSize = TextAutoSize.StepBased(
+                                maxFontSize = 50.sp
+                            ),
+                            maxLines = 1,
+                            softWrap = false,
+                        )
+                    },
+                    navigationIcon = {
+                        if (!isLoading && appState.page != Page.MAIN_MENU) {
+                            previousPageContent()
+                        }
+                    }
                 )
             },
-            navigationIcon = {
-                if (previousPageContent != null) scope.previousPageContent()
-                else scope.previousPageContentDefault(appState)
+            snackbarHost = { ErrorMessage(error) { setError(it) } }
+        ) { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                backgroundImage?.let { imageRes ->
+                    Image(
+                        painter = painterResource(imageRes),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .alpha(0.2f),
+                        contentScale = ContentScale.FillHeight
+                    )
+                }
             }
-        )
-    }, snackbarHost = { appState.value.error?.let { scope.ErrorMessage(appState) } }
-    ) { paddingValues ->
-        with(scope) {
             Box {
                 content(paddingValues)
-                if (appState.value.isLoading) {
+                if (isLoading) {
                     Loading(loadingModifier)
                 }
             }

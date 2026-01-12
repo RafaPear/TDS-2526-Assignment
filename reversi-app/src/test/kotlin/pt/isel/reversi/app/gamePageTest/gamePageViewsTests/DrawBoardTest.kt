@@ -10,12 +10,13 @@ import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.startNewGame
+import pt.isel.reversi.core.storage.MatchPlayers
 import kotlin.test.Test
 import kotlin.test.fail
 
 @OptIn(ExperimentalTestApi::class)
 class DrawBoardTest {
-    val reversiScope = ReversiScope(AppState.EMPTY_APP_STATE)
+    val reversiScope = ReversiScope(AppState.empty())
 
     @Test
     fun `DrawBoard test if all cells are displayed`() = runComposeUiTest {
@@ -24,7 +25,7 @@ class DrawBoardTest {
             val game = runBlocking {
                 startNewGame(
                     side = expectedSide,
-                    players = listOf(Player(type = PieceType.BLACK)),
+                    players = MatchPlayers(Player(type = PieceType.BLACK)),
                     firstTurn = PieceType.BLACK,
                     currGameName = null
                 )
@@ -51,7 +52,7 @@ class DrawBoardTest {
         val expectedSide = 4
         var game = startNewGame(
             side = expectedSide,
-            players = listOf(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
+            players = MatchPlayers(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
             firstTurn = PieceType.BLACK,
             currGameName = null
         )
@@ -90,7 +91,7 @@ class DrawBoardTest {
         val expectedSide = 4
         val game = startNewGame(
             side = expectedSide,
-            players = listOf(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
+            players = MatchPlayers(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
             firstTurn = PieceType.BLACK,
             currGameName = null
         )
@@ -126,7 +127,7 @@ class DrawBoardTest {
         val expectedSide = 4
         val game = startNewGame(
             side = expectedSide,
-            players = listOf(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
+            players = MatchPlayers(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
             firstTurn = PieceType.BLACK,
             currGameName = null
         )
@@ -163,7 +164,7 @@ class DrawBoardTest {
         val expectedSide = 4
         val game = startNewGame(
             side = expectedSide,
-            players = listOf(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
+            players = MatchPlayers(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
             firstTurn = PieceType.BLACK,
             currGameName = null
         )
@@ -200,7 +201,7 @@ class DrawBoardTest {
         val expectedSide = 4
         val game = startNewGame(
             side = expectedSide,
-            players = listOf(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
+            players = MatchPlayers(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
             firstTurn = PieceType.BLACK,
             currGameName = null
         )

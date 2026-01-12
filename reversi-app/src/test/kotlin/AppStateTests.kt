@@ -1,9 +1,9 @@
 //class AppStateTests {
 //    fun cleanup(func: suspend () -> Unit) {
 //        val conf = loadCoreConfig()
-//        File(conf.SAVES_FOLDER).deleteRecursively()
+//        File(conf.savesPath).deleteRecursively()
 //        runBlocking { func() }
-//        File(conf.SAVES_FOLDER).deleteRecursively()
+//        File(conf.savesPath).deleteRecursively()
 //    }
 //    @Test
 //    fun `setPage update the same page does not change the state`() {
@@ -48,7 +48,7 @@
 //            )
 //
 //            val uut = setAppState(expectedAppState, page = Page.JOIN_GAME, error = GameNotStartedYet())
-//            assertEquals(expectedAppState.value.backPage, uut.backPage)
+//            assertEquals(expectedModuleappState.value.backPage, uut.backPage)
 //        }
 //    }
 //}

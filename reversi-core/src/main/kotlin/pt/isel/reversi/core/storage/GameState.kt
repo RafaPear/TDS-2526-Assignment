@@ -12,9 +12,27 @@ import pt.isel.reversi.core.board.PieceType
  * @property winner The player who has won the game, or null if there is no winner
  */
 data class GameState(
-    val players: List<Player>,
+    val players: MatchPlayers,
     val lastPlayer: PieceType,
     val board: Board,
     val winner: Player? = null,
-)
+) {
+    fun refreshPlayers(): GameState =
+        copy(players = players.refreshPlayers(board))
 
+    fun changeName(newName: String, pieceType: PieceType): GameState {
+        val player = players.getPlayerByType(pieceType) ?: return this
+        return copy(
+            players = players.copy(
+                player1 = if (players.player1 == player)
+                    player.copy(name = newName)
+                else
+                    players.player1,
+                player2 = if (players.player2 == player)
+                    player.copy(name = newName)
+                else
+                    players.player2
+            )
+        )
+    }
+}

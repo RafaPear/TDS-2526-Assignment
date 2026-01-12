@@ -4,8 +4,13 @@ import java.io.File
 import java.util.*
 
 /**
- * Configuration loader that reads properties files and creates Config instances.
- * Automatically creates default configuration files if they don't exist.
+ * Loads and manages configuration from Java properties files.
+ *
+ * This loader automatically:
+ * - Creates configuration files if they don't exist
+ * - Adds missing keys with default values
+ * - Reads and parses properties files
+ * - Provides type-safe access through Config implementations
  *
  * @param U The Config subclass type to instantiate with loaded values.
  * @property path File path to the configuration properties file.
@@ -13,45 +18,81 @@ import java.util.*
  */
 class ConfigLoader<U : Config>(
     val path: String,
-    val factory: (Map<String, String>) -> U,
+    val factory: (Map<String, String>) -> U
 ) {
+
     /**
-     * Loads the configuration from the properties file.
-     * Creates the file with default entries if it does not exist.
-     * Synchronizes the file with the factory's default entries on load.
+     * Loads configuration from the properties file at the specified path.
      *
-     * @return The instantiated Config object with loaded properties.
+     * If the file doesn't exist:
+     * - The parent directory is created if necessary
+     * - A new properties file is created
+     * - Default values from the factory are written to the file
+     *
+     * If the file exists but is missing keys:
+     * - Missing keys are added with their default values
+     * - The file is updated
+     *
+     * @return A new Config instance with the loaded properties.
      */
     fun loadConfig(): U {
-        val props = Properties()
         val file = File(path)
-        val defaultEntries = factory(emptyMap()).getDefaultConfigFileEntries()
+        val props = Properties()
 
         if (!file.exists()) {
             file.parentFile?.mkdirs()
             file.createNewFile()
-            val entries = defaultEntries
-            for (entry in entries)
-                props.setProperty(entry.key, entry.value)
+        } else {
+            file.inputStream().use(props::load)
+        }
 
-            file.outputStream().use { output ->
-                props.store(output, "Configuration file created at ${file.absolutePath}")
+        val defaults = factory(emptyMap()).getDefaultConfigFileEntries()
+
+        var changed = false
+        for ((key, value) in defaults) {
+            if (!props.containsKey(key)) {
+                props.setProperty(key, value)
+                changed = true
             }
         }
 
-        file.inputStream().use { input ->
-            props.load(input)
+        if (changed) {
+            file.outputStream().use {
+                props.store(it, "Configuration file at ${file.absolutePath}")
+            }
         }
 
-        val configMap = props.entries.associate { it.key.toString() to it.value.toString() }
-        val factoryResult = factory(configMap)
-        val newProps = Properties().also {
-            it.putAll(factoryResult.getDefaultConfigFileEntries())
+        val configMap = props.entries.associate {
+            it.key.toString() to it.value.toString().trim()
         }
 
-        file.outputStream().use { output ->
-            newProps.store(output, "Configuration file created at ${file.absolutePath}")
+        return factory(configMap)
+    }
+
+    /**
+     * Saves a configuration instance to the properties file.
+     *
+     * This method writes all configuration values from the provided Config instance
+     * to the properties file, creating the file and parent directories if necessary.
+     *
+     * @param config The configuration instance to save.
+     */
+    fun saveConfig(config: U) {
+        val file = File(path)
+        val props = Properties()
+
+        if (!file.exists()) {
+            file.parentFile?.mkdirs()
+            file.createNewFile()
         }
-        return factoryResult
+
+        val configMap = config.getDefaultConfigFileEntries()
+        configMap.forEach { (key, value) ->
+            props.setProperty(key, value)
+        }
+
+        file.outputStream().use {
+            props.store(it, "Configuration file updated at ${file.absolutePath}")
+        }
     }
 }

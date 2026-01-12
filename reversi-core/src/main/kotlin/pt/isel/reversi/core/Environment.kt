@@ -12,3 +12,8 @@ const val SIDE_MAX = 26
 fun loadCoreConfig(): CoreConfig = ConfigLoader(CORE_CONFIG_FILE) {
     CoreConfig(it)
 }.loadConfig()
+
+fun saveCoreConfig(config: CoreConfig) = ConfigLoader(CORE_CONFIG_FILE) {
+    CoreConfig(it)
+}.saveConfig(config)
+

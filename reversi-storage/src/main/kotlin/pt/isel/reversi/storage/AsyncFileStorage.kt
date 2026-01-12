@@ -29,4 +29,6 @@ data class AsyncFileStorage<T>(
     override suspend fun lastModified(id: String): Long? = withContext(Dispatchers.IO) { fileStorage.lastModified(id) }
 
     override suspend fun loadAllIds(): List<String> = withContext(Dispatchers.IO) { fileStorage.loadAllIds() }
+
+    override suspend fun close() = withContext(Dispatchers.IO) { fileStorage.close() }
 }

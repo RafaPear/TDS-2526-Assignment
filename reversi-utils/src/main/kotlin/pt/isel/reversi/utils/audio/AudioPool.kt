@@ -8,11 +8,41 @@ import pt.isel.reversi.utils.LOGGER
  * @param pool The list of AudioWrapper instances in the pool.
  */
 @Suppress("Unused")
-data class AudioPool(val pool: List<AudioWrapper>) {
+class AudioPool(startPool: List<AudioWrapper>) {
+
+    val pool: MutableList<AudioWrapper> = startPool.toMutableList()
+
     init {
         LOGGER.info("AudioPool created with ${pool.size} audio tracks")
         resetBalance()
         resetMasterVolume()
+    }
+
+    /**
+     * Merges this AudioPool with another AudioPool.
+     * New audio tracks from the other pool are added to this pool.
+     * Duplicate audio tracks (by ID) from the new pool are not added.
+     * Tracks from this pool take precedence in case of ID conflicts.
+     * Old tracks that do not exist in the other pool are destroyed
+     * and removed from this pool.
+     *
+     * @param other The other AudioPool to merge with.
+     */
+    fun merge(other: AudioPool) {
+        val iterator = pool.iterator()
+        while (iterator.hasNext()) {
+            val old = iterator.next()
+            if (other.pool.none { it.id == old.id }) {
+                old.close()
+                iterator.remove()
+            }
+        }
+
+        other.pool.forEach { newTrack ->
+            if (pool.none { it.id == newTrack.id }) {
+                pool.add(newTrack)
+            }
+        }
     }
 
     /**
@@ -161,6 +191,15 @@ data class AudioPool(val pool: List<AudioWrapper>) {
     }
 
     /**
+     * Gets the master volume range (min and max) of the first audio track in the pool.
+     * @return A Pair containing the minimum and maximum master volume, or null if the pool is empty.
+     */
+    fun getMasterVolumeRange(): Pair<Float, Float>? {
+        val first = pool.firstOrNull() ?: return null
+        return Pair(first.masterGainControl.minimumValue, 0f)
+    }
+
+    /**
      * Resets the master volume of all audio tracks in the pool to the default value.
      */
     fun resetMasterVolume() {
@@ -199,6 +238,15 @@ data class AudioPool(val pool: List<AudioWrapper>) {
     }
 
     /**
+     * Gets the balance range (min and max) of the first audio track in the pool.
+     * @return A Pair containing the minimum and maximum balance, or null if the pool is empty.
+     */
+    fun getBalanceRange(): Pair<Float, Float>? {
+        val first = pool.firstOrNull() ?: return null
+        return Pair(first.balanceControl.minimumValue, first.balanceControl.maximumValue)
+    }
+
+    /**
      * Mutes or unmutes all audio tracks in the pool.
      * @param mute True to mute, false to unmute.
      */
@@ -207,11 +255,25 @@ data class AudioPool(val pool: List<AudioWrapper>) {
     }
 
     /**
+     * Checks if all audio tracks in the pool are muted.
+     * @return True if all tracks are muted, false otherwise.
+     */
+    fun isPoolMuted(): Boolean = pool.all { it.muteControl.getValue() }
+
+    /**
      * Checks if all audio tracks in the pool are stopped.
      * @return True if all tracks are stopped, false otherwise.
      */
     fun isPoolStopped(): Boolean = pool.all {
         !it.isPlaying()
+    }
+
+    /**
+     * Retrieves the IDs of all currently playing audio tracks in the pool.
+     * @return A list of IDs of playing audio tracks.
+     */
+    fun getPlayingAudios(): List<String> {
+        return pool.filter { it.isPlaying() }.map { it.id }
     }
 
     companion object {

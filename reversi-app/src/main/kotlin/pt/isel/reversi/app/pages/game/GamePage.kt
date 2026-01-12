@@ -1,15 +1,15 @@
 package pt.isel.reversi.app.pages.game
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import pt.isel.reversi.app.PreviousPage
+import pt.isel.reversi.app.ReversiScope
 import pt.isel.reversi.app.ScaffoldView
-import pt.isel.reversi.app.state.getStateAudioPool
-import pt.isel.reversi.app.state.setAppState
+import pt.isel.reversi.core.Game
+import pt.isel.reversi.utils.TRACKER
 
 /**
  * Main game page displaying the Reversi board, player scores, and game controls.
@@ -20,18 +20,23 @@ import pt.isel.reversi.app.state.setAppState
  * @param freeze Whether to freeze the game board and prevent user interaction.
  */
 @Composable
-fun GamePage(viewModel: GamePageViewModel, modifier: Modifier = Modifier, freeze: Boolean = false) {
-    val appState = viewModel.appState
-    val game = viewModel.uiState.value
+fun ReversiScope.GamePage(
+    viewModel: GamePageViewModel,
+    modifier: Modifier = Modifier,
+    freeze: Boolean = false,
+    onLeave: (Game) -> Unit,
+) {
+    val game = viewModel.uiState.value.game
+    val theme = appState.theme
 
     // Launch the game refresh coroutine
     DisposableEffect(viewModel) {
-        if (game.currGameName != null && game.gameState?.players?.size != 2 && !viewModel.isPollingActive()) {
+        TRACKER.trackEffectStart(this)
+        if (game.currGameName != null && !viewModel.isPollingActive()) {
             viewModel.startPolling()
         }
 
-        appState.getStateAudioPool().run {
-            val theme = appState.value.theme
+        appState.audioPool.run {
             if (!isPlaying(theme.gameMusic)) {
                 stop(theme.backgroundMusic)
                 stop(theme.gameMusic)
@@ -42,21 +47,23 @@ fun GamePage(viewModel: GamePageViewModel, modifier: Modifier = Modifier, freeze
         onDispose {
             viewModel.stopPolling()
             viewModel.save()
+            TRACKER.trackEffectStop(this)
         }
     }
 
-    val name = game.currGameName?.let { "Game: $it" }
+    val name = game.currGameName
 
-    ScaffoldView(
-        appState = appState,
+    this.ScaffoldView(
+        setError = { viewModel.setError(it) },
+        error = viewModel.uiState.value.screenState.error,
+        isLoading = viewModel.uiState.value.screenState.isLoading,
         title = name ?: "Reversi",
         previousPageContent = {
-            PreviousPage { appState.setAppState(page = appState.value.backPage, game = game) }
+            PreviousPage { onLeave(game) }
         }
     ) { padding ->
         GamePageView(
             modifier = modifier.fillMaxSize()
-                .background(appState.value.theme.backgroundColor)
                 .padding(paddingValues = padding),
             game = game,
             freeze = freeze,

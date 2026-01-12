@@ -12,7 +12,7 @@ import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
 class ButtonsTest {
-    val reversiScope = ReversiScope(AppState.EMPTY_APP_STATE)
+    val reversiScope = ReversiScope(AppState.empty())
 
     @Test
     fun `check if the Target button is displayed and clickable`() = runComposeUiTest {

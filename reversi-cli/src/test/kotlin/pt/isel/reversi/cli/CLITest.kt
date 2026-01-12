@@ -4,6 +4,7 @@ import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.startNewGame
+import pt.isel.reversi.core.storage.MatchPlayers
 import kotlin.test.Test
 
 // Using the functions parseInput and parseStringToResult
@@ -14,9 +15,11 @@ class CLITest {
         // send data to standard input and verify output
         cleanup {
             val cli = CLI(arrayOf(MockCommand)) // game is null
-            val result = cli.parseInput("mock", null) as Game?// should execute MockCommand and game remains null
+            val result = cli.parseInput("mock", null)// should execute MockCommand and game remains null
             val newGame = startNewGame(
-                players = listOf(Player(PieceType.BLACK)), firstTurn = PieceType.BLACK
+                side = 8,
+                players = MatchPlayers(Player(PieceType.BLACK)),
+                firstTurn = PieceType.BLACK
             )
             assert(
                 result != null && result.gameState == newGame.gameState
@@ -32,10 +35,12 @@ class CLITest {
             val cli = CLI(arrayOf(MockCommand))
             val initialGame = Game()
             val expectedGame = startNewGame(
-                players = listOf(Player(PieceType.BLACK)), firstTurn = PieceType.BLACK
+                side = 8,
+                players = MatchPlayers(Player(PieceType.BLACK)),
+                firstTurn = PieceType.BLACK
             )
 
-            val result = cli.parseInput("mock", initialGame) as Game?// should execute MockCommand and return new game context
+            val result = cli.parseInput("mock", initialGame)// should execute MockCommand and return new game context
             assert(
                 result != null
                         && result.gameState != initialGame.gameState

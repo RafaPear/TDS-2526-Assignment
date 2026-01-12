@@ -10,7 +10,20 @@ import pt.rafap.ktflag.style.Colors
 import pt.rafap.ktflag.style.Colors.colorText
 
 /**
- * Command to debug the game state.
+ * Debug command to display detailed internal game state information.
+ *
+ * This development-only command outputs comprehensive diagnostic information including:
+ * - Current game state initialization status
+ * - Last player who moved
+ * - Current board representation
+ * - Player scores and active turn
+ * - Game name (if applicable)
+ * - Target mode status
+ * - Pass count
+ * - Configuration information
+ * - Available saved games in the saves folder
+ *
+ * Usage: `debug` or `dbg` (available only with --debug flag)
  */
 object DebugCmd : CommandImpl<Game>() {
     override val info: CommandInfo = CommandInfo(
@@ -23,11 +36,24 @@ object DebugCmd : CommandImpl<Game>() {
         maxArgs = 0
     )
 
+    /**
+     * Formats a title for debug output with decorative lines.
+     *
+     * @param text The title text to format.
+     * @return A formatted title string with decorative separator lines.
+     */
     private fun title(text: String): String {
         val line = "-----------------------------------------"
         return "$line\n$text\n$line\n"
     }
 
+    /**
+     * Executes the debug command and generates comprehensive diagnostic output.
+     *
+     * @param args Command arguments (unused for this command).
+     * @param context The current game context.
+     * @return A CommandResult with detailed debug information about the game state, configuration, and saved games.
+     */
     override fun execute(
         vararg args: String,
         context: Game?
@@ -95,7 +121,7 @@ object DebugCmd : CommandImpl<Game>() {
                 )
             )
             sb.appendLine(title("Saves Folder Contents"))
-            val files = java.io.File(context.config.SAVES_FOLDER).listFiles()
+            val files = java.io.File(context.config.savesPath).listFiles()
             if (files.isNullOrEmpty()) {
                 sb.appendLine("    No saved games found.")
             } else {

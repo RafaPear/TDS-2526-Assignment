@@ -10,7 +10,16 @@ import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult
 
 /**
- * Command to join a game.
+ * Command to join an existing Reversi game from persistent storage.
+ *
+ * Loads a saved game by name and optionally specifies which player you control:
+ * - `join gameName` — Joins the named game
+ * - `join gameName #` — Joins as Black (#)
+ * - `join gameName @` — Joins as White (@)
+ *
+ * If a game is already in progress, it is automatically saved before loading the new game.
+ * If a piece type is specified, you will play as that color.
+ * If no piece type is provided, the system will assign an available color.
  */
 object JoinCmd : CommandImpl<Game>() {
     override val info: CommandInfo = CommandInfo(
@@ -23,6 +32,13 @@ object JoinCmd : CommandImpl<Game>() {
         maxArgs = 2
     )
 
+    /**
+     * Executes the join command.
+     *
+     * @param args The command arguments: <gameName> `[optionalPieceType]`
+     * @param context The current game context (will be saved before joining new game).
+     * @return A CommandResult with the loaded game or an error message.
+     */
     override fun execute(vararg args: String, context: Game?): CommandResult<Game> {
         if (context != null && context.currGameName != null) {
             runBlocking {
@@ -38,7 +54,10 @@ object JoinCmd : CommandImpl<Game>() {
         if (pTypeArg != null && pType == null)
             return CommandResult.ERROR("Invalid piece type symbol provided: '$pTypeArg'.")
 
-        val game = runBlocking { loadGame(name, pType) }
+        val game = runBlocking { loadGame(
+             gameName = name,
+             desiredType = pType,
+        ) }
 
         println(ShowCmd.executeWrapper(context = game).message)
 

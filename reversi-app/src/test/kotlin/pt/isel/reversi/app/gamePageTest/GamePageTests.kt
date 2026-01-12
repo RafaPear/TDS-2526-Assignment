@@ -1,17 +1,17 @@
 package pt.isel.reversi.app.gamePageTest
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.test.*
 import kotlinx.coroutines.runBlocking
-import pt.isel.reversi.app.pages.MainMenu
+import pt.isel.reversi.app.ReversiScope
 import pt.isel.reversi.app.pages.game.*
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.Page
+import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.startNewGame
-import pt.isel.reversi.utils.audio.AudioPool
+import pt.isel.reversi.core.storage.MatchPlayers
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -21,29 +21,24 @@ class GamePageTests {
     val game = runBlocking {
         startNewGame(
             side = 4,
-            players = listOf(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
+            players = MatchPlayers(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
             firstTurn = PieceType.BLACK,
             currGameName = null
         )
     }
 
+    val appState = AppState.empty().copy(
+        game = game,
+        page = Page.GAME
+    )
+
     @Test
     fun `check if player score change after a move`() = runComposeUiTest {
 
-        val expectedAppState = AppState(
-            game = game,
-            page = Page.GAME,
-            error = null,
-            audioPool = AudioPool(emptyList()),
-            theme = AppState.EMPTY_APP_STATE.theme
-        )
-
-        val appState = mutableStateOf(value = expectedAppState)
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GamePageViewModel(appState, scope)
-
-            GamePage(gameViewModel)
+            val gameViewModel = GamePageViewModel(game, scope, {},{ },)
+            ReversiScope(appState).GamePage(gameViewModel, onLeave = { })
         }
 
         val players = game.gameState?.players!!
@@ -53,7 +48,6 @@ class GamePageTests {
         }
 
         val validMove = game.getAvailablePlays().first()
-
         val expectedGameState = game.play(coordinate = validMove)
 
         //find the valid cell and perform click
@@ -61,30 +55,19 @@ class GamePageTests {
 
         val newPlayers = expectedGameState.gameState?.players!!
 
-        //verify if the players score have changed
-        repeat(times = 2) {
-            onNodeWithTag(testTag = testTagPlayerScore(players[it])).assertDoesNotExist()
-            onNodeWithTag(testTag = testTagPlayerScore(player = newPlayers[it])).assertExists()
-        }
+        onNodeWithTag(testTag = testTagPlayerScore(players.first())).assertDoesNotExist()
+        onNodeWithTag(testTag = testTagPlayerScore(players.last())).assertDoesNotExist()
+
+        onNodeWithTag(testTag = testTagPlayerScore(player = newPlayers.first())).assertExists()
+        onNodeWithTag(testTag = testTagPlayerScore(player = newPlayers.last())).assertExists()
     }
 
     @Test
     fun `check if player score not change if freeze is true`() = runComposeUiTest {
-        val expectedAppState = AppState(
-            game = game,
-            page = Page.GAME,
-            error = null,
-            audioPool = AudioPool(emptyList()),
-            theme = AppState.EMPTY_APP_STATE.theme
-        )
-
-        val appState = mutableStateOf(value = expectedAppState)
-
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GamePageViewModel(appState, scope)
-
-            GamePage(gameViewModel, freeze = true)
+            val gameViewModel = GamePageViewModel(game, scope, {} ,{ },)
+            ReversiScope(appState).GamePage(gameViewModel, onLeave = { }, freeze = true)
         }
 
         val players = game.gameState?.players!!
@@ -104,28 +87,16 @@ class GamePageTests {
         }
     }
 
-
     @Test
     fun `check if ghost pieces shows when target mode is on`() = runComposeUiTest {
-        val expectedAppState = AppState(
-            game = game,
-            page = Page.GAME,
-            error = null,
-            audioPool = AudioPool(emptyList()),
-            theme = AppState.EMPTY_APP_STATE.theme
-        )
-
-        val appState = mutableStateOf(value = expectedAppState)
-
         val board = game.gameState!!.board
         val expectedGhostPieces = game.getAvailablePlays().size
         val expectedPieces = board.totalBlackPieces + board.totalWhitePieces
 
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GamePageViewModel(appState, scope)
-
-            GamePage(gameViewModel)
+            val gameViewModel = GamePageViewModel(game, scope, { }, {})
+            ReversiScope(appState).GamePage(gameViewModel, onLeave = { })
         }
 
         var countPieces = 0
@@ -155,24 +126,13 @@ class GamePageTests {
 
     @Test
     fun `check if ghost pieces not shows when target mode is on and freeze is true`() = runComposeUiTest {
-        val expectedAppState = AppState(
-            game = game,
-            page = Page.GAME,
-            error = null,
-            audioPool = AudioPool(emptyList()),
-            theme = AppState.EMPTY_APP_STATE.theme
-        )
-
-        val appState = mutableStateOf(value = expectedAppState)
-
         val board = game.gameState!!.board
         val expectedPieces = board.totalBlackPieces + board.totalWhitePieces
 
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GamePageViewModel(appState, scope)
-
-            GamePage(gameViewModel, freeze = true)
+            val gameViewModel = GamePageViewModel(game, scope, { }, { })
+            ReversiScope(appState).GamePage(gameViewModel, onLeave = { }, freeze = true)
         }
 
         var countPieces = 0
@@ -201,35 +161,24 @@ class GamePageTests {
     }
 
     @Test
-    fun `check if game is saved in app state when disposed`() = runComposeUiTest {
-        val expectedAppState = AppState(
-            game = game,
-            page = Page.GAME,
-            error = null,
-            audioPool = AudioPool(emptyList()),
-            theme = AppState.EMPTY_APP_STATE.theme
-        )
-
-        val appState = mutableStateOf(value = expectedAppState)
+    fun `check if game is saved when play valid move`() = runComposeUiTest {
+        val expectedGame = game.play(game.getAvailablePlays()[0])
+        var gameSaved: Game? = null
 
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GamePageViewModel(appState, scope)
+            val gameViewModel = GamePageViewModel(game, scope, { gameSaved = it }, { })
 
-            GamePage(gameViewModel)
+            ReversiScope(appState).GamePage(
+                viewModel = gameViewModel,
+                onLeave = { }
+            )
         }
 
         //click on a valid cell to change the game state on view model
-        assert(game == appState.value.game )
         onNodeWithTag(testTagCellView(game.getAvailablePlays()[0]), useUnmergedTree = true).performClick()
 
-        //set main menu page to dispose the game page
-        setContent {
-            MainMenu(appState)
-        }
-
-        //verify if the game state in app state is different from the initial game state
-        assert(game != appState.value.game)
+        assertEquals(expectedGame,gameSaved!!)
     }
 
     //TODO: add test for pass, wait for winner page

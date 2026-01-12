@@ -8,10 +8,10 @@ import kotlin.test.assertFails
 class PlayerSerializerTest {
     val testUnit = SerializerTestUnit(PlayerSerializer()) {
         listOf(
-            Player(PieceType.BLACK, 10),
-            Player(PieceType.WHITE, 20),
-            Player(PieceType.BLACK, 0),
-            Player(PieceType.WHITE, 100)
+            Player(PieceType.BLACK, points = 10),
+            Player(PieceType.WHITE, points = 20),
+            Player(PieceType.BLACK, points = 0),
+            Player(PieceType.WHITE, points = 100)
         )
     }
 
@@ -22,10 +22,10 @@ class PlayerSerializerTest {
 
     @Test
     fun `Test serialize`() {
-        val player = Player(PieceType.BLACK, 15)
+        val player = Player(PieceType.BLACK, points = 15)
         val serialized = PlayerSerializer().serialize(player)
 
-        val expected = "${player.type.symbol},${player.points}"
+        val expected = "${player.type.symbol},${player.name},${player.points}"
 
         assert(serialized == expected) {
             "Serialization failed. Expected: $expected, got: $serialized"
@@ -34,9 +34,9 @@ class PlayerSerializerTest {
 
     @Test
     fun `Test deserialize`() {
-        val data = "@,25"
+        val data = "@,WHITE,25"
         val deserialized = PlayerSerializer().deserialize(data)
-        val expected = Player(PieceType.WHITE, 25)
+        val expected = Player(PieceType.WHITE, points = 25)
         assert(deserialized == expected) {
             "Deserialization failed. Expected: $expected, got: $deserialized"
         }

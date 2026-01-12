@@ -7,6 +7,9 @@ import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.Piece
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.storage.GameState
+import pt.isel.reversi.core.storage.MatchPlayers
+import pt.isel.reversi.utils.LOGGER
+import kotlin.test.assertEquals
 import kotlin.test.assertFails
 
 class GameStateSerializerTest {
@@ -24,25 +27,32 @@ class GameStateSerializerTest {
             }
             val board = Board(side, pieces)
             val currentPlayer = PieceType.entries.random()
-            val players = listOf(
-                Player(PieceType.BLACK), Player(PieceType.WHITE)
+            val players = MatchPlayers(
+                Player(PieceType.BLACK, "Alice"),
+                Player(PieceType.WHITE, "Bob")
             )
-            val gameState = GameState(players, currentPlayer, board)
+            val gameState = GameState(
+                players = players, lastPlayer = currentPlayer, board = board
+            )
             list += gameState
         }
         list
     }
 
     val testingGameState = GameState(
-        listOf(
-            Player(PieceType.BLACK), Player(PieceType.WHITE)
-        ), PieceType.BLACK, Board(8).startPieces(), null
+        players = MatchPlayers(
+            Player(PieceType.BLACK, "Alice"),
+            Player(PieceType.WHITE, "Bob")
+        ),
+        lastPlayer = PieceType.BLACK,
+        board = Board(8).startPieces(),
+        winner = null
     )
 
     private fun buildStringFromGameState(state: GameState): String {
         return buildString {
             for (player in state.players) {
-                append("${player.type.symbol},${player.points};")
+                append("${player.type.symbol},${player.name},${player.points};")
             }
             appendLine()
             appendLine(state.lastPlayer.symbol)
@@ -65,7 +75,18 @@ class GameStateSerializerTest {
     fun `Test serialize`() {
         val serialized = GameStateSerializer().serialize(testingGameState)
         val expected = buildStringFromGameState(testingGameState)
+        LOGGER.info("Serialized:\n$serialized")
+        LOGGER.info("Expected:\n$expected")
         assert(serialized == expected)
+    }
+
+    @Test
+    fun `Test serialize with empty players` () {
+        val gamState = testingGameState.copy(players = MatchPlayers())
+        val expected = buildStringFromGameState(gamState)
+        val uut = GameStateSerializer().serialize(gamState)
+
+        assertEquals(expected, uut)
     }
 
     @Test
@@ -93,5 +114,25 @@ class GameStateSerializerTest {
                 GameStateSerializer().deserialize(badData)
             }
         }
+    }
+
+    @Test
+    fun `Deserialize empty players results in empty MatchPlayers`() {
+        val expectedGameState = testingGameState.copy(players = MatchPlayers())
+        val data = buildStringFromGameState(expectedGameState)
+        val deserialized = GameStateSerializer().deserialize(data)
+
+        assert(deserialized == expectedGameState)
+    }
+
+    @Test
+    fun `Deserialize with one player results in MatchPlayers with one player`() {
+        val expectedGameState = testingGameState.copy(
+            players = MatchPlayers(testingGameState.players.last())
+        )
+        val data = buildStringFromGameState(expectedGameState)
+        val deserialized = GameStateSerializer().deserialize(data)
+
+        assert(deserialized == expectedGameState)
     }
 }

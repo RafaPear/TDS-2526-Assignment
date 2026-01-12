@@ -15,7 +15,8 @@ class SerializerTestUnit<U, K>(
     private fun verifyPasses(testData: U) {
         serializer.run {
             assert(testData == deserialize(serialize(testData))) {
-                "Failed for: $testData"
+                "Failed for: $testData" +
+                "Serialized: ${deserialize(serialize(testData))}"
             }
         }
     }

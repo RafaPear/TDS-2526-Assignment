@@ -7,8 +7,12 @@ import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult
 
 /**
- * Refreshes and displays the current game state.
- * It expects a `Game` context and returns an error when the game or board is not initialized.
+ * Command to refresh and display the current game state.
+ *
+ * Re-reads the underlying game state from storage (useful in multi-process scenarios
+ * where another instance may have updated the game state) and displays the updated board.
+ *
+ * Usage: `refresh` or `r`
  */
 object RefreshCmd : CommandImpl<Game>() {
     override val info: CommandInfo = CommandInfo(
@@ -22,6 +26,13 @@ object RefreshCmd : CommandImpl<Game>() {
         maxArgs = 0
     )
 
+    /**
+     * Executes the refresh command.
+     *
+     * @param args Command arguments (unused for this command).
+     * @param context The current game context.
+     * @return A CommandResult with the refreshed game state or an error message.
+     */
     override fun execute(
         vararg args: String,
         context: Game?

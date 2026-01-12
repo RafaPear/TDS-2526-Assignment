@@ -6,33 +6,82 @@ import pt.isel.reversi.utils.makePathString
 
 /**
  * Configuration holder for core game parameters loaded from properties files.
- * Manages board dimensions, character representations, and storage configuration.
+ * Manages character representations and storage configuration.
  *
  * @property map The underlying configuration map with string keys and values.
  */
 class CoreConfig(override val map: Map<String, String>) : Config {
-    /** Side length of the game board. */
-    val BOARD_SIDE = map["BOARD_SIDE"]?.toIntOrNull() ?: 8
-
     /** Character representing the target pieces on the board. */
-    val TARGET_CHAR = map["TARGET_CHAR"]?.firstOrNull() ?: '*'
+    val targetChar = map["targetChar"]?.firstOrNull() ?: '*'
 
     /** Character representing empty spaces on the board. */
-    val EMPTY_CHAR = map["EMPTY_CHAR"]?.firstOrNull() ?: '.'
-
-    /** Directory path where game saves are stored. */
-    val SAVES_FOLDER = map["SAVES_FOLDER"] ?: makePathString("saves")
+    val emptyChar = map["emptyChar"]?.firstOrNull() ?: '.'
 
     /** Configured storage type for game state persistence. */
-    val STORAGE_TYPE = GameStorageType.fromConfigValue(map["STORAGE_TYPE"].toString())
+    val gameStorageType = GameStorageType.fromConfigValue(map["gameStorageType"].toString())
+
+    /** Directory path where game saves are stored. */
+    val savesPath = map["savesPath"] ?: makePathString("saves")
+
+    /** Name of the MongoDB database for storing game states. */
+    val dbName = map["dbName"] ?: "gameSaves"
+
+    /** URI for connecting to the MongoDB server. */
+    val dbURI = map["dbURI"] ?: "comunity.ddns.net"
+
+    /** Name of the MongoDB collection for storing game states. */
+    val dbPort = map["dbPort"]?.toIntOrNull() ?: 27017
+
+    /** Username for MongoDB authentication. */
+    val dbUser = map["dbUser"] ?: "<reversiUser>"
+
+    /** Password for MongoDB authentication. */
+    val dbPassword = map["dbPassword"] ?: "<reversiPass>"
 
     override fun getDefaultConfigFileEntries(): Map<String, String> {
         return mapOf(
-            "BOARD_SIDE" to BOARD_SIDE.toString(),
-            "TARGET_CHAR" to TARGET_CHAR.toString(),
-            "EMPTY_CHAR" to EMPTY_CHAR.toString(),
-            "SAVES_FOLDER" to SAVES_FOLDER,
-            "STORAGE_TYPE" to GameStorageType.FILE_STORAGE.name,
+            "targetChar" to targetChar.toString(),
+            "emptyChar" to emptyChar.toString(),
+            "savesPath" to savesPath,
+            "gameStorageType" to gameStorageType.name,
+            "dbURI" to dbURI,
+            "dbUser" to dbUser,
+            "dbPassword" to dbPassword,
+            "dbPort" to dbPort.toString(),
+            "dbName" to dbName,
         )
     }
+
+    /**
+     * Creates a copy of this CoreConfig with optionally modified values.
+     */
+    fun copy(
+        targetChar: Char = this.targetChar,
+        emptyChar: Char = this.emptyChar,
+        gameStorageType: GameStorageType = this.gameStorageType,
+        savesPath: String = this.savesPath,
+        dbName: String = this.dbName,
+        dbURI: String = this.dbURI,
+        dbPort: Int = this.dbPort,
+        dbUser: String = this.dbUser,
+        dbPassword: String = this.dbPassword
+    ): CoreConfig {
+        val newMap = mapOf(
+            "targetChar" to targetChar.toString(),
+            "emptyChar" to emptyChar.toString(),
+            "gameStorageType" to gameStorageType.name,
+            "savesPath" to savesPath,
+            "dbName" to dbName,
+            "dbURI" to dbURI,
+            "dbPort" to dbPort.toString(),
+            "dbUser" to dbUser,
+            "dbPassword" to dbPassword
+        )
+        return CoreConfig(newMap)
+    }
 }
+
+
+
+
+

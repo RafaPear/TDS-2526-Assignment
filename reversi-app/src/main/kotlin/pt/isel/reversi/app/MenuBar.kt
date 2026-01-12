@@ -1,12 +1,13 @@
 package pt.isel.reversi.app
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
-import pt.isel.reversi.app.state.*
+import kotlinx.coroutines.runBlocking
+import pt.isel.reversi.app.state.AppState
+import pt.isel.reversi.app.state.Page
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.utils.LOGGER
 
@@ -19,23 +20,36 @@ import pt.isel.reversi.utils.LOGGER
  * @param exitAction Callback function to execute on application exit.
  */
 @Composable
-fun FrameWindowScope.MakeMenuBar(appState: MutableState<AppState>, windowState: WindowState, exitAction: () -> Unit) {
+fun FrameWindowScope.MakeMenuBar(
+    appState: AppState,
+    windowState: WindowState,
+    setPage: (Page) -> Unit,
+    setGame: (Game) -> Unit,
+    setTheme: (AppTheme) -> Unit,
+    setGlobalError: (Exception?) -> Unit,
+    exitAction: () -> Unit
+) {
     MenuBar {
         Menu("Ficheiro") {
             Item("Novo Jogo") {
-                appState.setPage(Page.NEW_GAME)
+                setPage(Page.NEW_GAME)
             }
-            Item("Guardar Jogo") {
-                appState.setPage(Page.SAVE_GAME)
-            }
+//            Item("Guardar Jogo") {
+//                setPage(Page.SAVE_GAME)
+//            }
             Item("Definições") {
-                appState.setPage(Page.SETTINGS)
+                setPage(Page.SETTINGS)
             }
             Item("Menu Principal") {
-                appState.setPage(Page.MAIN_MENU)
+                setPage(Page.MAIN_MENU)
             }
             Item("Jogo Atual") {
-                appState.setPage(Page.GAME)
+                setPage(Page.GAME)
+            }
+            Item("Sair do jogo atual") {
+                runBlocking { appState.game.saveEndGame() }
+                setPage(Page.MAIN_MENU)
+                setGame(Game())
             }
             Separator()
             Item("Sair") {
@@ -48,38 +62,38 @@ fun FrameWindowScope.MakeMenuBar(appState: MutableState<AppState>, windowState: 
                 windowState.placement =
                     if (windowState.placement == WindowPlacement.Floating) WindowPlacement.Fullscreen
                     else WindowPlacement.Floating
-                appState.value = appState.value.copy() // Epa foi o q arranjei para forcar o gajo a dar update lol
+                setTheme(appState.theme) // Force recomposition
             }
         }
 
         Menu("Dev") {
             Item("Mostrar Estado do Jogo") {
-                appState.value.game.printDebugState()
+                // Use the extension function defined in the pt.isel.reversi.app package
+                appState.game.printDebugState()
             }
             Item("Nullify Game State") {
-                appState.setGame(
-                    Game()
-                )
+                setGame( Game() )
                 LOGGER.info("Estado do jogo anulado para fins de teste.")
             }
             Item("Reload Config") {
                 try {
-                    appState.setGame(
-                        appState.value.game.reloadConfig()
-                    )
+                    setGame( appState.game.reloadConfig() )
                     LOGGER.info("Config recarregada com sucesso.")
                 } catch (e: Exception) {
-                    appState.setError(error = e)
+                    setGlobalError(e)
                 }
             }
-            Item("Lobby Screen") {
-                appState.setPage(Page.LOBBY)
+            Item("Trigger Error") {
+                setGlobalError(Exception("Erro de teste disparado a partir do menu Dev"))
+            }
+            Item("Crash App") {
+                throw RuntimeException("App crash triggered from Dev menu")
             }
         }
 
         Menu("Ajuda") {
             Item("Sobre") {
-                appState.setPage(Page.ABOUT)
+                setPage(Page.ABOUT)
             }
         }
     }

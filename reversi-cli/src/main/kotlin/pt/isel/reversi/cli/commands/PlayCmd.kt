@@ -9,7 +9,14 @@ import pt.rafap.ktflag.cmd.CommandResult
 import pt.rafap.ktflag.cmd.CommandResult.ERROR
 
 /**
- * Command to do a play in a game.
+ * Command to execute a move at the specified board coordinates.
+ *
+ * Accepts coordinates in multiple formats:
+ * - Separate arguments: `play 3 4`
+ * - Combined with letter column: `play 3A` or `play 3a`
+ * - Combined digits: `play 34` (row=3, col=4)
+ *
+ * Coordinates are 1-based (row 1-8, column 1-8 for standard 8x8 board).
  */
 object PlayCmd : CommandImpl<Game>() {
     override val info: CommandInfo = CommandInfo(
@@ -22,11 +29,16 @@ object PlayCmd : CommandImpl<Game>() {
         maxArgs = 2
     )
 
-    // 1 5
-    // 1 A ou 1 a
-    // 1A ou 1a
-    // 15
-
+    /**
+     * Parses coordinate arguments in various formats.
+     *
+     * Supports the following formats:
+     * - Two separate arguments: row and column (as strings/numbers)
+     * - Combined format: digit(s) followed by a letter or digit
+     *
+     * @param args The coordinate arguments to parse.
+     * @return The parsed Coordinate, or null if parsing fails.
+     */
     fun parseCoordinateArgs(args: List<String>): Coordinate? {
 
         val arg = args.joinToString("").trim()
@@ -47,6 +59,13 @@ object PlayCmd : CommandImpl<Game>() {
         }
     }
 
+    /**
+     * Executes a move at the parsed coordinates.
+     *
+     * @param args The coordinate arguments (see parseCoordinateArgs for formats).
+     * @param context The current game context.
+     * @return A CommandResult with the updated game state or an error message.
+     */
     override fun execute(vararg args: String, context: Game?): CommandResult<Game> {
         if (context == null) {
             return ERROR("Game is not defined. Cannot play.")

@@ -1,6 +1,9 @@
 package pt.isel.reversi.app.gameAudio
 
 import pt.isel.reversi.app.AppTheme
+import pt.isel.reversi.app.exceptions.CouldNotLoadAsset
+import pt.isel.reversi.core.exceptions.ErrorType
+import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.utils.LOGGER
 import pt.isel.reversi.utils.audio.AudioModifier
 import pt.isel.reversi.utils.audio.AudioPool
@@ -13,29 +16,37 @@ import pt.isel.reversi.utils.loadResourcesFromFolder
  * Loads the game's audio pool from the resources.
  * @return An AudioPool containing all loaded audio tracks.
  */
-fun loadGameAudioPool(theme: AppTheme, mainFolder: String = "audios/"): AudioPool {
-    val audioNames = listOf(
-        theme.backgroundMusic,
-        theme.gameMusic,
-        theme.placePieceSound
-    )
+fun loadGameAudioPool(theme: AppTheme, mainFolder: String = "audios/", setErrorFun: (ReversiException) -> Unit): AudioPool {
+    val audioNames = theme.getAudioNames().toSet()
+    val musicNames = theme.getAudioMusicNames().toSet()
+
+    val loadedAudioNames: MutableSet<String> = mutableSetOf()
+
     val audioPaths = loadResourcesFromFolder(mainFolder) { fileName, url ->
         val name = fileName.substringBeforeLast('.')
         try {
-            when (name) {
-                in setOf(theme.backgroundMusic, theme.gameMusic) -> loadAudio(
+            val value = when (name) {
+                in musicNames -> loadAudio(
                     name,
                     url,
                     AudioModifier().setToLoopInfinitely()
                 )
-
                 in audioNames -> loadAudio(name, url.toURI().toURL())
                 else -> null
             }
+            if (value != null) loadedAudioNames.add(name)
+            value
         } catch (e: Exception) {
-            LOGGER.warning("Failed to load audio $name: ${e.message}")
+            LOGGER.warning("Failed to load audio $name: ${e.message}. This audio will not be available.")
+            setErrorFun(CouldNotLoadAsset("Could not load audio asset $name: ${e.message}", ErrorType.WARNING))
             null
         }
+    }
+    val missingAudio = audioNames - loadedAudioNames
+    if (missingAudio.isNotEmpty()) {
+        val message = "Could not load audio assets: ${missingAudio.joinToString(", ")}"
+        LOGGER.warning(message)
+        setErrorFun(CouldNotLoadAsset(message, ErrorType.WARNING))
     }
 
     return buildAudioPool { for (audio in audioPaths) add(audio) }

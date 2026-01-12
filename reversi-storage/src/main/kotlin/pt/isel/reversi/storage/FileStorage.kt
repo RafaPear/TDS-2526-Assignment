@@ -2,6 +2,7 @@ package pt.isel.reversi.storage
 
 import okio.FileSystem
 import okio.Path.Companion.toPath
+import pt.isel.reversi.utils.TRACKER
 
 /**
  * [Storage] implementation via file + text strings.
@@ -15,6 +16,10 @@ data class FileStorage<T>(
     private val folder: String,
     override val serializer: Serializer<T, String>
 ) : Storage<String, T, String> {
+
+    init {
+        TRACKER.trackClassCreated(this)
+    }
 
     /** Storage file path for entity identified by [id]. */
     private fun path(id: String) = "$folder/$id.txt".toPath()
@@ -43,7 +48,6 @@ data class FileStorage<T>(
 
         // check if file is not in use by another process
         fs.metadata(path(id))
-
         val content = fs.read(path(id)) { readUtf8() }
 
         return serializer.deserialize(content)
@@ -85,5 +89,9 @@ data class FileStorage<T>(
         return fs.list(dirPath)
             .filter { fs.metadata(it).isRegularFile }
             .map { it.name.removeSuffix(".txt") }
+    }
+
+    override fun close() {
+        // No resources to release
     }
 }

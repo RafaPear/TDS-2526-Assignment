@@ -5,6 +5,7 @@ import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.startNewGame
+import pt.isel.reversi.core.storage.MatchPlayers
 import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult
@@ -26,7 +27,8 @@ object MockCommand : CommandImpl<Game>() {
     ): CommandResult<Game> {
         val newContext = runBlocking {
             startNewGame(
-                players = listOf(Player(PieceType.BLACK)),
+                side = 8,
+                players = MatchPlayers(Player(PieceType.BLACK)),
                 firstTurn = PieceType.BLACK
             )
         }

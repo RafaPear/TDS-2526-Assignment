@@ -5,8 +5,15 @@ import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult
 import pt.rafap.ktflag.cmd.CommandResultType
-import java.io.File
 
+/**
+ * Debug command to list all available saved games.
+ *
+ * This is a development-only command that displays all game files in the saves folder.
+ * Useful for debugging and manual testing to see which games are available to load.
+ *
+ * Usage: `listgames` or `lg` (available only with --debug flag)
+ */
 object ListGamesCmd : CommandImpl<Game>() {
     override val info: CommandInfo =
         CommandInfo(
@@ -19,6 +26,13 @@ object ListGamesCmd : CommandImpl<Game>() {
             maxArgs = 0
         )
 
+    /**
+     * Executes the list games command.
+     *
+     * @param args Command arguments (unused for this command).
+     * @param context The current game context (used to access configuration).
+     * @return A CommandResult with the list of available games or an error message.
+     */
     override fun execute(
         vararg args: String,
         context: Game?
@@ -26,7 +40,7 @@ object ListGamesCmd : CommandImpl<Game>() {
         if (context == null) {
             return CommandResultType.ERROR("Game context is not available. No config is loaded.", context)
         }
-        val folder = File(context.config.SAVES_FOLDER)
+        val folder = java.io.File(context.config.savesPath)
         if (!folder.exists() || !folder.isDirectory) {
             return CommandResult.SUCCESS("No saved games found.", context)
         }

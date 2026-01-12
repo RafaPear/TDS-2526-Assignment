@@ -14,13 +14,14 @@ internal class PlayerSerializer : Serializer<Player, String> {
     override fun serialize(obj: Player): String {
         val symbol = pieceTypeSerializer.serialize(obj.type)
         val points = obj.points
+        val name = obj.name
 
-        return "$symbol,$points"
+        return "$symbol,$name,$points"
     }
 
     override fun deserialize(obj: String): Player {
-        val (symbol, points) = obj.trim().split(",")
+        val (symbol, name, points) = obj.trim().split(",")
         val type = pieceTypeSerializer.deserialize(symbol.first())
-        return Player(type, points.toInt())
+        return Player(type, name = name , points = points.toInt())
     }
 }

@@ -5,7 +5,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
@@ -13,7 +15,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,15 +23,15 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import pt.isel.reversi.app.ReversiScope
 import pt.isel.reversi.app.ReversiText
-import pt.isel.reversi.app.state.AppState
-import pt.isel.reversi.app.state.setError
 import pt.isel.reversi.core.exceptions.ErrorType
+import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.utils.LOGGER
 
 /**
@@ -39,12 +40,10 @@ import pt.isel.reversi.utils.LOGGER
  * @param modifier Optional modifier for styling the composable.
  */
 @Composable
-fun ReversiScope.ErrorMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
-    //TODO: Differentiate error types with different UI elements
-
-    // Evite logging on every recomposition, only log when the error changes
-    LaunchedEffect(appState.value.error) {
-        val error = appState.value.error ?: return@LaunchedEffect
+fun ReversiScope.ErrorMessage(error: ReversiException?, modifier: Modifier = Modifier, setError: (Exception?) -> Unit) {
+    // Avoid logging on every recomposition, only when error changes
+    LaunchedEffect(error) {
+        val error = error?: return@LaunchedEffect
         when (error.type) {
             ErrorType.INFO -> LOGGER.info("${error.message}")
             ErrorType.WARNING -> LOGGER.warning("${error.message}")
@@ -53,18 +52,18 @@ fun ReversiScope.ErrorMessage(appState: MutableState<AppState>, modifier: Modifi
         }
     }
 
-    when (appState.value.error?.type) {
-        ErrorType.INFO -> ToastMessage(appState, modifier)
-        ErrorType.WARNING -> WarningMessage(appState, modifier)
-        ErrorType.ERROR -> ToastMessage(appState, modifier)
-        ErrorType.CRITICAL -> ToastMessage(appState, modifier)
+    when (error?.type) {
+        ErrorType.INFO -> ToastMessage(error,modifier, setError)
+        ErrorType.WARNING -> WarningMessage(error,modifier, setError)
+        ErrorType.ERROR -> ToastMessage(error,modifier, setError)
+        ErrorType.CRITICAL -> ToastMessage(error,modifier, setError)
         null -> return
     }
 }
 
 @Composable
-fun ReversiScope.WarningMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
-    val errorMessage = appState.value.error?.message ?: return
+fun ReversiScope.WarningMessage(error: ReversiException?, modifier: Modifier = Modifier, setError: (Exception?) -> Unit) {
+    val errorMessage = error?.message ?: return
 
     val overlayColor = Color.Black.copy(alpha = 0.6f)
     val warningBackgroundColor = Color(0xFFFFCC80)
@@ -83,6 +82,7 @@ fun ReversiScope.WarningMessage(appState: MutableState<AppState>, modifier: Modi
                 .clip(RoundedCornerShape(12.dp))
                 .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp))
                 .background(warningBackgroundColor)
+                .verticalScroll(rememberScrollState())
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -102,13 +102,13 @@ fun ReversiScope.WarningMessage(appState: MutableState<AppState>, modifier: Modi
                 modifier = Modifier.fillMaxWidth(),
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center,
-                maxLines = 5,
+                overflow = TextOverflow.Visible,
+                softWrap = true,
+                maxLines = Int.MAX_VALUE
             )
 
             Button(
-                onClick = {
-                    appState.setError(error = null)
-                },
+                onClick = { setError(null) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = buttonBackgroundColor,
                     contentColor = Color.White
@@ -131,9 +131,8 @@ fun ReversiScope.WarningMessage(appState: MutableState<AppState>, modifier: Modi
  * @param modifier Optional modifier for styling the composable.
  */
 @Composable
-fun ReversiScope.ToastMessage(appState: MutableState<AppState>, modifier: Modifier = Modifier) {
+fun ReversiScope.ToastMessage(error: ReversiException?, modifier: Modifier = Modifier, setError: (Exception?) -> Unit) {
     val offsetY = remember { Animatable(-100f) }
-    val error = appState.value.error
     val message = error?.message
 
     val slideDuration = 300
@@ -180,6 +179,6 @@ fun ReversiScope.ToastMessage(appState: MutableState<AppState>, modifier: Modifi
             targetValue = -100f,
             animationSpec = tween(durationMillis = slideDuration)
         )
-        appState.setError(error = null)
+        setError(null)
     }
 }

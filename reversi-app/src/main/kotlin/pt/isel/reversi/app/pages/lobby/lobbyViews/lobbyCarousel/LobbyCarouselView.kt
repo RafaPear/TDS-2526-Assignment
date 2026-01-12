@@ -18,19 +18,19 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.ReversiScope
+import pt.isel.reversi.app.pages.lobby.LobbyLoadedState
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.drawCard.GameCard
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.utils.NavButton
-import pt.isel.reversi.core.Game
 import kotlin.math.absoluteValue
 
 @Composable
 fun BoxWithConstraintsScope.LobbyCarouselView(
     currentGameName: String?,
     pagerState: PagerState,
-    games: List<Game>,
+    games: List<LobbyLoadedState>,
     reversiScope: ReversiScope,
     onNavButtonClick: (Int) -> Unit,
-    onGameClick: (Game, Int) -> Unit
+    onGameClick: (LobbyLoadedState, Int) -> Unit
 ) {
     val availableWidth = this.maxWidth
     val availableHeight = this.maxHeight
