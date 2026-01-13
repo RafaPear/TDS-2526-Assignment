@@ -17,10 +17,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.isel.reversi.app.ReversiScope
 import pt.isel.reversi.app.pages.lobby.LobbyLoadedState
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.drawCard.GameCard
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.utils.NavButton
+import pt.isel.reversi.app.state.ReversiScope
 import kotlin.math.absoluteValue
 
 @Composable

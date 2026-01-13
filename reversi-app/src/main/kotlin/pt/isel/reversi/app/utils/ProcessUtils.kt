@@ -1,9 +1,11 @@
-package pt.isel.reversi.app
+package pt.isel.reversi.app.utils
 
 import pt.isel.reversi.utils.LOGGER
 import pt.isel.reversi.utils.generateUniqueTimestampedFileName
 import pt.isel.reversi.utils.makePathString
 import java.io.File
+import java.time.Instant
+import java.util.logging.FileHandler
 
 fun installFatalCrashLogger() {
     Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
@@ -33,7 +35,7 @@ $msg
 ===============================
 CRASH FATAL
 Thread: ${thread.name}
-Time: ${java.time.Instant.now()}
+Time: ${Instant.now()}
 Type: ${throwable::class.qualifiedName}
 Message: ${throwable.message}
                
@@ -58,7 +60,7 @@ ${throwable.stackTraceToString()}
 
         // close logger
         LOGGER.info("Shutting down logger before crash...")
-        val fileHandler = LOGGER.handlers.find { it is java.util.logging.FileHandler }
+        val fileHandler = LOGGER.handlers.find { it is FileHandler }
         fileHandler?.flush()
         for (handler in LOGGER.handlers) {
             handler.flush()

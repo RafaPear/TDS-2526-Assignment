@@ -5,10 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import pt.isel.reversi.app.PreviousPage
-import pt.isel.reversi.app.ReversiScope
-import pt.isel.reversi.app.ReversiText
 import pt.isel.reversi.app.ScaffoldView
+import pt.isel.reversi.app.state.ReversiScope
+import pt.isel.reversi.app.state.ReversiText
+import pt.isel.reversi.app.utils.PreviousPage
 
 
 /**

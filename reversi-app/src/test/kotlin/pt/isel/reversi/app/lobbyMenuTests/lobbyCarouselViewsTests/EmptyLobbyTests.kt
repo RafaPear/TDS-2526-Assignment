@@ -4,9 +4,9 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.runComposeUiTest
-import pt.isel.reversi.app.ReversiScope
 import pt.isel.reversi.app.pages.lobby.lobbyViews.*
 import pt.isel.reversi.app.state.AppState
+import pt.isel.reversi.app.state.ReversiScope
 import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)

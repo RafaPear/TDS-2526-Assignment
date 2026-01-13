@@ -12,10 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
-import pt.isel.reversi.app.*
+import pt.isel.reversi.app.AppTheme
+import pt.isel.reversi.app.AppThemes
+import pt.isel.reversi.app.ScaffoldView
+import pt.isel.reversi.app.state.*
+import pt.isel.reversi.app.utils.PreviousPage
 import pt.isel.reversi.core.CoreConfig
-import pt.isel.reversi.core.loadCoreConfig
 import pt.isel.reversi.core.storage.GameStorageType
 import pt.isel.reversi.utils.TRACKER
 
@@ -62,19 +64,10 @@ fun ReversiScope.SettingsPage(
     onLeave: () -> Unit
 ) {
     TRACKER.trackRecomposition()
-
-    val draftPlayerName = remember { mutableStateOf(appState.playerName) }
-    val draftTheme = remember { mutableStateOf(appState.theme) }
-
-    val draftCoreConfig = remember { mutableStateOf(loadCoreConfig()) }
-    var currentVol by remember {
-        val masterVol = appState.audioPool.getMasterVolume()
-        val isMuted = appState.audioPool.isPoolMuted()
-        val min = appState.audioPool.getMasterVolumeRange()?.first
-
-        if (isMuted) mutableStateOf(min ?: -20f)
-        else mutableStateOf(masterVol ?: 0f)
-    }
+    val draftPlayerName = viewModel.uiState.value.draftPlayerName
+    val draftTheme = viewModel.uiState.value.draftTheme
+    val draftCoreConfig = viewModel.uiState.value.draftCoreConfig
+    val currentVol = viewModel.uiState.value.currentVol
 
     ScaffoldView(
         setError = { error -> viewModel.setError(error) },
@@ -85,7 +78,6 @@ fun ReversiScope.SettingsPage(
             PreviousPage { onLeave() }
         }
     ) { padding ->
-        val scope = rememberCoroutineScope()
         val scrollState = rememberScrollState(0)
 
         Box(
@@ -119,123 +111,39 @@ fun ReversiScope.SettingsPage(
             ) {
 
                 GameSection(
-                    playerName = draftPlayerName.value,
-                    onValueChange = {
-                        draftPlayerName.value = it
-                    }
+                    playerName = draftPlayerName,
+                    onValueChange = { viewModel.setDraftPlayerName(it) }
                 )
 
                 CoreConfigSection(
-                    coreConfig = draftCoreConfig.value,
-                    onConfigChange = { draftCoreConfig.value = it }
+                    coreConfig = draftCoreConfig,
+                    onConfigChange = { viewModel.setDraftCoreConfig(it) }
                 )
 
                 AudioSection(
                     currentVol = currentVol,
-                    onVolumeChange = {
-                        currentVol = it
-                    },
+                    onVolumeChange = { viewModel.setCurrentVol(it) },
                 )
 
                 AppearanceSection(
-                    theme = draftTheme.value,
+                    theme = draftTheme,
                     appTheme = appState.theme
-                ) { newTheme ->
-                    draftTheme.value = newTheme
-                }
+                ) { viewModel.setDraftTheme(it) }
 
                 // Apply button
                 ApplyButton {
-                    scope.launch {
-                        TRACKER.trackFunctionCall(details = "Apply settings clicked")
-                        viewModel.applySettings(
-                            oldTheme = appState.theme,
-                            newName = draftPlayerName.value,
-                            newTheme = draftTheme.value,
-                            draftCoreConfig = draftCoreConfig.value,
-                            volume = currentVol
-                        )
-                    }
+                    viewModel.applySettings(
+                        oldTheme = appState.theme,
+                        newName = draftPlayerName,
+                        newTheme = draftTheme,
+                        draftCoreConfig = draftCoreConfig,
+                        volume = currentVol
+                    )
                 }
             }
         }
     }
 }
-
-//TODO: Rever esta fun com as novas alteracoes
-//// Settings application logic (simplified to avoid unresolved references)
-//private suspend fun applySettings(
-//    appState: AppState,
-//    draft: AppState,
-//    draftCoreConfig: CoreConfig,
-//    volume: Float
-//): AppState {
-//    setLoading(appState, true)
-//
-//    try {
-//
-//        // check if storage type changed and test connection if needed
-//        val currentCoreConfig = loadCoreConfig()
-//        if (currentCoreConfig != draftCoreConfig) {
-//            LOGGER.info("Storage type changed from ${currentCoreConfig.gameStorageType} to ${draftCoreConfig.gameStorageType}, testing connectivity...")
-//            val exception = runStorageHealthCheck(testConf = draftCoreConfig, save = true)
-//            if (exception != null) {
-//                setError(appState, exception, ErrorType.WARNING)
-//                LOGGER.severe("Storage type change failed: ${exception.message}")
-//            }
-//            else {
-//                saveCoreConfig(draftCoreConfig)
-//                LOGGER.info("Core config saved: storageType=${draftCoreConfig.gameStorageType}")
-//            }
-//        }
-//
-//        // Load audio pool for the selected theme and merge into current
-//        val current = appState
-//        val oldTheme = current.theme.value
-//        val playingAudios = current.audioPool.value.getPlayingAudios()
-//
-//        val loadedAudioPool = loadGameAudioPool(draft.theme.value) { err ->
-//            setError(appState, err)
-//        }
-//        current.audioPool.value.merge(loadedAudioPool)
-//
-//        // Apply audio volume
-//        parseVolume(volume, current)
-//
-//        // Apply theme and player name
-//        setAppState(
-//            appState,
-//            game = current.game.value,
-//            playerName = draft.playerName.value,
-//            theme = draft.theme.value
-//        )
-//
-//        // Resume previously playing theme-related audios
-//        for (audio in playingAudios) {
-//            val audioToPlay = when (audio) {
-//                oldTheme.backgroundMusic -> draft.theme.value.backgroundMusic
-//                oldTheme.gameMusic -> draft.theme.value.gameMusic
-//                else -> null
-//            }
-//            if (audioToPlay != null && !current.audioPool.value.isPlaying(audioToPlay)) {
-//                current.audioPool.value.play(audioToPlay)
-//                LOGGER.info("Resuming audio: $audioToPlay")
-//            }
-//        }
-//
-//        val loadedAudios = current.audioPool.value.pool.map { it.id }
-//        LOGGER.info("Loaded audios after applying settings: $loadedAudios")
-//
-//        // Small delay for UX
-//        delay(100)
-//    } catch (e: Exception) {
-//        LOGGER.severe("Failed to apply settings: ${e.message}")
-//    } finally {
-//        setLoading(appState, false)
-//    }
-//
-//    return appState
-//}
 
 
 @Composable

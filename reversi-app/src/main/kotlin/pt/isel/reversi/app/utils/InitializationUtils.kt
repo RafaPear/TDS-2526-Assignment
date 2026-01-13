@@ -1,5 +1,6 @@
-package pt.isel.reversi.app
+package pt.isel.reversi.app.utils
 
+import pt.isel.reversi.app.AppThemes
 import pt.isel.reversi.app.gameAudio.loadGameAudioPool
 import pt.isel.reversi.core.CoreConfig
 import pt.isel.reversi.core.Game

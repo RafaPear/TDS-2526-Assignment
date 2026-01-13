@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import pt.isel.reversi.app.exceptions.ErrorMessage
 import pt.isel.reversi.app.state.Page
+import pt.isel.reversi.app.state.ReversiScope
+import pt.isel.reversi.app.state.ReversiText
 import pt.isel.reversi.core.exceptions.ReversiException
 
 

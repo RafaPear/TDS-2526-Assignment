@@ -15,9 +15,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.isel.reversi.app.ReversiScope
-import pt.isel.reversi.app.ReversiText
-import pt.isel.reversi.app.getTheme
+import pt.isel.reversi.app.state.ReversiScope
+import pt.isel.reversi.app.state.ReversiText
+import pt.isel.reversi.app.state.getTheme
 import pt.isel.reversi.core.board.PieceType
 
 /**

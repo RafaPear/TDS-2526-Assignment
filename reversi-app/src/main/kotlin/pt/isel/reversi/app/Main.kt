@@ -20,6 +20,10 @@ import pt.isel.reversi.app.pages.newGamePage.NewGameViewModel
 import pt.isel.reversi.app.pages.settingsPage.SettingsPage
 import pt.isel.reversi.app.pages.settingsPage.SettingsViewModel
 import pt.isel.reversi.app.state.*
+import pt.isel.reversi.app.utils.addShutdownHook
+import pt.isel.reversi.app.utils.initializeAppArgs
+import pt.isel.reversi.app.utils.installFatalCrashLogger
+import pt.isel.reversi.app.utils.runStorageHealthCheck
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.ErrorType.Companion.toReversiException
@@ -178,6 +182,7 @@ fun main(args: Array<String>) {
 
                     Page.SETTINGS -> SettingsViewModel(
                         scope,
+                        appState,
                         setTheme = { themeState.value = it },
                         setGlobalError = { globalError.setGlobalError(it) },
                         setPlayerName = {
@@ -193,7 +198,6 @@ fun main(args: Array<String>) {
                                 )
                             }
                         },
-                        audioPool = audioPool.value,
                         globalError = globalError.value
                     )
 

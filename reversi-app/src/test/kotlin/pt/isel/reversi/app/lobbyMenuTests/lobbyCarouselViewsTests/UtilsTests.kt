@@ -7,9 +7,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.*
-import pt.isel.reversi.app.ReversiScope
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.utils.*
 import pt.isel.reversi.app.state.AppState
+import pt.isel.reversi.app.state.ReversiScope
 import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)

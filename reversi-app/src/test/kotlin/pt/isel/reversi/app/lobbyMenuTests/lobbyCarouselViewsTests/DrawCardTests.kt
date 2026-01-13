@@ -1,13 +1,13 @@
 package lobbyMenuTest.lobbyCarouselTests.lobbyCarouselViewsTests
 
 import androidx.compose.ui.test.*
-import pt.isel.reversi.app.ReversiScope
 import pt.isel.reversi.app.pages.game.testTagBoard
 import pt.isel.reversi.app.pages.game.testTagCellView
 import pt.isel.reversi.app.pages.lobby.LobbyLoadedState
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.drawCard.*
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.getCardStatus
 import pt.isel.reversi.app.state.AppState
+import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.Board

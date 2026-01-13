@@ -3,11 +3,11 @@ package pt.isel.reversi.app.gamePageTest
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.test.*
 import kotlinx.coroutines.runBlocking
-import pt.isel.reversi.app.ReversiScope
 import pt.isel.reversi.app.pages.game.*
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.Page
 import pt.isel.reversi.app.state.PagesState
+import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType

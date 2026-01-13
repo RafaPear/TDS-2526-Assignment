@@ -9,8 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.isel.reversi.app.*
+import pt.isel.reversi.app.ScaffoldView
 import pt.isel.reversi.app.state.Page
+import pt.isel.reversi.app.state.ReversiButton
+import pt.isel.reversi.app.state.ReversiScope
+import pt.isel.reversi.app.state.ReversiText
+import pt.isel.reversi.app.utils.PreviousPage
 import pt.isel.reversi.utils.TRACKER
 
 val MAIN_MENU_AUTO_SIZE_BUTTON_TEXT =
