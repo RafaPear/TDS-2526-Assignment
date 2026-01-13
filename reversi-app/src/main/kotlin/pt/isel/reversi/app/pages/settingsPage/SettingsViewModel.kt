@@ -125,7 +125,8 @@ class SettingsViewModel(
 
                 // Apply theme and player name
                 Snapshot.withMutableSnapshot {
-                    setPlayerName(newName?.ifEmpty { appState.playerName })
+                    setPlayerName(newName)
+                    setDraftPlayerName(newName)
                     setTheme(newTheme)
                 }
 

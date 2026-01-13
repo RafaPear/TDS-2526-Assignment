@@ -134,7 +134,7 @@ fun ReversiScope.SettingsPage(
                 ApplyButton {
                     viewModel.applySettings(
                         oldTheme = appState.theme,
-                        newName = draftPlayerName,
+                        newName = draftPlayerName?.ifEmpty { appState.playerName },
                         newTheme = draftTheme,
                         draftCoreConfig = draftCoreConfig,
                         volume = currentVol
