@@ -19,6 +19,8 @@ import pt.isel.reversi.app.pages.newGamePage.NewGamePage
 import pt.isel.reversi.app.pages.newGamePage.NewGameViewModel
 import pt.isel.reversi.app.pages.settingsPage.SettingsPage
 import pt.isel.reversi.app.pages.settingsPage.SettingsViewModel
+import pt.isel.reversi.app.pages.statisticsPage.StatisticsPage
+import pt.isel.reversi.app.pages.statisticsPage.StatisticsPageViewModel
 import pt.isel.reversi.app.state.*
 import pt.isel.reversi.app.utils.addShutdownHook
 import pt.isel.reversi.app.utils.initializeAppArgs
@@ -218,7 +220,7 @@ fun main(args: Array<String>) {
                             }
                         }
                     )
-
+                    Page.STATISTICS -> StatisticsPageViewModel(scope, globalError.value)
                     Page.LOBBY -> LobbyViewModel(
                         scope = scope,
                         appState = appState,
@@ -236,7 +238,7 @@ fun main(args: Array<String>) {
                 }
             }
 
-            TRACKER.trackRecomposition()
+            TRACKER.trackRecomposition(category = "App.Main")
 
             // Log navigation once per page change
             LaunchedEffect(currentPage) {
@@ -281,6 +283,15 @@ fun main(args: Array<String>) {
                                 viewModel = currentViewModel,
                                 onLeave = {
                                     pagesState.setPage(pagesState.value.backPage)
+                                }
+                            )
+                        }
+
+                        Page.STATISTICS -> if (currentViewModel is StatisticsPageViewModel) {
+                            StatisticsPage(
+                                viewModel = currentViewModel,
+                                onLeave = {
+                                    pagesState.setPage(Page.MAIN_MENU)
                                 }
                             )
                         }

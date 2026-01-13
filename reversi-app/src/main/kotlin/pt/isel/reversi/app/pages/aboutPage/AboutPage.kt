@@ -6,20 +6,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pt.isel.reversi.app.ScaffoldView
+import pt.isel.reversi.app.state.Page
 import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.app.state.ReversiText
 import pt.isel.reversi.app.utils.PreviousPage
+import pt.isel.reversi.utils.TRACKER
 
 
 /**
  * Simple about page presenting project and authorship information.
  *
- * @param appState Global state holder used for navigation and theming.
+ * @param viewModel View model providing screen state and error handling.
  * @param modifier Optional modifier to adjust layout in previews or reuse.
+ * @param onLeave Callback invoked when navigating back.
  */
 @Composable
 fun ReversiScope.AboutPage(viewModel: AboutPageViewModel, modifier: Modifier = Modifier, onLeave: () -> Unit) {
-
+    TRACKER.trackPageEnter(category = Page.ABOUT)
     ScaffoldView(
         setError = { error -> viewModel.setError(error) },
         error = viewModel.uiState.value.screenState.error,

@@ -22,6 +22,11 @@ class CliConfig(override val map: Map<String, String>) : Config {
     val HELP_ALIAS_COLOR = map["HELP_ALIAS_COLOR"] ?: Colors.BLUE
     val HELP_DESC_COLOR = map["HELP_DESC_COLOR"] ?: Colors.WHITE
 
+    /**
+     * Returns the default configuration entries for CLI settings.
+     *
+     * @return A map of default CLI configuration key-value pairs.
+     */
     override fun getDefaultConfigFileEntries(): Map<String, String> {
         return mapOf(
             "WELCOME_MESSAGE" to WELCOME_MESSAGE,

@@ -38,6 +38,10 @@ class CoreConfig(override val map: Map<String, String>) : Config {
     /** Password for MongoDB authentication. */
     val dbPassword = map["dbPassword"] ?: "<reversiPass>"
 
+    /**
+     * Returns the default configuration entries for core game settings.
+     * @return A map of default configuration key-value pairs.
+     */
     override fun getDefaultConfigFileEntries(): Map<String, String> {
         return mapOf(
             "targetChar" to targetChar.toString(),
@@ -54,6 +58,16 @@ class CoreConfig(override val map: Map<String, String>) : Config {
 
     /**
      * Creates a copy of this CoreConfig with optionally modified values.
+     * @param targetChar The character representing targets on the board.
+     * @param emptyChar The character representing empty spaces on the board.
+     * @param gameStorageType The storage type for game persistence.
+     * @param savesPath The directory path for game saves.
+     * @param dbName The MongoDB database name.
+     * @param dbURI The MongoDB connection URI.
+     * @param dbPort The MongoDB connection port.
+     * @param dbUser The MongoDB username for authentication.
+     * @param dbPassword The MongoDB password for authentication.
+     * @return A new CoreConfig with the specified values.
      */
     fun copy(
         targetChar: Char = this.targetChar,

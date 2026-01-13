@@ -17,6 +17,10 @@ import pt.isel.reversi.utils.LOGGER
  *
  * @param appState Global application state for navigation and configuration.
  * @param windowState Window state for toggling fullscreen mode.
+ * @param setPage Callback to change the current page.
+ * @param setGame Callback to update the current game instance.
+ * @param setTheme Callback to reapply the current theme (used after fullscreen toggle).
+ * @param setGlobalError Callback to surface errors triggered from menu actions.
  * @param exitAction Callback function to execute on application exit.
  */
 @Composable
@@ -76,6 +80,9 @@ fun FrameWindowScope.MakeMenuBar(
             Item("Mostrar Estado do Jogo") {
                 // Use the extension function defined in the pt.isel.reversi.app package
                 appState.game.printDebugState()
+            }
+            Item("Estatísticas de Tracking") {
+                setPage(Page.STATISTICS)
             }
             Item("Nullify Game State") {
                 setGame(Game())

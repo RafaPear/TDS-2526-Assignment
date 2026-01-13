@@ -35,9 +35,10 @@ import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.utils.LOGGER
 
 /**
- * Composable that displays an error message based on the error type in the app state.
- * @param appState Mutable state of the application containing the current error information.
+ * Composable that displays an error message based on the error type.
+ * @param error Current error to show (null hides the message).
  * @param modifier Optional modifier for styling the composable.
+ * @param setError Callback to clear or update the error.
  */
 @Composable
 fun ReversiScope.ErrorMessage(error: ReversiException?, modifier: Modifier = Modifier, setError: (Exception?) -> Unit) {
@@ -127,8 +128,9 @@ fun ReversiScope.WarningMessage(error: ReversiException?, modifier: Modifier = M
 /**
  * Composable that shows a toast message for errors.
  * The message is displayed for 2 seconds before being cleared.
- * @param appState Mutable state of the application containing the current error information.
+ * @param error Current error to show.
  * @param modifier Optional modifier for styling the composable.
+ * @param setError Callback to clear the error after display.
  */
 @Composable
 fun ReversiScope.ToastMessage(error: ReversiException?, modifier: Modifier = Modifier, setError: (Exception?) -> Unit) {

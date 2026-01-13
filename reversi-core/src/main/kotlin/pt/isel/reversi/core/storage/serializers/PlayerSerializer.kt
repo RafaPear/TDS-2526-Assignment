@@ -21,6 +21,18 @@ internal class PlayerSerializer : Serializer<Player, String> {
 
     override fun deserialize(obj: String): Player {
         val (symbol, name, points) = obj.trim().split(",")
+        if (symbol.isEmpty() || name.isEmpty() || points.isEmpty()) {
+            throw IllegalArgumentException("Player line has empty fields: '$obj'")
+        }
+        if (symbol.length != 1) {
+            throw IllegalArgumentException("Invalid piece symbol length in line: '$obj'")
+        }
+        if (!points.all { it.isDigit() }) {
+            throw IllegalArgumentException("Points must be an integer in line: '$obj'")
+        }
+        if (points.toInt() < 0) {
+            throw IllegalArgumentException("Points must be non-negative in line: '$obj'")
+        }
         val type = pieceTypeSerializer.deserialize(symbol.first())
         return Player(type, name = name , points = points.toInt())
     }

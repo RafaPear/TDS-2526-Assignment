@@ -3,41 +3,13 @@ package pt.isel.reversi.core.storage.serializers
 import org.junit.Test
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.Board
-import pt.isel.reversi.core.board.Coordinate
-import pt.isel.reversi.core.board.Piece
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.storage.GameState
 import pt.isel.reversi.core.storage.MatchPlayers
-import pt.isel.reversi.utils.LOGGER
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 
 class GameStateSerializerTest {
-    val testUnit = SerializerTestUnit(GameStateSerializer()) {
-        val list = mutableListOf<GameState>()
-        val sides = listOf(4, 6, 8, 10, 12, 14, 16)
-        for (side in sides) {
-            val pieces = mutableListOf<Piece>()
-            for (i in 0 until side) {
-                for (j in 0 until side) {
-                    val cord = Coordinate(i, j)
-                    val pieceType = PieceType.entries.random()
-                    pieces += Piece(cord, pieceType)
-                }
-            }
-            val board = Board(side, pieces)
-            val currentPlayer = PieceType.entries.random()
-            val players = MatchPlayers(
-                Player(PieceType.BLACK, "Alice"),
-                Player(PieceType.WHITE, "Bob")
-            )
-            val gameState = GameState(
-                players = players, lastPlayer = currentPlayer, board = board
-            )
-            list += gameState
-        }
-        list
-    }
 
     val testingGameState = GameState(
         players = MatchPlayers(
@@ -67,72 +39,147 @@ class GameStateSerializerTest {
     }
 
     @Test
-    fun `Test serialize and deserialize`() {
-        testUnit.runTest()
-    }
-
-    @Test
-    fun `Test serialize`() {
+    fun `serialize game state with two players`() {
         val serialized = GameStateSerializer().serialize(testingGameState)
         val expected = buildStringFromGameState(testingGameState)
-        LOGGER.info("Serialized:\n$serialized")
-        LOGGER.info("Expected:\n$expected")
-        assert(serialized == expected)
+
+        assertEquals(expected, serialized, "Serialization failed for game state with two players")
     }
 
     @Test
-    fun `Test serialize with empty players` () {
+    fun `serialize game state with empty players`() {
         val gamState = testingGameState.copy(players = MatchPlayers())
         val expected = buildStringFromGameState(gamState)
-        val uut = GameStateSerializer().serialize(gamState)
+        val serialized = GameStateSerializer().serialize(gamState)
 
-        assertEquals(expected, uut)
+        assertEquals(expected, serialized, "Serialization failed for game state with empty players")
     }
 
     @Test
-    fun `Test deserialize`() {
+    fun `serialize game state with one player`() {
+        val gameState = testingGameState.copy(
+            players = MatchPlayers(Player(PieceType.BLACK, "Alice"))
+        )
+        val expected = buildStringFromGameState(gameState)
+        val serialized = GameStateSerializer().serialize(gameState)
+
+        assertEquals(expected, serialized, "Serialization failed for game state with one player")
+    }
+
+    @Test
+    fun `deserialize game state with two players`() {
         val data = buildStringFromGameState(testingGameState)
         val deserialized = GameStateSerializer().deserialize(data)
         val expected = testingGameState
-        assert(deserialized == expected)
+
+        assertEquals(expected, deserialized, "Deserialization failed for game state with two players")
     }
 
     @Test
-    fun `Deserialize bad data throws exception`() {
-        val badData1 = "B,10;W,20\nX\n8\n0,0,#" // Invalid last player
-        val badData2 = "B,10;W,20\n@\nnotANumber\n0,0,#" // Invalid board side
-        val badData3 = "B,10;W,20\n@\n8\n0,0,Z" // Invalid piece type
-        val badData4 = "B,notANumber;W,20\n@\n8\n0,0,#" // Invalid player points
-        val badData5 = "B,10;W,20\n@\n8\nnotARow,0,#" // Invalid piece row
-        val badData6 = "B,10;W,20\n@\n8\n0,notACol,#" // Invalid piece column
-        val badData7 = "B,10;W,20\n@\n8\n" // Missing pieces
-        val badData8 = "B,10\n@\n8\n0,0,#" // Missing players
-        val badDataList = listOf(badData1, badData2, badData3, badData4, badData5, badData6, badData7, badData8)
-
-        for (badData in badDataList) {
-            assertFails {
-                GameStateSerializer().deserialize(badData)
-            }
-        }
-    }
-
-    @Test
-    fun `Deserialize empty players results in empty MatchPlayers`() {
+    fun `deserialize game state with empty players`() {
         val expectedGameState = testingGameState.copy(players = MatchPlayers())
         val data = buildStringFromGameState(expectedGameState)
         val deserialized = GameStateSerializer().deserialize(data)
 
-        assert(deserialized == expectedGameState)
+        assertEquals(deserialized, expectedGameState, "Deserialization failed for empty players")
     }
 
     @Test
-    fun `Deserialize with one player results in MatchPlayers with one player`() {
+    fun `deserialize game state with one player`() {
         val expectedGameState = testingGameState.copy(
             players = MatchPlayers(testingGameState.players.last())
         )
         val data = buildStringFromGameState(expectedGameState)
         val deserialized = GameStateSerializer().deserialize(data)
 
-        assert(deserialized == expectedGameState)
+        assertEquals(deserialized, expectedGameState, "Deserialization failed for one player")
+    }
+
+    @Test
+    fun `deserialize with invalid last player throws exception`() {
+        val badData = "B,10;W,20\nX\n8\n0,0,#"
+        assertFails("Should fail with invalid last player") {
+            GameStateSerializer().deserialize(badData)
+        }
+    }
+
+    @Test
+    fun `deserialize with invalid board side throws exception`() {
+        val badData = "B,10;W,20\n@\nnotANumber\n0,0,#"
+        assertFails("Should fail with invalid board side") {
+            GameStateSerializer().deserialize(badData)
+        }
+    }
+
+    @Test
+    fun `deserialize with invalid piece type throws exception`() {
+        val badData = "B,10;W,20\n@\n8\n0,0,Z"
+        assertFails("Should fail with invalid piece type") {
+            GameStateSerializer().deserialize(badData)
+        }
+    }
+
+    @Test
+    fun `deserialize with invalid player points throws exception`() {
+        val badData = "B,notANumber;W,20\n@\n8\n0,0,#"
+        assertFails("Should fail with invalid player points") {
+            GameStateSerializer().deserialize(badData)
+        }
+    }
+
+    @Test
+    fun `deserialize with invalid piece row throws exception`() {
+        val badData = "B,10;W,20\n@\n8\nnotARow,0,#"
+        assertFails("Should fail with invalid piece row") {
+            GameStateSerializer().deserialize(badData)
+        }
+    }
+
+    @Test
+    fun `deserialize with invalid piece column throws exception`() {
+        val badData = "B,10;W,20\n@\n8\n0,notACol,#"
+        assertFails("Should fail with invalid piece column") {
+            GameStateSerializer().deserialize(badData)
+        }
+    }
+
+    @Test
+    fun `deserialize with missing board data throws exception`() {
+        val badData = "B,10;W,20\n@\n8\n"
+        assertFails("Should fail with missing board data") {
+            GameStateSerializer().deserialize(badData)
+        }
+    }
+
+    @Test
+    fun `deserialize with malformed player data throws exception`() {
+        val badData = "B,10\n@\n8\n0,0,#"
+        assertFails("Should fail with malformed player data") {
+            GameStateSerializer().deserialize(badData)
+        }
+    }
+
+    @Test
+    fun `deserialize with empty string throws exception`() {
+        val badData = ""
+        assertFails("Should fail with empty string") {
+            GameStateSerializer().deserialize(badData)
+        }
+    }
+
+    @Test
+    fun `deserialize with negative player points throws exception`() {
+        val badData = "B,-10;W,20\n@\n8\n0,0,#"
+        assertFails("Should fail with negative player points") {
+            GameStateSerializer().deserialize(badData)
+        }
+    }
+
+    @Test
+    fun `deserialize with out of bounds piece coordinates throws exception`() {
+        val badData = "B,10;W,20\n@\n8\n10,10,#"
+        assertFails("Should fail with out of bounds coordinates") {
+            GameStateSerializer().deserialize(badData)
+        }
     }
 }

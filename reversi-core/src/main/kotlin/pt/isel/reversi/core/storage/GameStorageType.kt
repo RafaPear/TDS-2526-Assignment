@@ -48,6 +48,11 @@ enum class GameStorageType(val storage: (StorageParams) -> AsyncStorage<String, 
             return result
         }
 
+        /**
+         * Sets up the appropriate storage based on the core configuration.
+         * @param config The core configuration specifying the storage type.
+         * @return An AsyncStorage instance configured according to the core config.
+         */
         internal fun setUpStorage(config: CoreConfig): AsyncStorage<String, GameState, String> {
             return when (config.gameStorageType) {
                 FILE_STORAGE -> setUpFileStorage(config)
@@ -55,10 +60,20 @@ enum class GameStorageType(val storage: (StorageParams) -> AsyncStorage<String, 
             }
         }
 
+        /**
+         * Sets up file-based game storage.
+         * @param config The core configuration containing the save path.
+         * @return An AsyncFileStorage instance for game state persistence.
+         */
         internal fun setUpFileStorage(config: CoreConfig): AsyncStorage<String, GameState, String> {
             return FILE_STORAGE.storage(StorageParams.FileStorageParams(config.savesPath))
         }
 
+        /**
+         * Sets up MongoDB-based game storage.
+         * @param config The core configuration containing database connection details.
+         * @return An AsyncMongoDBStorage instance for game state persistence.
+         */
         internal fun setUpDatabaseStorage(config: CoreConfig): AsyncStorage<String, GameState, String> {
             val mongoDBConnection = MongoDBConnection(
                 host = config.dbURI,

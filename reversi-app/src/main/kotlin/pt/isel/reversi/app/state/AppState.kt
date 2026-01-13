@@ -11,6 +11,13 @@ import pt.isel.reversi.utils.audio.AudioPool
  * Central application state with each field as a mutable state.
  * This allows fine-grained reactivity: changing one field only invalidates
  * composables that read that specific field.
+ *
+ * @property game The current game instance.
+ * @property pagesState The current page and navigation state.
+ * @property audioPool The audio pool for managing game sounds.
+ * @property globalError A global error that occurred in the application, if any.
+ * @property theme The current application theme.
+ * @property playerName The name of the current player, if set.
  */
 data class AppState(
     val game: Game,
@@ -33,6 +40,12 @@ data class AppState(
     }
 }
 
+/**
+ * Screen state for managing UI-level error and loading states.
+ *
+ * @property error The current error state, if any.
+ * @property isLoading Whether the screen is currently loading.
+ */
 data class ScreenState(
     val error: ReversiException? = null,
     val isLoading: Boolean = false,
@@ -52,12 +65,27 @@ abstract class UiState {
     abstract fun updateScreenState(newScreenState: ScreenState): UiState
 }
 
+/**
+ * Contract for UI view models that manage screen state and error handling.
+ *
+ * @property uiState The current UI state as a reactive state holder.
+ */
 interface ViewModel {
     val uiState: State<UiState>
 
+    /**
+     * Sets or clears an error in the UI state.
+     * @param error The exception to display, or null to clear the current error.
+     */
     fun setError(error: Exception?)
 }
 
+/**
+ * Represents the navigation state of the application.
+ *
+ * @property page The current page being displayed.
+ * @property backPage The previous page for navigation history.
+ */
 data class PagesState(
     val page: Page,
     val backPage: Page,

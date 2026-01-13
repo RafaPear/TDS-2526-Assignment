@@ -20,14 +20,17 @@ import pt.isel.reversi.utils.TRACKER
  * In a local game, both players are managed within the same game instance. No storage operations are performed.
  *
  * #### Not Local Game
- * In a not local game, only one player is managed within the game instance. The game state is saved and loaded
+ * In a not local game, only one player is managed within the game instance. The game state is saved and loaded from storage.
  *
  * TODO: Test my piece and parameters
  *
  * @property target Indicates if the game is in target mode.
  * @property currGameName The name of the current game for storage purposes.
+ * @property lastModified The timestamp of the last modification to the game state in storage.
  * @property gameState The current state of the game, including the board and players.
  * @property countPass The number of consecutive passes made by players.
+ * @property myPiece The piece type representing the current player.
+ * @property config The core configuration for the game.
  */
 data class Game(
     val target: Boolean = false,
@@ -44,7 +47,7 @@ data class Game(
     }
 
     init {
-        TRACKER.trackClassCreated(this)
+        TRACKER.trackClassCreated(this, category = "Core.Game")
     }
 
     /**
@@ -87,6 +90,10 @@ data class Game(
         }
     }
 
+    /**
+     * Validates whether the game already ended and throws if a winner is set.
+     * @throws EndGameException if the game already has a winner.
+     */
     private fun gameEnded() {
         val gs = requireStartedGame()
         if (gs.winner != null) {
@@ -97,6 +104,11 @@ data class Game(
         }
     }
 
+    /**
+     * Ensures both players are available either locally or in persisted storage.
+     * @return True if both player slots are filled.
+     * @throws InvalidFileException if loading the persisted game fails.
+     */
     private suspend fun hasAllPlayers(): Boolean {
         val gs = requireStartedGame()
         val name = currGameName ?: return (gs.players.isFull())
@@ -121,6 +133,7 @@ data class Game(
      * @throws EndGameException if the game has already ended.
      */
     suspend fun play(coordinate: Coordinate): Game {
+        TRACKER.trackFunctionCall(customName = "Game.play", details = "coordinate=$coordinate", category = "Core.Game")
         val gs = requireStartedGame()
         gameEnded()
         if (!hasAllPlayers()) {
@@ -160,7 +173,8 @@ data class Game(
      */
     fun setTargetMode(target: Boolean): Game = this.copy(target = target)
 
-    /** Gets the available plays for the current player.
+    /**
+     * Gets the available plays for the current player.
      * If it is not a local game, and it is not the player's turn, returns an empty list.
      * @return List of available plays.
      * @throws InvalidGameException if the game is not started yet (board is null).
@@ -191,6 +205,7 @@ data class Game(
      * @throws EndGameException if the game has already ended.
      */
     suspend fun pass(): Game {
+        TRACKER.trackFunctionCall(customName = "Game.pass", category = "Core.Game")
         var gs = requireStartedGame()
         gameEnded()
 
@@ -244,6 +259,7 @@ data class Game(
      * @throws InvalidFileException if there is an error loading the game state from storage.
      */
     suspend fun refresh(): Game {
+        TRACKER.trackFunctionCall(customName = "Game.refresh", category = "Core.Game")
         val gs = requireStartedGame()
         if (currGameName == null) return this
 
@@ -261,6 +277,11 @@ data class Game(
         )
     }
 
+    /**
+     * Loads the latest persisted game state without mutating the current instance.
+     * @return The loaded game state or null if unchanged or no persisted state exists.
+     * @throws InvalidFileException if loading from storage fails.
+     */
     suspend fun refreshBase(): GameState? {
         if (currGameName == null) return null
 
@@ -273,6 +294,10 @@ data class Game(
         )
     }
 
+    /**
+     * Replaces the in-memory game state with the latest persisted version if available.
+     * @return A new Game instance reflecting the persisted state, or this instance if unchanged.
+     */
     suspend fun hardRefresh(): Game {
         val gs = refreshBase()
         return if (gs != null) {
@@ -289,6 +314,7 @@ data class Game(
      * @throws InvalidFileException if the current game name is null.
      */
     suspend fun saveEndGame() {
+        TRACKER.trackFunctionCall(customName = "Game.saveEndGame", category = "Core.Game")
         val gs = requireStartedGame()
 
         val name = currGameName ?: throw InvalidFileException(

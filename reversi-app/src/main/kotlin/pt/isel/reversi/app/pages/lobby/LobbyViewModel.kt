@@ -19,6 +19,11 @@ import pt.isel.reversi.utils.TRACKER
 private const val UI_DELAY_SHORT_MS = 100L
 private const val POLL_INTERVAL_MS = 1000L
 
+/**
+ * Represents a game loaded from storage in the lobby.
+ * @property gameState The state of the loaded game.
+ * @property name The name/identifier of the game.
+ */
 data class LobbyLoadedState(
     val gameState: GameState,
     val name: String,
@@ -31,6 +36,7 @@ data class LobbyLoadedState(
  * @property lobbyState Current state of the lobby (empty, showing games, etc.).
  * @property selectedGame The currently selected game for joining.
  * @property canRefresh Whether the refresh button is enabled.
+ * @property screenState The screen state containing error and loading information.
  */
 data class LobbyUiState(
     val gameStates: List<LobbyLoadedState> = emptyList(),
@@ -42,6 +48,11 @@ data class LobbyUiState(
         isLoading = false
     )
 ) : UiState() {
+    /**
+     * Creates a copy of this UI state with the given screen state.
+     * @param newScreenState The new screen state to apply.
+     * @return A new LobbyUiState with the updated screen state.
+     */
     override fun updateScreenState(newScreenState: ScreenState): LobbyUiState {
         return copy(screenState = newScreenState)
     }
@@ -76,8 +87,7 @@ class LobbyViewModel(
     private var pollingJob: Job? = null
 
     init {
-        TRACKER.trackViewModelCreated(this)
-        LOGGER.info("LobbyViewModel initialized")
+        TRACKER.trackViewModelCreated(this, category = Page.LOBBY)
     }
 
     fun refreshAll() {

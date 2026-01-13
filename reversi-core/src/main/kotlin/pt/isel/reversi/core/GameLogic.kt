@@ -6,6 +6,7 @@ import pt.isel.reversi.core.board.Piece
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.InvalidPlayException
+import pt.isel.reversi.utils.TRACKER
 
 /**
  * Contains the core game logic for Reversi, including methods to play a piece,
@@ -25,6 +26,7 @@ internal object GameLogic {
         board: Board,
         myPiece: Piece,
     ): Board {
+        TRACKER.trackFunctionCall(customName = "GameLogic.play", category = "Core.Logic")
         board.checkPosition(myPiece.coordinate)
         board[myPiece.coordinate]?.let {
             //if != null, position is occupied
@@ -71,6 +73,7 @@ internal object GameLogic {
         board: Board,
         myPieceType: PieceType,
     ): List<Coordinate> {
+        TRACKER.trackFunctionCall(customName = "GameLogic.getAvailablePlays", category = "Core.Logic")
 
         val possibleMoves = board.flatMap { piece -> //get all possible moves around each enemy piece
             if (piece.value != myPieceType)//get empty spaces around opponent pieces
@@ -114,13 +117,13 @@ internal object GameLogic {
     }
 
     /**
-     *Finds all coordinates with 1 cell distance from the given piece that contain
+     * Finds all coordinates with 1 cell distance from the given piece that contain
      * the specified type of piece.
      * @param board The current state of the board.
      * @param myPiece The piece around which to search.
      * @param findThis The type of piece to search for. If null, it will find empty spaces.
      * @return A list of coordinates where the specified type of piece is found around the given piece.
-     * @throws IllegalArgumentException if the position is out of bounds
+     * @throws IllegalArgumentException if the position is out of bounds.
      */
     fun findAround(
         board: Board,

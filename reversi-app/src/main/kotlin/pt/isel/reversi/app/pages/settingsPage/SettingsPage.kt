@@ -52,8 +52,8 @@ private fun ReversiScope.SettingsSection(
 }
 
 /**
- * Settings page displaying application configuration options.
- * Includes theme selection and audio volume control.
+ * Settings page displaying configuration options including player name, storage, audio, and theme.
+ * Provides apply action to persist changes and navigate back.
  *
  * @param viewModel The ViewModel managing the settings state and logic.
  * @param onLeave Callback invoked when leaving the settings page.
@@ -63,7 +63,7 @@ fun ReversiScope.SettingsPage(
     viewModel: SettingsViewModel,
     onLeave: () -> Unit
 ) {
-    TRACKER.trackRecomposition()
+    TRACKER.trackRecomposition(category = Page.SETTINGS)
     val draftPlayerName = viewModel.uiState.value.draftPlayerName
     val draftTheme = viewModel.uiState.value.draftTheme
     val draftCoreConfig = viewModel.uiState.value.draftCoreConfig
@@ -132,6 +132,7 @@ fun ReversiScope.SettingsPage(
 
                 // Apply button
                 ApplyButton {
+                    TRACKER.trackFunctionCall(details = "Apply settings clicked")
                     viewModel.applySettings(
                         oldTheme = appState.theme,
                         newName = draftPlayerName?.ifEmpty { appState.playerName },

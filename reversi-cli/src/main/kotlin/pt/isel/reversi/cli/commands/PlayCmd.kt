@@ -3,6 +3,7 @@ package pt.isel.reversi.cli.commands
 import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.board.Coordinate
+import pt.isel.reversi.utils.TRACKER
 import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult
@@ -67,6 +68,7 @@ object PlayCmd : CommandImpl<Game>() {
      * @return A CommandResult with the updated game state or an error message.
      */
     override fun execute(vararg args: String, context: Game?): CommandResult<Game> {
+        TRACKER.trackFunctionCall(customName = "PlayCmd.execute", details = "args=${args.joinToString()}", category = "CLI.Command")
         if (context == null) {
             return ERROR("Game is not defined. Cannot play.")
         }

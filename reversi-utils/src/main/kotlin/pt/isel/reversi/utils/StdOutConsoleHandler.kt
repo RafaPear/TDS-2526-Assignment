@@ -4,8 +4,16 @@ import java.util.logging.Handler
 import java.util.logging.Level
 import java.util.logging.LogRecord
 
+/**
+ * Custom logging handler that outputs formatted log records to standard output with ANSI color codes.
+ * Different log levels are displayed in different colors for better readability.
+ */
 class StdOutConsoleHandler : Handler() {
 
+    /**
+     * Publishes a log record to standard output with appropriate color coding.
+     * @param record The log record to publish.
+     */
     override fun publish(record: LogRecord) {
         if (!isLoggable(record)) return
 
@@ -22,7 +30,14 @@ class StdOutConsoleHandler : Handler() {
         print("$color$msg$RESET")
     }
 
+    /**
+     * Flushes the output stream.
+     */
     override fun flush() = System.out.flush()
+
+    /**
+     * Closes the handler (no-op for stdout).
+     */
     override fun close() {}
 
     companion object {

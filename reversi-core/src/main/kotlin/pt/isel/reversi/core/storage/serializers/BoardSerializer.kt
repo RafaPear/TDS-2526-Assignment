@@ -31,8 +31,16 @@ internal class BoardSerializer : Serializer<Board, String> {
             val side = parts[0].toInt()
             val pieces = mutableListOf<Piece>()
             for (part in parts.drop(1)) {
-                if (part.isNotEmpty())
-                    pieces += pieceSerializer.deserialize(part)
+                if (part.isNotEmpty()) {
+                    val piece = pieceSerializer.deserialize(part)
+                    if (piece.coordinate.row > side || piece.coordinate.col > side) {
+                        throw InvalidBoardInFileException(
+                            message = "Piece coordinate out of bounds: ${piece.coordinate}",
+                            type = ErrorType.ERROR
+                        )
+                    }
+                    pieces += piece
+                }
             }
             return Board(side, pieces)
         } catch (e: Exception) {

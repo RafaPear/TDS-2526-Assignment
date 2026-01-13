@@ -66,8 +66,9 @@ data class Board(
     }
 
     /**
-     * Gets the piece at the specified index like linear list.
-     * @return The piece at the PieceType, or null if there is no piece.
+     * Gets the piece at the specified index like a linear list.
+     * @param idx The linear index of the piece to retrieve.
+     * @return The piece type at the specified index, or null if there is no piece.
      * @throws IllegalArgumentException if the index is out of bounds.
      */
     operator fun get(idx: Int): PieceType? {
@@ -86,9 +87,10 @@ data class Board(
     }
 
     /**
-     * Changes the piece at the specified row and column from 'b' to 'w' or from 'w' to 'b'.
-     * @return true if the piece was changed, false if there is no piece at the specified position.
-     * @throws IllegalArgumentException if the row or column are out of bounds.
+     * Changes the piece at the specified coordinate by swapping its color from 'B' to 'W' or vice versa.
+     * @param coordinate The coordinate of the piece to change.
+     * @return A new board with the piece color swapped at the specified position.
+     * @throws IllegalArgumentException if the coordinate is out of bounds or if there is no piece at the position.
      */
     fun changePiece(coordinate: Coordinate): Board {
         checkPosition(coordinate)
@@ -105,10 +107,10 @@ data class Board(
     }
 
     /**
-     * Changes the piece at the specified index like linear list from 'b' to 'w' or from 'w' to 'b'.
-     * @param idx The index of the piece to change.
-     * @return true if the piece was changed, false if there is no piece at the specified position.
-     * @throws IllegalArgumentException if the index is out of bounds.
+     * Changes the piece at the specified linear index by swapping its color.
+     * @param idx The linear index of the piece to change.
+     * @return A new board with the piece color swapped at the specified index.
+     * @throws IllegalArgumentException if the index is out of bounds or if there is no piece at the position.
      */
     fun changePiece(idx: Int): Board {
         val coordinate = idx.toCoordinate()
@@ -116,11 +118,11 @@ data class Board(
     }
 
     /**
-     * Adds a piece to the board at the specified row and column.
+     * Adds a piece to the board at the specified coordinate.
      * @param coordinate The (row, column) coordinate where the piece will be added.
      * @param value The type of piece to add.
      * @return A new board with the added piece.
-     * @throws IllegalArgumentException if the row or column are out of bounds.
+     * @throws IllegalArgumentException if the coordinate is out of bounds or if there is already a piece at that position.
      */
     fun addPiece(coordinate: Coordinate, value: PieceType): Board {
         checkPosition(coordinate)
@@ -133,11 +135,11 @@ data class Board(
     }
 
     /**
-     * Adds a piece to the board at the specified index like linear list.
-     * @param idx The index where the piece will be added.
+     * Adds a piece to the board at the specified linear index.
+     * @param idx The linear index where the piece will be added.
      * @param value The type of piece to add.
      * @return A new board with the added piece.
-     * @throws IllegalArgumentException if the row or column are out of bounds.
+     * @throws IllegalArgumentException if the index is out of bounds or if there is already a piece at that position.
      */
     fun addPiece(idx: Int, value: PieceType): Board {
         val coordinate = idx.toCoordinate()
@@ -148,7 +150,7 @@ data class Board(
      * Adds a piece to the board.
      * @param piece The piece to add.
      * @return A new board with the added piece.
-     * @throws IllegalArgumentException if the row or column are out of bounds.
+     * @throws IllegalArgumentException if the coordinate is out of bounds or if there is already a piece at that position.
      */
     fun addPiece(piece: Piece): Board = addPiece(piece.coordinate, piece.value)
 

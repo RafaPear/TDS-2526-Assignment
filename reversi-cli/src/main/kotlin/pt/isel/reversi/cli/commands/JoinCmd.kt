@@ -5,6 +5,7 @@ import pt.isel.reversi.cli.pieceTypes
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.loadGame
+import pt.isel.reversi.utils.TRACKER
 import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult
@@ -40,6 +41,7 @@ object JoinCmd : CommandImpl<Game>() {
      * @return A CommandResult with the loaded game or an error message.
      */
     override fun execute(vararg args: String, context: Game?): CommandResult<Game> {
+        TRACKER.trackFunctionCall(customName = "JoinCmd.execute", details = "args=${args.joinToString()}", category = "CLI.Command")
         if (context != null && context.currGameName != null) {
             runBlocking {
                 context.saveEndGame()

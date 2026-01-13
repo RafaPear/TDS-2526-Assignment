@@ -26,7 +26,7 @@ data class MongoDBStorage<T>(
     private val collection = database.getCollection<Document>(collectionName)
 
     init {
-        TRACKER.trackClassCreated(this)
+        TRACKER.trackClassCreated(this, category = "Storage.MongoDB")
         // cria coleção se não existir
         val collectionNames = database.listCollectionNames().toList()
         if (collectionName !in collectionNames) {
@@ -51,6 +51,7 @@ data class MongoDBStorage<T>(
     }
 
     override fun new(id: String, factory: () -> T): T {
+        TRACKER.trackFunctionCall(customName = "MongoDBStorage.new", details = "id=$id", category = "Storage.MongoDB")
         ensureIdExists(id, shouldExist = false)
 
         val obj = factory()
@@ -61,11 +62,13 @@ data class MongoDBStorage<T>(
     }
 
     override fun load(id: String): T? {
+        TRACKER.trackFunctionCall(customName = "MongoDBStorage.load", details = "id=$id", category = "Storage.MongoDB")
         val doc = collection.find(eq("_id", id)).firstOrNull()
         return doc?.getString("obj")?.let(serializer::deserialize)
     }
 
     override fun save(id: String, obj: T) {
+        TRACKER.trackFunctionCall(customName = "MongoDBStorage.save", details = "id=$id", category = "Storage.MongoDB")
         ensureIdExists(id, shouldExist = true)
 
         val objStr = serializer.serialize(obj)

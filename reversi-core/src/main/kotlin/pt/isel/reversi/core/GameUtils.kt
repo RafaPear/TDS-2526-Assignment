@@ -7,6 +7,7 @@ import pt.isel.reversi.core.exceptions.*
 import pt.isel.reversi.core.storage.GameState
 import pt.isel.reversi.core.storage.GameStorageType.Companion.setUpStorage
 import pt.isel.reversi.core.storage.MatchPlayers
+import pt.isel.reversi.utils.TRACKER
 
 fun loadStorageFromConfig() = setUpStorage(loadCoreConfig())
 
@@ -28,6 +29,7 @@ suspend fun startNewGame(
     firstTurn: PieceType,
     currGameName: String? = null,
 ): Game {
+    TRACKER.trackFunctionCall(customName = "startNewGame", details = "gameName=$currGameName", category = "Core.Game")
     if (players.isEmpty()) throw InvalidGameException(
         "Need minimum one player to start the game", ErrorType.WARNING
     )
@@ -79,6 +81,7 @@ suspend fun loadGame(
     playerName: String? = null,
     desiredType: PieceType?,
 ): Game {
+    TRACKER.trackFunctionCall(customName = "loadGame", details = "gameName=$gameName", category = "Core.Game")
     val storage = loadStorageFromConfig()
     val loadedState = storage.load(gameName)
         ?: throw InvalidFileException(
@@ -116,6 +119,12 @@ suspend fun loadGame(
     )
 }
 
+/**
+ * Reads a game without modifying it or adding the current player.
+ * Useful for spectating or inspecting game state without joining.
+ * @param gameName The name of the game to read.
+ * @return The game instance, or null if the game does not exist.
+ */
 suspend fun readGame(gameName: String): Game? {
     val storage = loadStorageFromConfig()
     val loadedState = storage.load(gameName) ?: return null
@@ -130,11 +139,21 @@ suspend fun readGame(gameName: String): Game? {
     )
 }
 
+/**
+ * Reads the raw game state from storage without wrapping it in a Game instance.
+ * @param gameName The name of the game to read.
+ * @return The game state, or null if the game does not exist.
+ */
 suspend fun readState(gameName: String): GameState? {
     val storage = loadStorageFromConfig()
     return storage.load(gameName)
 }
 
+/**
+ * Converts the game board to a string representation with row/column labels and target markers.
+ * If target mode is enabled, available plays are marked with the target character.
+ * @return A formatted string representation of the board, or an error message if board is uninitialized.
+ */
 fun Game.stringifyBoard(): String {
     val sb = StringBuilder()
     val board = gameState?.board ?: return "Board not initialized"
@@ -161,6 +180,14 @@ fun Game.stringifyBoard(): String {
     return sb.toString()
 }
 
+/**
+ * Creates a new game instance for testing purposes with specified board and player configuration.
+ * @param board The board to use for the game.
+ * @param players The players in the game.
+ * @param myPiece The piece type of the player controlling this game instance.
+ * @param currGameName Optional game name for storage (defaults to local game if null).
+ * @return A new Game instance with the provided configuration.
+ */
 fun newGameForTest(
     board: Board,
     players: MatchPlayers,
@@ -178,6 +205,10 @@ fun newGameForTest(
     )
 )
 
+/**
+ * Retrieves all game names stored in the configured storage backend.
+ * @return A list of all game identifiers in storage.
+ */
 suspend fun getAllGameNames(): List<String> {
     val storage = loadStorageFromConfig()
     return storage.loadAllIds()

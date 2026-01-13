@@ -39,9 +39,17 @@ data class AppTheme(
     val darkPieceColor: Color = Color(0xFF000000),
     val lightPieceColor: Color = Color(0xFFFFFFFF),
 ) {
+    /**
+     * Gets the list of all audio resource names for this theme.
+     * @return A list containing background music, game music, and piece placement sound.
+     */
     fun getAudioNames(): List<String> =
         listOf(backgroundMusic, gameMusic, placePieceSound)
 
+    /**
+     * Gets the list of music resource names (excluding sound effects) for this theme.
+     * @return A list containing background music and game music.
+     */
     fun getAudioMusicNames(): List<String> =
         listOf(backgroundMusic, gameMusic)
 }

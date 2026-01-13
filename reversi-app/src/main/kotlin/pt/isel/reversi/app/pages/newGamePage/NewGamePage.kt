@@ -23,7 +23,9 @@ import pt.isel.reversi.core.board.PieceType
  * New game page for creating a local game with piece selection.
  * Allows the user to choose their piece color and start a new game.
  *
- * @param appState Global application state for navigation and game control.
+ * @param viewModel The view model for managing game creation state and logic.
+ * @param playerNameChange Callback to update the player name.
+ * @param onLeave Callback invoked when the user navigates back.
  */
 @Composable
 fun ReversiScope.NewGamePage(
@@ -49,11 +51,11 @@ fun ReversiScope.NewGamePage(
 }
 
 /**
- * Shared UI for new/join game pages with piece selection and game initiation.
- * Provides a dropdown menu for piece selection and a button to start the game.
+ * Shared UI for new game page with piece selection and game initiation.
+ * Provides input fields for game name, player name, board size, and a dropdown menu for piece selection.
  *
- * @param title The title displayed at the top of the page.
- * @param appState Global application state for navigation and game control.
+ * @param modifier The modifier for layout customization.
+ * @param playerNameChange Callback to update the player name.
  * @param onClick Callback invoked when the user confirms game creation with selected piece and board size.
  */
 @Composable

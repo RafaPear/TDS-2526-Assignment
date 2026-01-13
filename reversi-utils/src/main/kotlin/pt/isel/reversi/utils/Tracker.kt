@@ -14,6 +14,7 @@ import kotlin.concurrent.thread
  * @property timestamp The time when the event occurred.
  * @property type The type of tracking event.
  * @property context The context/name of the tracked element.
+ * @property category Optional grouping category (can be any type).
  * @property details Additional details about the event.
  * @property threadId The ID of the thread that generated the event.
  */
@@ -21,6 +22,7 @@ data class TrackingEvent(
     val timestamp: LocalDateTime,
     val type: TrackingType,
     val context: String,
+    val category: Any? = null,
     val details: String = "",
     val threadId: Long = Thread.currentThread().threadId()
 )
@@ -42,6 +44,11 @@ enum class TrackingType {
 /**
  * Data class representing statistics for a specific tracked context.
  *
+ * References:
+ * - [Practical uses for AtomicInteger](https://stackoverflow.com/questions/4818699/practical-uses-for-atomicinteger)
+ * - [Java Multithreading - Threadsafe Counter](https://stackoverflow.com/questions/29883719/java-multithreading-threadsafe-counter)
+ *
+ *
  * @property context The name of the tracked element.
  * @property eventCount Total number of events recorded for this context.
  * @property pageEnters Number of page entries.
@@ -51,6 +58,9 @@ enum class TrackingType {
  * @property functionCalls Number of function calls.
  * @property firstOccurrence The timestamp of the first occurrence.
  * @property lastOccurrence The timestamp of the last occurrence.
+ * @property effectStarts Number of effect starts.
+ * @property effectStops Number of effect stops.
+ *
  */
 data class TrackingStats(
     val context: String,
@@ -101,33 +111,10 @@ data class TrackerConfig(
  * Provides comprehensive tracking of page entries, view model creations,
  * recompositions, function calls, and custom events with thread-safe operations.
  *
- * **Usage Examples:**
- *
- * ```kotlin
- * // Initialize with configuration
- * val tracker = DevTracker(
- *     config = TrackerConfig(
- *         enabled = true,
- *         maxEventsPerContext = 500,
- *         autoSave = false
- *     )
- * )
- *
- * // Track different event types
- * tracker.trackPageEnter()
- * tracker.trackViewModelCreated(viewModel)
- * tracker.trackRecomposition()
- * tracker.trackFunctionCall(details = "Processing user input")
- * tracker.trackCustom("UserAction", "ButtonClicked")
- *
- * // Get statistics
- * val stats = tracker.getStats("GamePage")
- * tracker.printSummary()
- *
- * // File operations
- * tracker.setTrackerFilePath(autoSave = true)
- * tracker.saveToFile()
- * ```
+ * References:
+ * - [Java’s ConcurrentHashMap.compute() Method Explained](https://medium.com/@AlexanderObregon/javas-concurrenthashmap-compute-method-explained-ddec7cfd44f4)
+ * - [ConcurrentHashMap in Java](https://www.geeksforgeeks.org/java/concurrenthashmap-in-java/)
+ * - [How can I get the current stack trace in Java?](https://stackoverflow.com/questions/1069066/how-can-i-get-the-current-stack-trace-in-java)
  *
  * @property config Configuration for the tracker.
  */
@@ -137,6 +124,7 @@ class DevTracker(
 ) {
     private val events = ConcurrentHashMap<String, MutableList<TrackingEvent>>()
     private val stats = ConcurrentHashMap<String, TrackingStats>()
+    private val categorizedStats = ConcurrentHashMap<Any, MutableList<TrackingStats>>()
     private val dateFormatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS")
     private val fullDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
@@ -171,6 +159,10 @@ class DevTracker(
 
     /**
      * Automatically detects the calling function name from the call stack.
+     *
+     * References:
+     * - [How can I get the current stack trace in Java?](https://stackoverflow.com/questions/1069066/how-can-i-get-the-current-stack-trace-in-java)
+     *
      * @return The name of the calling function or "Unknown" if detection fails.
      */
     private fun detectCallingFunction(): String {
@@ -216,6 +208,17 @@ class DevTracker(
             val contextStats = stats.computeIfAbsent(contextKey) { TrackingStats(contextKey) }
             contextStats.incrementType(event.type)
 
+            // Update category grouping if category is provided
+            event.category?.let { category ->
+                categorizedStats.compute(category) { _, existing ->
+                    val list = existing ?: mutableListOf()
+                    if (!list.contains(contextStats)) {
+                        list.add(contextStats)
+                    }
+                    list
+                }
+            }
+
             // Update timestamps with thread-safe compare-and-set pattern
             if (contextStats.firstOccurrence == null) {
                 synchronized(contextStats) {
@@ -246,6 +249,7 @@ class DevTracker(
         val message = buildString {
             append("[${event.timestamp.format(dateFormatter)}] ")
             append("[Thread-${event.threadId}] ")
+            event.category?.let { append("[$it] ") }
             append("Started tracking ${event.type.name}:${event.context}")
             if (event.details.isNotEmpty()) {
                 append(" - ${event.details}")
@@ -256,104 +260,128 @@ class DevTracker(
 
     /**
      * Tracks a page entry with automatic caller detection.
+     * @param customName Optional custom name for the page.
+     * @param category Optional category for grouping (can be any type).
      */
-    fun trackPageEnter(customName: String? = null) {
+    fun trackPageEnter(customName: String? = null, category: Any? = null) {
         recordEvent(
             TrackingEvent(
                 timestamp = LocalDateTime.now(),
                 type = TrackingType.PAGE_ENTER,
-                context = customName ?: detectCallingFunction()
+                context = customName ?: detectCallingFunction(),
+                category = category
             )
         )
     }
 
     /**
      * Tracks a view model creation.
+     * @param viewModel The view model instance being tracked.
+     * @param className Optional custom class name.
+     * @param category Optional category for grouping (can be any type).
      */
-    fun <T : Any> trackViewModelCreated(viewModel: T? = null, className: String? = null) {
+    fun <T : Any> trackViewModelCreated(viewModel: T? = null, className: String? = null, category: Any? = null) {
         val context = className ?: viewModel?.javaClass?.simpleName ?: "Unknown"
         recordEvent(
             TrackingEvent(
                 timestamp = LocalDateTime.now(),
                 type = TrackingType.VIEW_MODEL_CREATED,
-                context = context
+                context = context,
+                category = category
             )
         )
     }
 
     /**
      * Tracks a class creation.
+     * @param classInstance The class instance being tracked.
+     * @param className Optional custom class name.
+     * @param category Optional category for grouping (can be any type).
      */
-    fun <T : Any> trackClassCreated(classInstance: T? = null, className: String? = null) {
+    fun <T : Any> trackClassCreated(classInstance: T? = null, className: String? = null, category: Any? = null) {
         val context = className ?: classInstance?.javaClass?.simpleName ?: "Unknown"
         recordEvent(
             TrackingEvent(
                 timestamp = LocalDateTime.now(),
                 type = TrackingType.CLASS_CREATED,
-                context = context
+                context = context,
+                category = category
             )
         )
     }
 
-    fun <T : Any> trackEffectStart(effectInstance: T? = null, effectName: String? = null) {
+    fun <T : Any> trackEffectStart(effectInstance: T? = null, effectName: String? = null, category: Any? = null) {
         val context = effectName ?: effectInstance?.javaClass?.simpleName ?: "Unknown"
         recordEvent(
             TrackingEvent(
                 timestamp = LocalDateTime.now(),
                 type = TrackingType.EFFECT_START,
-                context = context
+                context = context,
+                category = category
             )
         )
     }
 
-    fun <T : Any> trackEffectStop(effectInstance: T? = null, effectName: String? = null) {
+    fun <T : Any> trackEffectStop(effectInstance: T? = null, effectName: String? = null, category: Any? = null) {
         val context = effectName ?: effectInstance?.javaClass?.simpleName ?: "Unknown"
         recordEvent(
             TrackingEvent(
                 timestamp = LocalDateTime.now(),
                 type = TrackingType.EFFECT_STOP,
-                context = context
+                context = context,
+                category = category
             )
         )
     }
 
     /**
      * Tracks a recomposition with automatic caller detection.
+     * @param customName Optional custom name for the recomposition.
+     * @param category Optional category for grouping (can be any type).
      */
-    fun trackRecomposition(customName: String? = null) {
+    fun trackRecomposition(customName: String? = null, category: Any? = null) {
         recordEvent(
             TrackingEvent(
                 timestamp = LocalDateTime.now(),
                 type = TrackingType.RECOMPOSITION,
-                context = customName ?: detectCallingFunction()
+                context = customName ?: detectCallingFunction(),
+                category = category
             )
         )
     }
 
     /**
      * Tracks a function call with optional details.
+     * @param customName Optional custom name for the function.
+     * @param details Additional details about the function call.
+     * @param category Optional category for grouping (can be any type).
      */
-    fun trackFunctionCall(customName: String? = null, details: String = "") {
+    fun trackFunctionCall(customName: String? = null, details: String = "", category: Any? = null) {
         recordEvent(
             TrackingEvent(
                 timestamp = LocalDateTime.now(),
                 type = TrackingType.FUNCTION_CALL,
                 context = customName ?: detectCallingFunction(),
-                details = details
+                details = details,
+                category = category
             )
         )
     }
 
     /**
      * Tracks a custom event.
+     * @param context The context/name of the event.
+     * @param details Additional details about the event.
+     * @param category Optional category for grouping (can be any type).
      */
-    fun trackCustom(context: String, details: String = "") {
+    fun trackCustom(context: String, details: String = "", category: Any? = null) {
         recordEvent(
             TrackingEvent(
                 timestamp = LocalDateTime.now(),
                 type = TrackingType.CUSTOM,
                 context = context,
-                details = details
+                details = details,
+                category = category
             )
         )
     }
@@ -367,6 +395,12 @@ class DevTracker(
      * Gets all recorded statistics as an immutable map.
      */
     fun getAllStats(): Map<String, TrackingStats> = stats.toMap()
+
+    /**
+     * Gets statistics grouped by category.
+     * @return A map of category to list of tracking statistics.
+     */
+    fun getCategorizedStats(): Map<Any, List<TrackingStats>> = categorizedStats.mapValues { it.value.toList() }
 
     /**
      * Gets all recorded events for a specific context.
@@ -446,8 +480,41 @@ class DevTracker(
         append("Generated: ${LocalDateTime.now().format(fullDateFormatter)}\n")
         append("Total contexts tracked: ${stats.size}\n")
         append("Total events tracked: ${totalEventsTracked.get()}\n")
+        append("Total categories: ${categorizedStats.size}\n")
         append("\n")
 
+        // Export by category if categories exist
+        if (categorizedStats.isNotEmpty()) {
+            append("========== GROUPED BY CATEGORY ==========\n\n")
+            categorizedStats.entries.sortedBy { it.key.toString() }.forEach { (category, statsList) ->
+                val categoryStr = category.toString()
+                append("Category: $categoryStr\n")
+                append("${"=".repeat(40 + categoryStr.length)}\n")
+
+                statsList.sortedByDescending { it.eventCount.get() }.forEach { stat ->
+                    append("  Context: ${stat.context}\n")
+                    append("    Total Events: ${stat.eventCount.get()}\n")
+                    append("    Page Enters: ${stat.pageEnters.get()}\n")
+                    append("    ViewModel Creations: ${stat.viewModelCreations.get()}\n")
+                    append("    Class Creations: ${stat.classCreations.get()}\n")
+                    append("    Recompositions: ${stat.recompositions.get()}\n")
+                    append("    Function Calls: ${stat.functionCalls.get()}\n")
+                    append("    Effect Starts: ${stat.effectStarts.get()}\n")
+                    append("    Effect Stops: ${stat.effectStops.get()}\n")
+                    stat.firstOccurrence?.let {
+                        append("    First: ${it.format(fullDateFormatter)}\n")
+                    }
+                    stat.lastOccurrence?.let {
+                        append("    Last: ${it.format(fullDateFormatter)}\n")
+                    }
+                    append("\n")
+                }
+                append("\n")
+            }
+        }
+
+        // Export all contexts (including uncategorized)
+        append("========== ALL CONTEXTS ==========\n\n")
         stats.values.sortedByDescending { it.eventCount.get() }.forEach { stat ->
             append("Context: ${stat.context}\n")
             append("  Total Events: ${stat.eventCount.get()}\n")
@@ -470,8 +537,19 @@ class DevTracker(
     }
 
     private fun exportAsCSV(): String = buildString {
-        append("Context,Total Events,Page Enters,ViewModel Creations,Class Creations,Recompositions,Function Calls,Effect Start,Effect Stop,First Occurrence,Last Occurrence\n")
+        append("Category,Context,Total Events,Page Enters,ViewModel Creations,Class Creations,Recompositions,Function Calls,Effect Start,Effect Stop,First Occurrence,Last Occurrence\n")
+
+        // Create a map from context to category for easy lookup
+        val contextToCategory = mutableMapOf<String, String>()
+        categorizedStats.forEach { (category, statsList) ->
+            statsList.forEach { stat ->
+                contextToCategory[stat.context] = category.toString()
+            }
+        }
+
         stats.values.sortedByDescending { it.eventCount.get() }.forEach { stat ->
+            val category = contextToCategory[stat.context] ?: ""
+            append("\"$category\",")
             append("\"${stat.context}\",")
             append("${stat.eventCount.get()},")
             append("${stat.pageEnters.get()},")
@@ -490,6 +568,35 @@ class DevTracker(
         append("{\n")
         append("  \"totalContexts\": ${stats.size},\n")
         append("  \"totalEvents\": ${totalEventsTracked.get()},\n")
+        append("  \"totalCategories\": ${categorizedStats.size},\n")
+
+        // Export categorized statistics
+        if (categorizedStats.isNotEmpty()) {
+            append("  \"categorizedStatistics\": {\n")
+            categorizedStats.entries.sortedBy { it.key.toString() }.forEachIndexed { catIndex, (category, statsList) ->
+                val categoryStr = category.toString().replace("\"", "\\\"")
+                append("    \"$categoryStr\": [\n")
+                statsList.sortedByDescending { it.eventCount.get() }.forEachIndexed { index, stat ->
+                    append("      {\n")
+                    append("        \"context\": \"${stat.context}\",\n")
+                    append("        \"totalEvents\": ${stat.eventCount.get()},\n")
+                    append("        \"pageEnters\": ${stat.pageEnters.get()},\n")
+                    append("        \"viewModelCreations\": ${stat.viewModelCreations.get()},\n")
+                    append("        \"classCreations\": ${stat.classCreations.get()},\n")
+                    append("        \"recompositions\": ${stat.recompositions.get()},\n")
+                    append("        \"functionCalls\": ${stat.functionCalls.get()},\n")
+                    append("        \"effectStarts\": ${stat.effectStarts.get()},\n")
+                    append("        \"effectStops\": ${stat.effectStops.get()},\n")
+                    append("        \"firstOccurrence\": \"${stat.firstOccurrence?.format(fullDateFormatter) ?: ""}\",\n")
+                    append("        \"lastOccurrence\": \"${stat.lastOccurrence?.format(fullDateFormatter) ?: ""}\"\n")
+                    append("      }${if (index < statsList.size - 1) "," else ""}\n")
+                }
+                append("    ]${if (catIndex < categorizedStats.size - 1) "," else ""}\n")
+            }
+            append("  },\n")
+        }
+
+        // Export all statistics
         append("  \"statistics\": [\n")
 
         stats.values.sortedByDescending { it.eventCount.get() }.forEachIndexed { index, stat ->

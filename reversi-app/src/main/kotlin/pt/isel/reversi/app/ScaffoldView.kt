@@ -29,12 +29,14 @@ import pt.isel.reversi.core.exceptions.ReversiException
  * Main scaffold composable providing consistent layout structure for pages.
  * Includes top app bar with title and navigation, content area, and error handling.
  *
- * @param appState Global application state for navigation and theming.
+ * @param setError Callback to clear or set the current error.
  * @param backgroundTopBar Background color for the top app bar.
+ * @param error Current error to render via snackbar/overlay.
+ * @param isLoading When true, overlays a loading indicator.
  * @param title Title text displayed in the top app bar.
- * @param loadingModifier Modifier for the loading state.
- * @param previousPageContent Optional custom previous page navigation button.
- * @param content Main content composable lambda.
+ * @param loadingModifier Modifier for the loading state overlay.
+ * @param previousPageContent Composable to render the navigation/back button.
+ * @param content Main page content receiving scaffold padding.
  */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)

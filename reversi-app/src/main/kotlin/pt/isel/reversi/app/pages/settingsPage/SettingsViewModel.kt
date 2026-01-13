@@ -19,6 +19,14 @@ import pt.isel.reversi.utils.LOGGER
 import pt.isel.reversi.utils.TRACKER
 import pt.isel.reversi.utils.audio.AudioPool
 
+/**
+ * UI state for the settings page screen.
+ * @property screenState The screen state containing error and loading information.
+ * @property draftPlayerName The player name being edited in the settings.
+ * @property draftTheme The theme being selected in the settings.
+ * @property draftCoreConfig The core configuration being modified in the settings.
+ * @property currentVol The current audio volume level.
+ */
 data class SettingsUiState(
     override val screenState: ScreenState = ScreenState(),
     val draftPlayerName: String?,
@@ -26,10 +34,26 @@ data class SettingsUiState(
     val draftCoreConfig: CoreConfig,
     val currentVol: Float
 ) : UiState() {
+    /**
+     * Creates a copy of this UI state with the given screen state.
+     * @param newScreenState The new screen state to apply.
+     * @return A new SettingsUiState with the updated screen state.
+     */
     override fun updateScreenState(newScreenState: ScreenState) =
         copy(screenState = newScreenState)
 }
 
+/**
+ * ViewModel for the settings page screen.
+ * Manages settings changes, audio volume, theme selection, and persistence.
+ *
+ * @property scope Coroutine scope for background operations.
+ * @property appState The global application state.
+ * @property globalError Optional global error to display on initial load.
+ * @property setTheme Callback function to update the theme.
+ * @property setPlayerName Callback function to update the player name.
+ * @property setGlobalError Callback function to update global error state.
+ */
 class SettingsViewModel(
     private val scope: CoroutineScope,
     private val appState: AppState,
@@ -63,6 +87,10 @@ class SettingsViewModel(
     }
 
     override val uiState: State<SettingsUiState> = _uiState
+
+    init {
+        TRACKER.trackViewModelCreated(this, category = Page.SETTINGS)
+    }
 
     override fun setError(error: Exception?) =
         if (globalError != null) {

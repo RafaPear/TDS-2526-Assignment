@@ -1,6 +1,7 @@
 package pt.isel.reversi.cli
 
 import pt.isel.reversi.core.Game
+import pt.isel.reversi.utils.TRACKER
 import pt.rafap.ktflag.CommandParser
 import pt.rafap.ktflag.ParserConfig
 import pt.rafap.ktflag.cmd.CommandImpl
@@ -12,12 +13,20 @@ import pt.rafap.ktflag.style.Colors.colorText
  *
  * Holds the set of available `CommandImpl<Game>` objects, manages an optional debug mode
  * and runs the interactive read-eval-print loop that dispatches commands to the parser.
+ *
+ * @property commands Array of command implementations available in the CLI.
+ * @property debug Whether debug mode is enabled.
+ * @property debugCommands Additional commands available only when debug mode is enabled.
  */
 class CLI(
     val commands: Array<CommandImpl<Game>>,
     val debug: Boolean = false,
     debugCommands: Array<CommandImpl<Game>> = arrayOf(),
 ) {
+    init {
+        TRACKER.trackClassCreated(this, category = "CLI.Core")
+    }
+
     private fun log(message: String) {
         println(colorText(message))
     }
@@ -39,12 +48,9 @@ class CLI(
 
     /**
      * Entry point for the CLI version of the Reversi game.
-     * Initializes the board and command parser, and handles user input.
+     * Initializes the board and command parser, and handles user input in an interactive loop.
      */
     fun startLoop() {
-        /**
-         * The current game.
-         */
         var game: Game? = null
 
         println(colorText(WELCOME_MESSAGE, TEXT_COLOR))
@@ -54,7 +60,14 @@ class CLI(
         }
     }
 
+    /**
+     * Parses user input and executes the corresponding command.
+     * @param input The user input string to parse.
+     * @param context The current game context, or null if no game is active.
+     * @return The updated game context after command execution, or the original context if parsing failed.
+     */
     fun parseInput(input: String, context: Game? = null): Game? {
+        TRACKER.trackFunctionCall(customName = "CLI.parseInput", details = "input=$input", category = "CLI.Core")
         var game: Game? = context
 
         val result = parser.parseInputToResult(input, game)

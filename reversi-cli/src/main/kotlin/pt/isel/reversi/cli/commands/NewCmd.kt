@@ -7,6 +7,7 @@ import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.startNewGame
 import pt.isel.reversi.core.storage.MatchPlayers
+import pt.isel.reversi.utils.TRACKER
 import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult
@@ -45,6 +46,7 @@ object NewCmd : CommandImpl<Game>() {
      * @return A CommandResult with the newly created game or an error message.
      */
     override fun execute(vararg args: String, context: Game?): CommandResult<Game> {
+        TRACKER.trackFunctionCall(customName = "NewCmd.execute", details = "args=${args.joinToString()}", category = "CLI.Command")
         if (context != null && context.currGameName != null) {
             runBlocking { context.saveEndGame() }
         }

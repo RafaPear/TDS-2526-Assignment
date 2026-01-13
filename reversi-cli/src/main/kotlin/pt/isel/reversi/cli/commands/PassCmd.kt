@@ -2,6 +2,7 @@ package pt.isel.reversi.cli.commands
 
 import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.core.Game
+import pt.isel.reversi.utils.TRACKER
 import pt.rafap.ktflag.cmd.CommandImpl
 import pt.rafap.ktflag.cmd.CommandInfo
 import pt.rafap.ktflag.cmd.CommandResult
@@ -34,6 +35,7 @@ object PassCmd : CommandImpl<Game>() {
      * @return A CommandResult indicating success or failure, with the updated game state.
      */
     override fun execute(vararg args: String, context: Game?): CommandResult<Game> {
+        TRACKER.trackFunctionCall(customName = "PassCmd.execute", category = this)
         if (context == null) {
             return ERROR("Game is not defined. Cannot join a game.")
         }

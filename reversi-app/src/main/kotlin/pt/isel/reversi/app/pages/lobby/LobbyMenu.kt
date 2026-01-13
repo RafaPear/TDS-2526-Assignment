@@ -18,6 +18,7 @@ import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.LobbyCarousel
 import pt.isel.reversi.app.pages.lobby.lobbyViews.utils.PopupPickAPiece
 import pt.isel.reversi.app.pages.lobby.lobbyViews.utils.RefreshButton
 import pt.isel.reversi.app.reversiFadeAnimation
+import pt.isel.reversi.app.state.Page
 import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.app.state.getTheme
 import pt.isel.reversi.app.utils.PreviousPage
@@ -45,12 +46,15 @@ private const val PAGE_TRANSITION_DURATION_MS = 500
  * Displays available games in a carousel and handles game selection and joining.
  *
  * @param viewModel The lobby view model managing game list and selection logic.
+ * @param onLeave Callback invoked when navigating back from the lobby.
  */
 @Composable
 fun ReversiScope.LobbyMenu(
     viewModel: LobbyViewModel,
     onLeave: () -> Unit,
 ) {
+    TRACKER.trackPageEnter(customName = "LobbyMenu", category = Page.LOBBY)
+
     val uiState = viewModel.uiState.value
     val games = uiState.gameStates
     val lobbyState = uiState.lobbyState
@@ -61,10 +65,10 @@ fun ReversiScope.LobbyMenu(
 
     DisposableEffect(viewModel) {
         LOGGER.info("Starting polling for lobby updates.")
-        TRACKER.trackEffectStart(viewModel)
+        TRACKER.trackEffectStart(viewModel, category = Page.LOBBY)
         viewModel.startPolling()
         onDispose {
-            TRACKER.trackEffectStop(viewModel)
+            TRACKER.trackEffectStop(viewModel, category = Page.LOBBY)
             viewModel.stopPolling()
         }
     }

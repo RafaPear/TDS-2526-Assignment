@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import pt.isel.reversi.app.ScaffoldView
+import pt.isel.reversi.app.state.Page
 import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.app.utils.PreviousPage
 import pt.isel.reversi.core.Game
@@ -16,8 +17,9 @@ import pt.isel.reversi.utils.TRACKER
  * Manages game music playback and periodic game state refreshes for multiplayer games.
  *
  * @param viewModel The game page view model containing UI state and game logic.
- * @param modifier Optional composable modifier for layout adjustments.
- * @param freeze Whether to freeze the game board and prevent user interaction.
+ * @param modifier Modifier for layout adjustments.
+ * @param freeze When true, disables interactions with the board.
+ * @param onLeave Callback invoked when navigating back, receives the current game.
  */
 @Composable
 fun ReversiScope.GamePage(
@@ -26,12 +28,14 @@ fun ReversiScope.GamePage(
     freeze: Boolean = false,
     onLeave: (Game) -> Unit,
 ) {
+    TRACKER.trackPageEnter(customName = "GamePage", category = Page.GAME)
+
     val game = viewModel.uiState.value.game
     val theme = appState.theme
 
     // Launch the game refresh coroutine
     DisposableEffect(viewModel) {
-        TRACKER.trackEffectStart(this)
+        TRACKER.trackEffectStart(this, category = Page.GAME)
         if (game.currGameName != null && !viewModel.isPollingActive()) {
             viewModel.startPolling()
         }
@@ -46,7 +50,7 @@ fun ReversiScope.GamePage(
 
         onDispose {
             viewModel.stopPolling()
-            TRACKER.trackEffectStop(this)
+            TRACKER.trackEffectStop(this, category = Page.GAME)
         }
     }
 
