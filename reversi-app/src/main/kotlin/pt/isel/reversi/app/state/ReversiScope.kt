@@ -280,18 +280,20 @@ fun ReversiScope.ReversiTextField(
  */
 @Composable
 fun ReversiScope.ConfirmationPopUp(
+    title: String,
     message: String,
     onConfirmText: String = "Confirm",
     onDismissText: String = "Cancel",
-    onConfirm: () -> Unit = {},
-    onDismiss: () -> Unit = {}
+    onConfirm: (() -> Unit)? = null,
+    onDismiss: (() -> Unit)? = null
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.7f))
             .pointerInput(Unit) {
-                detectTapGestures { onDismiss() }
+                detectTapGestures {
+                    if (onDismiss != null) onDismiss()
+                }
             }
     ) {
         Box(
@@ -301,30 +303,44 @@ fun ReversiScope.ConfirmationPopUp(
                     detectTapGestures(onTap = { })
                 }
                 .background(getTheme().secondaryColor, RoundedCornerShape(16.dp))
-                .border(1.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(16.dp))
+                .border(
+                    1.dp,
+                    getTheme().secondaryColor.invert().copy(alpha = 0.2f),
+                    RoundedCornerShape(16.dp)
+                )
                 .padding(24.dp)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 ReversiText(
-                    text = message,
-                    color = Color.White,
+                    text = title,
+                    textAlign = TextAlign.Center,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
+                )
+                Spacer(Modifier.height(8.dp))
+                ReversiText(
+                    text = message,
+                    textAlign = TextAlign.Center,
+                    maxLines = 10,
+                    softWrap = true,
                 )
                 Spacer(Modifier.height(16.dp))
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
-                    ReversiButton(
-                        text = onConfirmText,
-                        onClick = onConfirm,
-                    )
-                    ReversiButton(
-                        text = onDismissText,
-                        onClick = onDismiss,
-                    )
+                    if (onConfirm != null)
+                        ReversiButton(
+                            text = onConfirmText,
+                            onClick = onConfirm,
+                        )
+
+                    if (onDismiss != null)
+                        ReversiButton(
+                            text = onDismissText,
+                            onClick = onDismiss,
+                        )
                 }
             }
         }

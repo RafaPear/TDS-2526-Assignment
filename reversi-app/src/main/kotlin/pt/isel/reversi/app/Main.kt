@@ -26,11 +26,6 @@ import reversi.reversi_app.generated.resources.Res
 import reversi.reversi_app.generated.resources.reversi
 import java.lang.System.setProperty
 
-fun isInPreviewMode(): Boolean {
-    return System.getProperty("java.awt.headless") == "true"
-}
-
-
 /**
  * Entry point for the desktop Reversi application. Initializes app dependencies
  * and launches the Compose window with the current `AppState`.
@@ -54,6 +49,7 @@ fun main(args: Array<String>) {
         // unica forma que permite sincronizar o estado do app no exit
         val appJob = SupervisorJob()
         val scope = CoroutineScope(Dispatchers.Default + appJob)
+        val isShutdownHookAdded = remember { mutableStateOf(false) }
 
         val initialGameService = GameService()
 
@@ -119,15 +115,18 @@ fun main(args: Array<String>) {
         }
 
         installFatalCrashLogger()
-        addShutdownHook {
-            LOGGER.info("SHUTDOWN HOOK TRIGGERED")
-            for (type in ExportFormat.entries) TRACKER.saveToFile(type)
+        if (!isShutdownHookAdded.value) {
+            isShutdownHookAdded.value = true
+            addShutdownHook {
+                LOGGER.info("SHUTDOWN HOOK TRIGGERED")
+                for (type in ExportFormat.entries) TRACKER.saveToFile(type)
 
-            for (handler in LOGGER.handlers) {
-                handler.flush()
-                handler.close()
+                for (handler in LOGGER.handlers) {
+                    handler.flush()
+                    handler.close()
+                }
+                safeExitApplication()
             }
-            safeExitApplication()
         }
 
         Window(

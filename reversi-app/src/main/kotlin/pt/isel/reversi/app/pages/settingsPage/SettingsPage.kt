@@ -147,7 +147,6 @@ fun ReversiScope.SettingsPage(
     }
 }
 
-
 @Composable
 private fun ReversiScope.GameSection(playerName: String?, onValueChange: (String) -> Unit) {
     SettingsSection(title = "Jogo") {
@@ -166,90 +165,128 @@ private fun ReversiScope.CoreConfigSection(
     onConfigChange: (CoreConfig) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var didClick by remember { mutableStateOf(false) }
+    var accepted by remember { mutableStateOf(false) }
 
-    SettingsSection(title = "Configuração do Jogo") {
-        // Storage Type Dropdown
-        Box(modifier = Modifier.fillMaxWidth()) {
-            OutlinedButton(
-                onClick = { expanded = true },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Row(
+    @Suppress("AssignedValueIsNeverRead")
+    if (didClick && !accepted) {
+        ConfirmationPopUp(
+            "Advanced user warning",
+            "Changing storage settings may lead to data loss or corruption if not done correctly. Are you sure you want to proceed?",
+            onConfirm = {
+                accepted = true
+                expanded = false
+            },
+        )
+    } else {
+        SettingsSection(title = "Configuração do Jogo") {
+            // Storage Type Dropdown
+            Box(modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(
+                    onClick = {
+                        if (!didClick) didClick = true
+                        else expanded = true
+                    },
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    ReversiText("Tipo de Armazenamento: ${coreConfig.gameStorageType.name}")
-                }
-            }
-
-            ReversiDropDownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                GameStorageType.entries.forEach { storageType ->
-                    ReversiDropdownMenuItem(
-                        text = storageType.name,
-                        onClick = {
-                            onConfigChange(coreConfig.copy(gameStorageType = storageType))
-                            expanded = false
-                        }
-                    )
-                }
-            }
-        }
-
-        // File Storage Path (only show when FILE_STORAGE is selected)
-        if (coreConfig.gameStorageType == GameStorageType.FILE_STORAGE) {
-            ReversiTextField(
-                value = coreConfig.savesPath,
-                onValueChange = { onConfigChange(coreConfig.copy(savesPath = it)) },
-                label = { ReversiText("Caminho das Gravações") },
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        // Database Settings (only show when DATABASE_STORAGE is selected)
-        if (coreConfig.gameStorageType == GameStorageType.DATABASE_STORAGE) {
-            ReversiTextField(
-                value = coreConfig.dbURI,
-                onValueChange = { onConfigChange(coreConfig.copy(dbURI = it)) },
-                label = { ReversiText("URI do Banco de Dados") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            ReversiTextField(
-                value = coreConfig.dbPort.toString(),
-                onValueChange = {
-                    val newPort = it.toIntOrNull()
-                    if (newPort != null && newPort > 0) {
-                        onConfigChange(coreConfig.copy(dbPort = newPort))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        ReversiText("Tipo de Armazenamento: ${coreConfig.gameStorageType.name}")
                     }
-                },
-                label = { ReversiText("Porta do Banco de Dados") },
-                modifier = Modifier.fillMaxWidth()
-            )
+                }
 
-            ReversiTextField(
-                value = coreConfig.dbName,
-                onValueChange = { onConfigChange(coreConfig.copy(dbName = it)) },
-                label = { ReversiText("Nome do Banco de Dados") },
-                modifier = Modifier.fillMaxWidth()
-            )
+                ReversiDropDownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    GameStorageType.entries.forEach { storageType ->
+                        ReversiDropdownMenuItem(
+                            text = storageType.name,
+                            onClick = {
+                                if (!didClick) didClick = true
+                                else {
+                                    onConfigChange(coreConfig.copy(gameStorageType = storageType))
+                                    expanded = false
+                                }
+                            }
+                        )
+                    }
+                }
+            }
 
-            ReversiTextField(
-                value = coreConfig.dbUser,
-                onValueChange = { onConfigChange(coreConfig.copy(dbUser = it)) },
-                label = { ReversiText("Usuário do Banco de Dados") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            // File Storage Path (only show when FILE_STORAGE is selected)
+            if (coreConfig.gameStorageType == GameStorageType.FILE_STORAGE) {
+                ReversiTextField(
+                    value = coreConfig.savesPath,
+                    onValueChange = {
+                        if (!didClick) didClick = true
+                        else onConfigChange(coreConfig.copy(savesPath = it))
+                    },
+                    label = { ReversiText("Caminho das Gravações") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
 
-            ReversiTextField(
-                value = coreConfig.dbPassword,
-                onValueChange = { onConfigChange(coreConfig.copy(dbPassword = it)) },
-                label = { ReversiText("Senha do Banco de Dados") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            // Database Settings (only show when DATABASE_STORAGE is selected)
+            if (coreConfig.gameStorageType == GameStorageType.DATABASE_STORAGE) {
+                ReversiTextField(
+                    value = coreConfig.dbURI,
+                    onValueChange = {
+                        if (!didClick) didClick = true
+                        else onConfigChange(coreConfig.copy(dbURI = it))
+                    },
+                    label = { ReversiText("URI do Banco de Dados") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                ReversiTextField(
+                    value = coreConfig.dbPort.toString(),
+                    onValueChange = {
+                        if (!didClick) didClick = true
+                        else {
+                            val newPort = it.toIntOrNull()
+                            if (newPort != null && newPort > 0) {
+                                onConfigChange(coreConfig.copy(dbPort = newPort))
+                            }
+                        }
+                    },
+                    label = { ReversiText("Porta do Banco de Dados") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                ReversiTextField(
+                    value = coreConfig.dbName,
+                    onValueChange = {
+                        if (!didClick) didClick = true
+                        else onConfigChange(coreConfig.copy(dbName = it))
+                    },
+                    label = { ReversiText("Nome do Banco de Dados") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                ReversiTextField(
+                    value = coreConfig.dbUser,
+                    onValueChange = {
+                        if (!didClick) didClick = true
+                        else onConfigChange(coreConfig.copy(dbUser = it))
+                    },
+                    label = { ReversiText("Usuário do Banco de Dados") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                ReversiTextField(
+                    value = coreConfig.dbPassword,
+                    onValueChange = {
+                        if (!didClick) didClick = true
+                        else onConfigChange(coreConfig.copy(dbPassword = it))
+                    },
+                    label = { ReversiText("Senha do Banco de Dados") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }
