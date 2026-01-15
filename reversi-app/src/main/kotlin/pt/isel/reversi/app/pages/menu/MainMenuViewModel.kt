@@ -4,10 +4,10 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import pt.isel.reversi.app.state.AppState
 import pt.isel.reversi.app.state.getStateAudioPool
-import pt.isel.reversi.app.state.pages.Page
-import pt.isel.reversi.app.state.pages.ScreenState
-import pt.isel.reversi.app.state.pages.UiState
-import pt.isel.reversi.app.state.pages.ViewModel
+import pt.isel.reversi.app.pages.Page
+import pt.isel.reversi.app.pages.ScreenState
+import pt.isel.reversi.app.pages.UiState
+import pt.isel.reversi.app.pages.ViewModel
 import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.utils.TRACKER
 

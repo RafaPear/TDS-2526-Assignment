@@ -16,8 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.ScaffoldView
+import pt.isel.reversi.app.pages.Page
 import pt.isel.reversi.app.state.*
-import pt.isel.reversi.app.state.pages.Page
 import pt.isel.reversi.app.utils.PreviousPage
 import pt.isel.reversi.utils.TRACKER
 import pt.isel.reversi.utils.TrackingStats

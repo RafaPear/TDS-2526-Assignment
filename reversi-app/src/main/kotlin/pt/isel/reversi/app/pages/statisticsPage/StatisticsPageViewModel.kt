@@ -3,9 +3,9 @@ package pt.isel.reversi.app.pages.statisticsPage
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
-import pt.isel.reversi.app.state.pages.ScreenState
-import pt.isel.reversi.app.state.pages.UiState
-import pt.isel.reversi.app.state.pages.ViewModel
+import pt.isel.reversi.app.pages.ScreenState
+import pt.isel.reversi.app.pages.UiState
+import pt.isel.reversi.app.pages.ViewModel
 import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.utils.TRACKER
 import pt.isel.reversi.utils.TrackingStats

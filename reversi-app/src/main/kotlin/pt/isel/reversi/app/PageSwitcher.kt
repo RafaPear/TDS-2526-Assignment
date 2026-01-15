@@ -10,15 +10,13 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import pt.isel.reversi.app.state.pages.Page
-import pt.isel.reversi.app.state.pages.PagesState
+import pt.isel.reversi.app.pages.Page
+import pt.isel.reversi.app.pages.PagesState
 
 /**
  * Central component managing transitions between pages in the application.
  * Slides right (forward) when navigating to higher-level pages, left (backward) when returning.
  *
- * @param targetPage The current/target page to display.
- * @param backPage The previous page (kept for compatibility).
  * @param theme The current app theme for styling.
  * @param contentAlignment How to align overlapping content during transition.
  * @param switchAction Lambda defining content for each page within the animation container.

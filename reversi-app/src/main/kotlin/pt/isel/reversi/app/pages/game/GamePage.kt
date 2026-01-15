@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import pt.isel.reversi.app.ScaffoldView
+import pt.isel.reversi.app.pages.Page
 import pt.isel.reversi.app.state.ReversiScope
-import pt.isel.reversi.app.state.pages.Page
 import pt.isel.reversi.app.utils.PreviousPage
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.utils.TRACKER

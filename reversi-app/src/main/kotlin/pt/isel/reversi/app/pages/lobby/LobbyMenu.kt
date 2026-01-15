@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pt.isel.reversi.app.ScaffoldView
+import pt.isel.reversi.app.pages.Page
 import pt.isel.reversi.app.pages.lobby.lobbyViews.Empty
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.LobbyCarousel
 import pt.isel.reversi.app.pages.lobby.lobbyViews.utils.PopupPickAPiece
@@ -20,7 +21,6 @@ import pt.isel.reversi.app.pages.lobby.lobbyViews.utils.RefreshButton
 import pt.isel.reversi.app.reversiFadeAnimation
 import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.app.state.getTheme
-import pt.isel.reversi.app.state.pages.Page
 import pt.isel.reversi.app.utils.PreviousPage
 import pt.isel.reversi.utils.LOGGER
 import pt.isel.reversi.utils.TRACKER

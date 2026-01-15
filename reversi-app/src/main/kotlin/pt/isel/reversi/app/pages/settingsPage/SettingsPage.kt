@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.AppTheme
 import pt.isel.reversi.app.AppThemes
 import pt.isel.reversi.app.ScaffoldView
+import pt.isel.reversi.app.pages.Page
 import pt.isel.reversi.app.state.*
-import pt.isel.reversi.app.state.pages.Page
 import pt.isel.reversi.app.utils.PreviousPage
 import pt.isel.reversi.core.CoreConfig
 import pt.isel.reversi.core.storage.GameStorageType

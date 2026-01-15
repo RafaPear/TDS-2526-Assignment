@@ -1,4 +1,4 @@
-package pt.isel.reversi.app.state.pages.utils
+package pt.isel.reversi.app.pages
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -18,10 +18,6 @@ import pt.isel.reversi.app.pages.settingsPage.SettingsViewModel
 import pt.isel.reversi.app.pages.statisticsPage.StatisticsPage
 import pt.isel.reversi.app.pages.statisticsPage.StatisticsPageViewModel
 import pt.isel.reversi.app.state.ReversiScope
-import pt.isel.reversi.app.state.pages.Page
-import pt.isel.reversi.app.state.pages.PagesState
-import pt.isel.reversi.app.state.pages.UiState
-import pt.isel.reversi.app.state.pages.ViewModel
 import pt.isel.reversi.app.state.setGame
 import pt.isel.reversi.app.state.setPage
 import pt.isel.reversi.core.Game

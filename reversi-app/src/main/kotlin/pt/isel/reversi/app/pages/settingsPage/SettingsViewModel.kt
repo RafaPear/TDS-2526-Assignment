@@ -8,11 +8,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pt.isel.reversi.app.AppTheme
 import pt.isel.reversi.app.gameAudio.loadGameAudioPool
+import pt.isel.reversi.app.pages.Page
 import pt.isel.reversi.app.state.AppState
-import pt.isel.reversi.app.state.pages.Page
-import pt.isel.reversi.app.state.pages.ScreenState
-import pt.isel.reversi.app.state.pages.UiState
-import pt.isel.reversi.app.state.pages.ViewModel
+import pt.isel.reversi.app.pages.ScreenState
+import pt.isel.reversi.app.pages.UiState
+import pt.isel.reversi.app.pages.ViewModel
 import pt.isel.reversi.app.state.setError
 import pt.isel.reversi.app.state.setLoading
 import pt.isel.reversi.app.utils.runStorageHealthCheck

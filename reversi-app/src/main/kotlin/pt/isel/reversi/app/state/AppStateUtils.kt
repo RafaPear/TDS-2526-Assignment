@@ -3,9 +3,9 @@
 package pt.isel.reversi.app.state
 
 import androidx.compose.runtime.MutableState
-import pt.isel.reversi.app.state.pages.Page
-import pt.isel.reversi.app.state.pages.PagesState
-import pt.isel.reversi.app.state.pages.UiState
+import pt.isel.reversi.app.pages.Page
+import pt.isel.reversi.app.pages.PagesState
+import pt.isel.reversi.app.pages.UiState
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.ErrorType.Companion.toReversiException
@@ -16,7 +16,6 @@ import pt.isel.reversi.utils.LOGGER
  * Updates the current page in the application state.
  * @param page The new page to set.
  * @param backPage The new back page (auto-calculated if null).
- * @param backPageMutable The mutable state for the back page.
  */
 fun MutableState<PagesState>.setPage(page: Page, backPage: Page? = null) {
     if (page == value.page) {
@@ -83,6 +82,5 @@ fun <T : UiState> MutableState<T>.setError(error: Exception?, type: ErrorType = 
 fun MutableState<ReversiException?>.setGlobalError(error: Exception?, type: ErrorType = ErrorType.CRITICAL) {
     LOGGER.info("Set global error: ${error?.message ?: "null"}")
     val newError = error as? ReversiException ?: error?.toReversiException(type)
-
     value = newError
 }

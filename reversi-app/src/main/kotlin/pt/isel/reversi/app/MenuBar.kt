@@ -7,7 +7,7 @@ import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
 import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.app.state.AppState
-import pt.isel.reversi.app.state.pages.Page
+import pt.isel.reversi.app.pages.Page
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.utils.LOGGER
 
