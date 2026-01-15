@@ -44,8 +44,8 @@ fun ReversiScope.NewGamePage(
             PreviousPage { onLeave() }
         }
     ) { padding ->
-        NewGamePageView(Modifier.padding(padding), playerNameChange) { game, boardSize ->
-            viewModel.tryCreateGame(game, boardSize)
+        NewGamePageView(modifier = Modifier.padding(padding)) { game, boardSize, name ->
+            viewModel.tryCreateGame(game, boardSize, name)
         }
     }
 }
@@ -55,16 +55,15 @@ fun ReversiScope.NewGamePage(
  * Provides input fields for game name, player name, board size, and a dropdown menu for piece selection.
  *
  * @param modifier The modifier for layout customization.
- * @param playerNameChange Callback to update the player name.
- * @param onClick Callback invoked when the user confirms game creation with selected piece and board size.
+ * @param onClick Callback invoked when the user confirms game creation with selected piece, board size and player name.
  */
 @Composable
 private fun ReversiScope.NewGamePageView(
     modifier: Modifier,
-    playerNameChange: (String) -> Unit,
-    onClick: (Game, Int) -> Unit
+    onClick: (Game, Int, String?) -> Unit
 ) {
     var game by remember { mutableStateOf(getCurrentState().game) }
+    var playerName by remember { mutableStateOf(appState.playerName ?: "") }
     var boardSize by remember { mutableStateOf("8") }
     var expanded by remember { mutableStateOf(false) }
     val theme = getTheme()
@@ -88,15 +87,13 @@ private fun ReversiScope.NewGamePageView(
                 onValueChange = { game = game.copy(currGameName = it) },
                 label = { ReversiText("Nome do jogo") },
                 modifier = Modifier.fillMaxWidth(),
-                onDone = { onClick(game, boardSize.parseBoardSize()) },
             )
 
             ReversiTextField(
-                value = appState.playerName ?: "",
-                onValueChange = { playerNameChange(it) },
+                value = playerName,
+                onValueChange = { playerName = it },
                 label = { ReversiText("Nome de jogador") },
                 modifier = Modifier.fillMaxWidth(),
-                onDone = { onClick(game, boardSize.parseBoardSize()) },
             )
 
             ReversiTextField(
@@ -104,7 +101,6 @@ private fun ReversiScope.NewGamePageView(
                 onValueChange = { boardSize = it },
                 label = { ReversiText("Tamanho do Tabuleiro (4-26)") },
                 modifier = Modifier.fillMaxWidth(),
-                onDone = { onClick(game, boardSize.parseBoardSize()) },
             )
 
 
@@ -174,7 +170,9 @@ private fun ReversiScope.NewGamePageView(
 
             ReversiButton(
                 modifier = Modifier.fillMaxWidth().height(50.dp),
-                onClick = { onClick(game, boardSize.parseBoardSize()) },
+                onClick = {
+                    onClick(game, boardSize.parseBoardSize(), playerName.ifBlank { null })
+                },
                 text = "Entrar"
             )
         }

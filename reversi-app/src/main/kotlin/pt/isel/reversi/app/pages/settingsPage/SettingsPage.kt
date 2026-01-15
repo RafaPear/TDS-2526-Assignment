@@ -370,5 +370,3 @@ private fun ReversiScope.ApplyButton(onClick: () -> Unit) {
         ReversiButton(text = "Aplicar", onClick = onClick)
     }
 }
-
-// applySettings left for later refinement

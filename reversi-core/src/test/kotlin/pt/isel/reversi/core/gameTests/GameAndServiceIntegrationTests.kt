@@ -96,6 +96,7 @@ class GameAndServiceIntegrationTests {
                 players = MatchPlayers(player1),
                 firstTurn = PieceType.BLACK,
                 currGameName = "existingGame",
+                service = gameService,
             )
 
 
@@ -123,6 +124,7 @@ class GameAndServiceIntegrationTests {
                 players = MatchPlayers(Player(PieceType.BLACK)),
                 firstTurn = PieceType.BLACK,
                 currGameName = "testGame",
+                service = gameService,
             )
 
             var uutW = loadAndEntryGame(
@@ -155,6 +157,7 @@ class GameAndServiceIntegrationTests {
                 players = MatchPlayers(Player(PieceType.BLACK)),
                 firstTurn = PieceType.WHITE,
                 currGameName = "testGame",
+                service = gameService,
             )
 
             var uutW = loadAndEntryGame(
@@ -177,7 +180,8 @@ class GameAndServiceIntegrationTests {
                 players = MatchPlayers(Player(PieceType.BLACK), Player(PieceType.WHITE)),
                 firstTurn = PieceType.WHITE,
                 currGameName = "testGame",
-                side = 4
+                side = 4,
+                service = gameService,
             )
 
             uut.saveEndGame()
@@ -202,6 +206,7 @@ class GameAndServiceIntegrationTests {
                 players = MatchPlayers(initialMyPlayer, initialPlayer2),
                 firstTurn = initialMyPlayer.type,
                 currGameName = "testGame",
+                service = gameService,
             )
 
             val expectedMyPlayer = initialMyPlayer.copy(name = "Changed Name").refresh(uut.gameState!!.board) // Refresh points

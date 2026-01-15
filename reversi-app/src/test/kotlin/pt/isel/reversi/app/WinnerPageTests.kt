@@ -21,7 +21,8 @@ class WinnerPageTests {
             side = 4,
             players = MatchPlayers(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
             firstTurn = PieceType.BLACK,
-            currGameName = null
+            currGameName = null,
+            service = EmptyGameService()
         )
     }
 

@@ -17,8 +17,10 @@ import pt.isel.reversi.app.state.setError
 import pt.isel.reversi.app.state.setLoading
 import pt.isel.reversi.app.utils.runStorageHealthCheck
 import pt.isel.reversi.core.CoreConfig
+import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.ReversiException
+import pt.isel.reversi.core.gameServices.GameService
 import pt.isel.reversi.core.loadCoreConfig
 import pt.isel.reversi.core.saveCoreConfig
 import pt.isel.reversi.utils.LOGGER
@@ -65,8 +67,9 @@ class SettingsViewModel(
     private val appState: AppStateImpl,
     override val globalError: ReversiException? = null,
     private val setTheme: (AppTheme) -> Unit,
-    private val setPlayerName: (String?) -> Unit,
+    private val setPlayerName: suspend (String?) -> Unit,
     private val saveGame: suspend () -> Unit,
+    private val setGame: (Game) -> Unit,
     override val setGlobalError: (Exception?, ErrorType?) -> Unit,
 ) : ViewModel<SettingsUiState>() {
 
@@ -129,12 +132,15 @@ class SettingsViewModel(
             try {
                 // check if storage type changed and test connection if needed
                 val currentCoreConfig = loadCoreConfig()
-                var needsSaving = false
+                var resetGame = false
                 if (currentCoreConfig != draftCoreConfig) {
                     if (currentCoreConfig.gameStorageType != draftCoreConfig.gameStorageType) {
                         LOGGER.info("Storage type changed from ${currentCoreConfig.gameStorageType} to ${draftCoreConfig.gameStorageType}, testing connectivity...")
-                        LOGGER.info("Saving Game...")
-                        needsSaving = true
+                        if (appState.game.hasStarted()) {
+                            LOGGER.info("Saving Game...")
+                            saveGame()
+                        }
+                        resetGame = true
                     }
                     val exception = runStorageHealthCheck(appState.service, testConf = draftCoreConfig, save = true)
                     if (exception != null) {
@@ -162,7 +168,7 @@ class SettingsViewModel(
                     setPlayerName(newName)
                     setDraftPlayerName(newName)
                     setTheme(newTheme)
-                    if (needsSaving) saveGame()
+                    if (resetGame) setGame(Game(service = GameService()))
                 }
 
                 // Resume previously playing theme-related audios

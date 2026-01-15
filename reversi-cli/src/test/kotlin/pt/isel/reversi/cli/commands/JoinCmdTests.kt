@@ -5,7 +5,7 @@ import pt.rafap.ktflag.cmd.CommandResultType
 import kotlin.test.Test
 import kotlin.test.assertFails
 
-class JoinCmdTest {
+class JoinCmdTests {
 
     @Test
     fun `Test JoinCmd execution`() {

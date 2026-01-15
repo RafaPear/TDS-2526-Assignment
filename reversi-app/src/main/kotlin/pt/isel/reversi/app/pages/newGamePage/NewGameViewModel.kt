@@ -47,7 +47,6 @@ data class NewGameUiState(
 class NewGameViewModel(
     private val scope: CoroutineScope,
     private val appState: AppStateImpl,
-    private val playerName: String?,
     override val globalError: ReversiException? = null,
     override val setGlobalError: (Exception?, ErrorType?) -> Unit,
     private val createGame: (Game) -> Unit,
@@ -60,7 +59,7 @@ class NewGameViewModel(
 
     override val uiState: State<NewGameUiState> = _uiState
 
-    fun tryCreateGame(game: Game, boardSize: Int) {
+    fun tryCreateGame(game: Game, boardSize: Int, playerName: String?) {
         LOGGER.info("Using ${appState.service.getStorageTypeName()}")
 
         val currGameName = game.currGameName

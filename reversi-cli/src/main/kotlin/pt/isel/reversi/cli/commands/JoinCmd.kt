@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.cli.pieceTypes
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.board.PieceType
+import pt.isel.reversi.core.gameServices.GameService
 import pt.isel.reversi.core.loadAndEntryGame
 import pt.isel.reversi.utils.TRACKER
 import pt.rafap.ktflag.cmd.CommandImpl
@@ -41,12 +42,18 @@ object JoinCmd : CommandImpl<Game>() {
      * @return A CommandResult with the loaded game or an error message.
      */
     override fun execute(vararg args: String, context: Game?): CommandResult<Game> {
-        TRACKER.trackFunctionCall(customName = "JoinCmd.execute", details = "args=${args.joinToString()}", category = "CLI.Command")
+        TRACKER.trackFunctionCall(
+            customName = "JoinCmd.execute",
+            details = "args=${args.joinToString()}",
+            category = "CLI.Command"
+        )
         if (context != null && context.currGameName != null) {
             runBlocking {
                 context.saveEndGame()
             }
         }
+
+        val service = context?.service ?: GameService()
 
         val name = args[0]
         val pTypeArg = args.getOrNull(1)?.firstOrNull()
@@ -56,10 +63,13 @@ object JoinCmd : CommandImpl<Game>() {
         if (pTypeArg != null && pType == null)
             return CommandResult.ERROR("Invalid piece type symbol provided: '$pTypeArg'.")
 
-        val game = runBlocking { loadAndEntryGame(
-             gameName = name,
-             desiredType = pType,
-        ) }
+        val game = runBlocking {
+            loadAndEntryGame(
+                gameName = name,
+                desiredType = pType,
+                service = service,
+            )
+        }
 
         println(ShowCmd.executeWrapper(context = game).message)
 

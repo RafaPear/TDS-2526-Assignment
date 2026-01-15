@@ -28,7 +28,8 @@ class DrawBoardTest {
                     side = expectedSide,
                     players = MatchPlayers(Player(type = PieceType.BLACK)),
                     firstTurn = PieceType.BLACK,
-                    currGameName = null
+                    currGameName = null,
+                    service = EmptyGameService()
                 )
             }
 
@@ -55,7 +56,8 @@ class DrawBoardTest {
             side = expectedSide,
             players = MatchPlayers(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
             firstTurn = PieceType.BLACK,
-            currGameName = null
+            currGameName = null,
+            service = EmptyGameService()
         )
         game = game.play(coordinate = game.getAvailablePlays()[0])
         val board = game.gameState!!.board
@@ -94,7 +96,8 @@ class DrawBoardTest {
             side = expectedSide,
             players = MatchPlayers(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
             firstTurn = PieceType.BLACK,
-            currGameName = null
+            currGameName = null,
+            service = EmptyGameService()
         )
         val coordinateToClick = game.getAvailablePlays()[0]
         var onCellClickCalled = false
@@ -130,7 +133,8 @@ class DrawBoardTest {
             side = expectedSide,
             players = MatchPlayers(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
             firstTurn = PieceType.BLACK,
-            currGameName = null
+            currGameName = null,
+            service = EmptyGameService()
         )
         val coordinateToClick = game.getAvailablePlays()[0]
         var onCellClickCalled = false
@@ -167,7 +171,8 @@ class DrawBoardTest {
             side = expectedSide,
             players = MatchPlayers(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
             firstTurn = PieceType.BLACK,
-            currGameName = null
+            currGameName = null,
+            service = EmptyGameService()
         )
 
         val coordinateToClick = game.gameState!!.board.last().coordinate
@@ -204,7 +209,8 @@ class DrawBoardTest {
             side = expectedSide,
             players = MatchPlayers(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
             firstTurn = PieceType.BLACK,
-            currGameName = null
+            currGameName = null,
+            service = EmptyGameService()
         )
 
         val availablePlays = game.getAvailablePlays()

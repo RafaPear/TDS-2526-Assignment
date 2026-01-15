@@ -5,6 +5,7 @@ import pt.isel.reversi.cli.pieceTypes
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
+import pt.isel.reversi.core.gameServices.GameService
 import pt.isel.reversi.core.startNewGame
 import pt.isel.reversi.core.storage.MatchPlayers
 import pt.isel.reversi.utils.TRACKER
@@ -46,10 +47,16 @@ object NewCmd : CommandImpl<Game>() {
      * @return A CommandResult with the newly created game or an error message.
      */
     override fun execute(vararg args: String, context: Game?): CommandResult<Game> {
-        TRACKER.trackFunctionCall(customName = "NewCmd.execute", details = "args=${args.joinToString()}", category = "CLI.Command")
+        TRACKER.trackFunctionCall(
+            customName = "NewCmd.execute",
+            details = "args=${args.joinToString()}",
+            category = "CLI.Command"
+        )
         if (context != null && context.currGameName != null) {
             runBlocking { context.saveEndGame() }
         }
+
+        val service = context?.service ?: GameService()
 
         val playerType = PieceType.entries.find { it.symbol.toString() == args[0] }
             ?: return ERROR("First player must be one of: $pieceTypes")
@@ -59,14 +66,31 @@ object NewCmd : CommandImpl<Game>() {
 
         val game: Game = runBlocking {
             if (name != null) {
-                startNewGame(side = 8, players = MatchPlayers(player), currGameName = name, firstTurn = playerType)
+                startNewGame(
+                    side = 8,
+                    players = MatchPlayers(player),
+                    currGameName = name,
+                    firstTurn = playerType,
+                    service = service
+                )
             } else {
-                startNewGame(side = 8, players = MatchPlayers(player, player.swap()), firstTurn = playerType)
+                startNewGame(
+                    side = 8,
+                    players = MatchPlayers(
+                        player,
+                        player.swap()
+                    ),
+                    firstTurn = playerType,
+                    service = service
+                )
             }
         }
 
         println(ShowCmd.executeWrapper(context = game).message)
 
-        return CommandResult.SUCCESS("Game created Successfully", game)
+        return CommandResult.SUCCESS(
+            "Game created Successfully",
+            game
+        )
     }
 }

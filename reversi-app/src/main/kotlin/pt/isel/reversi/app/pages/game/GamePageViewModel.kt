@@ -59,13 +59,16 @@ class GamePageViewModel(
     override val globalError: ReversiException? = null,
     override val setGlobalError: (Exception?, ErrorType?) -> Unit,
 ) : ViewModel<GameUiState>() {
-    override val _uiState = mutableStateOf(
-        GameUiState(
-            game = game,
-            screenState = ScreenState(error = globalError)
+    override val _uiState by lazy {
+        mutableStateOf(
+            GameUiState(
+                game = game,
+                screenState = ScreenState(error = globalError)
+            )
         )
-    )
-    override val uiState: State<GameUiState> = _uiState
+    }
+
+    override val uiState: State<GameUiState> get() = _uiState
 
     private var pollingJob: Job? = null
 

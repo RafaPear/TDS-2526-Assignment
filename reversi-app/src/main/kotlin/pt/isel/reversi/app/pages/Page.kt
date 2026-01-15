@@ -47,8 +47,8 @@ interface UiState {
 abstract class ViewModel<T : UiState> {
     protected abstract val _uiState: MutableState<T>
     abstract val uiState: State<T>
-    protected abstract val globalError: ReversiException?
-    protected abstract val setGlobalError: (Exception?, ErrorType?) -> Unit
+    abstract val globalError: ReversiException?
+    abstract val setGlobalError: (Exception?, ErrorType?) -> Unit
 
     fun setError(error: Exception?, type: ErrorType? = ErrorType.WARNING) {
         if (globalError != null) {

@@ -50,6 +50,8 @@ data class Game(
         config = loadCoreConfig()
     )
 
+    fun hasStarted(): Boolean = gameState != null && gameState.players.isNotEmpty() && myPiece != null
+
     /**
      * Changes the player's piece type.
      * @param newType The new piece type for the player.
@@ -63,7 +65,7 @@ data class Game(
      * @throws InvalidGameException if the game is not started yet (game state is null or players list is empty).
      */
     fun requireStartedGame(): GameState {
-        if (gameState == null || gameState.players.isEmpty() || myPiece == null) throw InvalidGameException(
+        if (gameState == null || !hasStarted()) throw InvalidGameException(
             message = "Game is not started yet.", type = ErrorType.INFO
         )
         return gameState
@@ -245,22 +247,6 @@ data class Game(
     suspend fun refresh(): Game = service.refresh(this)
 
     /**
-     * Loads the latest persisted game state without mutating the current instance.
-     * @return The loaded game state or null if unchanged or no persisted state exists.
-     * @throws InvalidFileException if loading from storage fails.
-     */
-    suspend fun refreshBase(): GameState? = service.refreshBase(this)
-
-    /**
-     * Replaces the in-memory game state with the latest persisted version if available.
-     * @return A new Game instance reflecting the persisted state, or this instance if unchanged.
-     */
-    suspend fun hardRefresh(): GameState? {
-        val id = currGameName ?: return null
-        return service.hardLoad(id)
-    }
-
-    /**
      * Saves the current game state to storage.
      * Saves the player in storage if not already present (makes available this player for future loads).
      * It is recommended to use this method only to save the game at the end.
@@ -281,13 +267,6 @@ data class Game(
      */
     suspend fun saveOnlyBoard(gameState: GameState?) =
         service.saveOnlyBoard(currGameName, gameState)
-
-    /**
-     * Runs a health check on the storage system.
-     * Does the full cycle of creating, saving, loading, and deleting a test game state.
-     * @return True if the storage is healthy, false otherwise.
-     */
-    suspend fun runStorageHealthCheck(): Boolean = service.runStorageHealthCheck()
 
     /**
      * Closes the storage connection.

@@ -6,6 +6,7 @@ import kotlinx.coroutines.test.runTest
 import pt.isel.reversi.app.pages.game.GamePageViewModel
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
+import pt.isel.reversi.core.gameServices.EmptyGameService
 import pt.isel.reversi.core.startNewGame
 import pt.isel.reversi.core.storage.MatchPlayers
 import kotlin.test.Test
@@ -29,7 +30,8 @@ class GamePageViewModelTests {
             side = 4,
             players = MatchPlayers(Player(type = PieceType.BLACK), Player(type = PieceType.WHITE)),
             firstTurn = PieceType.BLACK,
-            currGameName = null
+            currGameName = null,
+            service = EmptyGameService()
         )
     }
 

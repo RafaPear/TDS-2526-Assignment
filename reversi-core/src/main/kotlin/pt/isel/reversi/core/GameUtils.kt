@@ -4,7 +4,6 @@ import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.exceptions.*
-import pt.isel.reversi.core.gameServices.EmptyGameService
 import pt.isel.reversi.core.gameServices.GameService
 import pt.isel.reversi.core.gameServices.GameServiceImpl
 import pt.isel.reversi.core.storage.GameState
@@ -31,7 +30,7 @@ suspend fun startNewGame(
     players: MatchPlayers,
     firstTurn: PieceType,
     currGameName: String? = null,
-    service: GameServiceImpl? = null
+    service: GameServiceImpl
 ): Game {
     TRACKER.trackFunctionCall(customName = "startNewGame", details = "gameName=$currGameName", category = "Core.Game")
     if (players.isEmpty()) throw InvalidGameException(
@@ -47,7 +46,7 @@ suspend fun startNewGame(
         winner = null
     )
 
-    return if (currGameName != null && service != null) {
+    return if (currGameName != null) {
         try {
             Game(
                 target = false,
@@ -67,7 +66,7 @@ suspend fun startNewGame(
             gameState = gs,
             currGameName = currGameName,
             myPiece = firstTurn,
-            service = service ?: EmptyGameService(),
+            service = service,
         )
     }
 }

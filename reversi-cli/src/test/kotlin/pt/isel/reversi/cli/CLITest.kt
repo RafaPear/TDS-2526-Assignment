@@ -3,13 +3,21 @@ package pt.isel.reversi.cli
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType
+import pt.isel.reversi.core.gameServices.GameService
 import pt.isel.reversi.core.startNewGame
+import pt.isel.reversi.core.storage.GameStorageType
 import pt.isel.reversi.core.storage.MatchPlayers
+import pt.isel.reversi.core.storage.StorageParams
 import kotlin.test.Test
 
 // Using the functions parseInput and parseStringToResult
 // from CLI.kt specifically made for testing purposes
 class CLITest {
+    val gameService = GameService(
+        storage = GameStorageType.FILE_STORAGE,
+        params = StorageParams.FileStorageParams(folder = "data/saves")
+    )
+
     @Test
     fun `Test MockCommand execution with null game context`() {
         // send data to standard input and verify output
@@ -19,7 +27,8 @@ class CLITest {
             val newGame = startNewGame(
                 side = 8,
                 players = MatchPlayers(Player(PieceType.BLACK)),
-                firstTurn = PieceType.BLACK
+                firstTurn = PieceType.BLACK,
+                service = gameService
             )
             assert(
                 result != null && result.gameState == newGame.gameState
@@ -33,11 +42,12 @@ class CLITest {
     fun `Test MockCommand execution with valid game context`() {
         cleanup {
             val cli = CLI(arrayOf(MockCommand))
-            val initialGame = Game()
+            val initialGame = Game(service = gameService)
             val expectedGame = startNewGame(
                 side = 8,
                 players = MatchPlayers(Player(PieceType.BLACK)),
-                firstTurn = PieceType.BLACK
+                firstTurn = PieceType.BLACK,
+                service = gameService
             )
 
             val result = cli.parseInput("mock", initialGame)// should execute MockCommand and return new game context

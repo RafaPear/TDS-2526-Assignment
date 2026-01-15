@@ -4,7 +4,7 @@ import pt.isel.reversi.cli.cleanup
 import pt.rafap.ktflag.cmd.CommandResultType
 import kotlin.test.Test
 
-class NewCmdTest {
+class NewCmdTests {
 
     @Test
     fun `Test NewCmd simple execution`() {

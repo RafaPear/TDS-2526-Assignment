@@ -18,7 +18,6 @@ import pt.isel.reversi.app.state.setGlobalError
 import pt.isel.reversi.app.state.setPage
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.exceptions.ReversiException
-import pt.isel.reversi.core.gameServices.GameService
 import pt.isel.reversi.utils.audio.AudioPool
 
 
@@ -50,7 +49,7 @@ fun Page.createViewModel(
                 play(themeState.value.placePieceSound)
             }
         },
-        setPage = { pagesState.setPage(it , backPage = Page.MAIN_MENU) },
+        setPage = { pagesState.setPage(it, backPage = Page.MAIN_MENU) },
         setGame = { game.setGame(it) },
     )
 
@@ -60,19 +59,20 @@ fun Page.createViewModel(
         setTheme = { themeState.value = it },
         setGlobalError = { it, type -> globalError.setGlobalError(it, type) },
         setPlayerName = {
-            Snapshot.withMutableSnapshot {
-                playerName.value = it
-                val newName = it ?: return@withMutableSnapshot
-                val gameState = game.value.gameState ?: return@withMutableSnapshot
-                val myPiece = game.value.myPiece ?: return@withMutableSnapshot
-                game.setGame(
-                    game.value.copy(
-                        gameState = gameState.changeName(newName, myPiece)
-                    )
+            playerName.value = it
+            val newName = it ?: return@SettingsViewModel
+            val gameState = game.value.gameState ?: return@SettingsViewModel
+            val myPiece = game.value.myPiece ?: return@SettingsViewModel
+            val newGameState = gameState.changeName(newName, myPiece)
+            game.setGame(
+                game.value.copy(
+                    gameState = newGameState
                 )
-            }
+            )
+            game.value.saveOnlyBoard(newGameState)
         },
-        saveGame = { game.value.saveEndGame() ; game.setGame(Game(service = GameService())) },
+        saveGame = { game.value.saveEndGame() },
+        setGame = { game.setGame(it) },
         globalError = globalError.value
     )
 
@@ -84,7 +84,6 @@ fun Page.createViewModel(
     Page.NEW_GAME -> NewGameViewModel(
         scope = scope,
         appState = appState,
-        playerName = playerName.value,
         globalError = globalError.value,
         setGlobalError = { it, type -> globalError.setGlobalError(it, type) },
         createGame = { newGame ->

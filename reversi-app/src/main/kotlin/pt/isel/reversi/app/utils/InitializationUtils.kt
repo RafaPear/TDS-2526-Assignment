@@ -90,18 +90,13 @@ suspend fun runStorageHealthCheck(service: GameServiceImpl, testConf: CoreConfig
     if (loadedConf.gameStorageType == GameStorageType.DATABASE_STORAGE) {
         LOGGER.info("Remote storage detected, checking connectivity...")
         try {
-            val didPass = service.runStorageHealthCheck()
-            if (didPass) {
-                LOGGER.info("Game remote storage connectivity check passed.")
-            } else {
-                LOGGER.severe("Game remote storage connectivity check failed.")
-                throw Exception("Game remote storage connectivity check failed.")
-            }
+            service.runStorageHealthCheck()
+            LOGGER.info("Game remote storage connectivity check passed.")
         } catch (e: Exception) {
+            LOGGER.severe("Game remote storage connectivity check failed.")
             LOGGER.severe("Failed to initialize game remote storage: ${e.message}")
             LOGGER.severe("Falling back to local storage.")
-            if (save)
-                saveCoreConfig(loadedConf.copy(gameStorageType = GameStorageType.FILE_STORAGE))
+            if (save) saveCoreConfig(loadedConf.copy(gameStorageType = GameStorageType.FILE_STORAGE))
             return e
         }
     }

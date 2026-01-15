@@ -54,11 +54,12 @@ fun FrameWindowScope.MakeMenuBar(
                     setPage(Page.GAME)
                 } catch (e: Exception) {
                     setGlobalError(e, null)
-                    return@Item
                 }
             }
             Item("Sair do jogo atual") {
-                runBlocking { appState.service.saveEndGame(appState.game) }
+                if (appState.game.currGameName != null) {
+                    runBlocking { appState.service.saveEndGame(appState.game) }
+                }
                 setGame(Game(service = appState.service))
                 setPage(Page.MAIN_MENU)
             }
@@ -78,10 +79,6 @@ fun FrameWindowScope.MakeMenuBar(
         }
 
         Menu("Dev") {
-            Item("Mostrar Estado do Jogo") {
-                // Use the extension function defined in the pt.isel.reversi.app package
-                appState.game.printDebugState()
-            }
             Item("Estatísticas de Tracking") {
                 setPage(Page.STATISTICS)
             }

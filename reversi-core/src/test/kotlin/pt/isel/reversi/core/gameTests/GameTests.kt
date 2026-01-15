@@ -50,6 +50,7 @@ class GameTests {
                 players = MatchPlayers(Player(PieceType.WHITE)),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
+                service = EmptyGameService()
             )
 
             assertFailsWith<InvalidPlayException> {
@@ -73,6 +74,7 @@ class GameTests {
                 players = MatchPlayers(Player(PieceType.BLACK)),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
+                service = EmptyGameService()
             )
 
             assertFails { (uut.play(Coordinate(1, 2))) }
@@ -112,6 +114,7 @@ class GameTests {
                 players = MatchPlayers(Player(PieceType.BLACK), Player(PieceType.WHITE)),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
+                service = EmptyGameService()
             ).play(Coordinate(1, 2))
 
             LOGGER.info { "Expected Game State:\n${expectedGame.gameState}\nUUT Game State:\n${uut.gameState}" }
@@ -139,6 +142,7 @@ class GameTests {
                 players = MatchPlayers(Player(PieceType.BLACK), Player(PieceType.WHITE)),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
+                service = EmptyGameService()
             )
                 .play(Coordinate(3, 4))
                 .play(Coordinate(2, 4))
@@ -243,6 +247,7 @@ class GameTests {
                 players = MatchPlayers(Player(PieceType.BLACK), Player(PieceType.WHITE)),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
+                service = EmptyGameService()
             )
 
             val expectedBoard = Board(4).startPieces()
@@ -264,6 +269,7 @@ class GameTests {
                     players = MatchPlayers(),
                     firstTurn = PieceType.BLACK,
                     currGameName = null,
+                    service = EmptyGameService()
                 )
             }
         }
@@ -277,6 +283,7 @@ class GameTests {
                 players = MatchPlayers(Player(PieceType.BLACK)),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
+                service = EmptyGameService()
             )
 
             val expectedBoard = Board(4).startPieces()
@@ -302,6 +309,7 @@ class GameTests {
                 ),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
+                service = EmptyGameService()
             )
 
             assertFailsWith<InvalidPlayException> {
@@ -323,6 +331,7 @@ class GameTests {
                 ),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
+                service = EmptyGameService()
             )
 
             val refreshedGame = uut.refresh()
@@ -340,6 +349,7 @@ class GameTests {
                 players = MatchPlayers(Player(PieceType.BLACK), Player(PieceType.WHITE)),
                 firstTurn = PieceType.BLACK,
                 currGameName = null,
+                service = EmptyGameService()
             )
 
             assertFailsWith<InvalidFileException> {
