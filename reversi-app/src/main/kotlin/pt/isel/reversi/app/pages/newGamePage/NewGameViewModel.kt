@@ -5,9 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import pt.isel.reversi.app.exceptions.NoPieceSelected
-import pt.isel.reversi.app.state.pages.ScreenState
-import pt.isel.reversi.app.state.pages.UiState
-import pt.isel.reversi.app.state.pages.ViewModel
+import pt.isel.reversi.app.pages.ScreenState
+import pt.isel.reversi.app.pages.UiState
+import pt.isel.reversi.app.pages.ViewModel
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
 import pt.isel.reversi.core.board.PieceType

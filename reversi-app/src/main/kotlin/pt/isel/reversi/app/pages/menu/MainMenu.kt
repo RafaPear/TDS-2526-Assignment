@@ -10,10 +10,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.ScaffoldView
+import pt.isel.reversi.app.pages.Page
 import pt.isel.reversi.app.state.ReversiButton
 import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.app.state.ReversiText
-import pt.isel.reversi.app.state.pages.Page
 import pt.isel.reversi.app.utils.PreviousPage
 import pt.isel.reversi.utils.TRACKER
 
@@ -26,7 +26,6 @@ val MAIN_MENU_AUTO_SIZE_BUTTON_TEXT =
  *
  * @param viewModel View model handling menu audio and error state.
  * @param modifier Modifier for layout customization.
- * @param setPage Callback to navigate to a target page.
  * @param onLeave Callback invoked when returning to the previous screen.
  */
 @Composable

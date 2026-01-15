@@ -1,4 +1,4 @@
-package pt.isel.reversi.app.state.pages
+package pt.isel.reversi.app.pages
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
