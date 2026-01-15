@@ -2,11 +2,12 @@ package pt.isel.reversi.app.pages.winnerPage
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import pt.isel.reversi.app.state.pages.ScreenState
-import pt.isel.reversi.app.state.pages.UiState
-import pt.isel.reversi.app.state.pages.ViewModel
+import pt.isel.reversi.app.pages.ScreenState
+import pt.isel.reversi.app.pages.UiState
+import pt.isel.reversi.app.pages.ViewModel
 import pt.isel.reversi.core.Game
 import pt.isel.reversi.core.Player
+import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.ReversiException
 
 data class WinnerUiState(
@@ -22,7 +23,7 @@ data class WinnerUiState(
 class WinnerPageViewModel(
     val game: Game,
     override val globalError: ReversiException?,
-    override val setGlobalError: (Exception?) -> Unit
+    override val setGlobalError: (Exception?, ErrorType?) -> Unit
 ) : ViewModel<WinnerUiState>() {
     override val _uiState = mutableStateOf(
         WinnerUiState(

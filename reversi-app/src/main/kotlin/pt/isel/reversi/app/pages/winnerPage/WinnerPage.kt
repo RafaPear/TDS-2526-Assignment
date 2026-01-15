@@ -20,7 +20,7 @@ fun ReversiScope.WinnerPage(
     val state = viewModel.uiState.value
 
     ScaffoldView(
-        setError = { error -> viewModel.setError(error) },
+        setError = { error, type -> viewModel.setError(error, type) },
         error = state.screenState.error,
         isLoading = state.screenState.isLoading,
         title = "Vencedor",

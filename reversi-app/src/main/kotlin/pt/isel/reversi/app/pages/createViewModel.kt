@@ -11,8 +11,8 @@ import pt.isel.reversi.app.pages.menu.MainMenuViewModel
 import pt.isel.reversi.app.pages.newGamePage.NewGameViewModel
 import pt.isel.reversi.app.pages.settingsPage.SettingsViewModel
 import pt.isel.reversi.app.pages.statisticsPage.StatisticsPageViewModel
-import pt.isel.reversi.app.state.AppStateImpl
 import pt.isel.reversi.app.pages.winnerPage.WinnerPageViewModel
+import pt.isel.reversi.app.state.AppStateImpl
 import pt.isel.reversi.app.state.setGame
 import pt.isel.reversi.app.state.setGlobalError
 import pt.isel.reversi.app.state.setPage
@@ -117,7 +117,7 @@ fun Page.createViewModel(
     Page.WINNER -> WinnerPageViewModel(
         game.value,
         globalError = globalError.value,
-        setGlobalError = { globalError.setGlobalError(it) }
+        setGlobalError = { it, type -> globalError.setGlobalError(it, type) }
     )
 
     Page.NONE -> null
