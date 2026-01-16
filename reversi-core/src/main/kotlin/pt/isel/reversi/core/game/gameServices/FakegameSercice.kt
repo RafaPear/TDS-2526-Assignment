@@ -60,7 +60,7 @@ class FakeGameService : GameServiceImpl {
         return game.copy(
             gameState = loadedState.refreshPlayers(),
             countPass = if (countPassCondition) game.countPass + 1 else 0,
-            lastModified =  mod + if (game.gameState == loadedState) 0L else 1L
+            lastModified = mod + if (game.gameState == loadedState) 0L else 1L
         )
     }
 

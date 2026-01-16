@@ -1,11 +1,16 @@
 package pt.isel.reversi.app.gamePageTest
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import pt.isel.reversi.app.pages.game.GamePageViewModel
+import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.PieceType
+import pt.isel.reversi.core.game.Game
+import pt.isel.reversi.core.game.gameServices.EmptyGameService
 import pt.isel.reversi.core.game.gameServices.FakeGameService
 import pt.isel.reversi.core.game.startNewGame
 import pt.isel.reversi.core.gameState.MatchPlayers
@@ -14,6 +19,7 @@ import pt.isel.reversi.utils.BASE_FOLDER
 import java.io.File
 import kotlin.test.*
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class GamePageViewModelTests {
 
 
@@ -49,7 +55,6 @@ class GamePageViewModelTests {
         null,
         { _, _ -> }
     )
-
 
 
     @BeforeTest
@@ -181,11 +186,11 @@ class GamePageViewModelTests {
                 )
             ),
             this,
-            setGame ={
+            setGame = {
                 setGameCalled = true
             },
             {},
-            setPage ={
+            setPage = {
                 setPageCalled = true
             },
             null,
@@ -255,6 +260,118 @@ class GamePageViewModelTests {
         val refreshedPlayer = uut.uiState.value.game.gameState?.players?.getPlayerByType(myPiece)
         // Verify that the player's name remains unchanged
         assertEquals(initialName, refreshedPlayer?.name)
+    }
+
+
+    @Test
+    fun `verify play call setGame`() = runTest {
+        var setGameCalled = false
+
+        val uut = GamePageViewModel(
+            game,
+            this,
+            setGame = {
+                setGameCalled = true
+            },
+            {},
+            {},
+            null,
+            { _, _ -> }
+        )
+
+        val validMove = game.getAvailablePlays().first()
+        uut.playMove(validMove)
+        advanceUntilIdle() // Wait for all coroutines to complete
+
+        assertTrue(setGameCalled)
+    }
+
+    @Test
+    fun `verify play handles exceptions and sets error`() = runTest {
+        val uut = GamePageViewModel(
+            game,
+            this,
+            {},
+            {},
+            {},
+            null,
+            { _, _ -> }
+        )
+
+        // Provide an invalid move (assuming (-1, -1) is invalid)
+        val invalidMove = pt.isel.reversi.core.board.Coordinate(-1, -1)
+        uut.playMove(invalidMove)
+        advanceUntilIdle() // Wait for all coroutines to complete
+
+        assertNotNull(uut.error)
+    }
+
+    @Test
+    fun `verify pass call setGame on error`() = runTest {
+        var setGameCalled = false
+
+        val uut = GamePageViewModel(
+            game, //have a game that cannot be passed
+            this,
+            setGame = {
+                setGameCalled = true
+            },
+            {},
+            {},
+            null,
+            { _, _ -> }
+        )
+
+        uut.pass()
+        advanceUntilIdle() // Wait for all coroutines to complete
+
+        assertTrue(setGameCalled)
+    }
+
+    @Test
+    fun `verify pass handles exceptions and sets error`() = runTest {
+        val uut = GamePageViewModel(
+            game, //have a game that cannot be passed
+            this,
+            {},
+            {},
+            {},
+            null,
+            { _, _ -> }
+        )
+
+        uut.pass()
+        advanceUntilIdle() // Wait for all coroutines to complete
+
+        assertNotNull(uut.error)
+    }
+
+    @Test
+    fun `verify pass works correctly when allowed`() = runTest {
+        val passableGame = Game(
+            gameState = game.gameState?.copy(
+                board = Board(4) // empty board to allow passing
+            ),
+            myPiece = game.myPiece,
+            currGameName = game.currGameName,
+            service = EmptyGameService()
+        )
+
+        val uut = GamePageViewModel(
+            passableGame,
+            this,
+            {},
+            {},
+            {},
+            null,
+            { _, _ -> }
+        )
+
+        val initialCountPass = uut.uiState.value.game.countPass
+        uut.pass()
+        advanceUntilIdle() // Wait for all coroutines to complete
+
+        assertEquals(initialCountPass + 1, uut.uiState.value.game.countPass)
     }
 }
 
