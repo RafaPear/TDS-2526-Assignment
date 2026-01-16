@@ -13,7 +13,6 @@ import pt.isel.reversi.app.utils.addShutdownHook
 import pt.isel.reversi.app.utils.initializeAppArgs
 import pt.isel.reversi.app.utils.installFatalCrashLogger
 import pt.isel.reversi.app.utils.runStorageHealthCheck
-import pt.isel.reversi.core.exceptions.ErrorType.Companion.toReversiException
 import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.core.game.Game
 import pt.isel.reversi.core.game.gameServices.GameService
@@ -62,21 +61,24 @@ class App(args: Array<String>) {
             )
             val isShutdownHookAdded = remember { mutableStateOf(false) }
 
+            val gameSession = remember {
+                mutableStateOf<GameSession>(
+                    value = GameSession(
+                        Game(service = initialGameService), null
+                    )
+                )
+            }
+            val audioThemeState = remember {
+                mutableStateOf(AudioThemeState(initializedArgs.audioPool, AppThemes.DARK.appTheme))
+            }
             val globalError = remember { mutableStateOf<ReversiException?>(null) }
-
-            val themeState = remember { mutableStateOf(AppThemes.DARK.appTheme) }
-            val game = remember { mutableStateOf(Game(service = initialGameService)) }
-            val audioPool = remember { mutableStateOf(initializedArgs.audioPool) }
-            val playerName = remember { mutableStateOf<String?>(null) }
             val pagesState = remember { mutableStateOf(PagesState(Page.MAIN_MENU, Page.NONE)) }
 
             val appState = AppState(
-                game = game.value,
+                gameSession = gameSession.value,
                 pagesState = pagesState.value,
-                audioPool = audioPool.value,
-                theme = themeState.value,
+                audioThemeState = audioThemeState.value,
                 globalError = globalError.value,
-                playerName = playerName.value
             )
 
             if (!isShutdownHookAdded.value) {
@@ -104,10 +106,10 @@ class App(args: Array<String>) {
                     appState,
                     windowState,
                     setPage = { pagesState.setPage(it) },
-                    setGame = { game.setGame(it) },
-                    setTheme = { themeState.value = it },
+                    setGame = { gameSession.setGame(it) },
+                    setTheme = { audioThemeState.setTheme(it) },
                     setGlobalError = { it, type ->
-                        globalError.value = it as? ReversiException ?: it?.toReversiException(type)
+                        globalError.setGlobalError(it, type)
                     },
                 ) { exitProcess(0) }
 
@@ -119,11 +121,9 @@ class App(args: Array<String>) {
                         pagesState.value.page.createViewModel(
                             scope = scope,
                             appState = appState,
-                            game = game,
-                            audioPool = audioPool,
-                            themeState = themeState,
+                            gameSession = gameSession,
+                            audioThemeState = audioThemeState,
                             globalError = globalError,
-                            playerName = playerName,
                             pagesState = pagesState,
                         )
                     }
@@ -135,7 +135,7 @@ class App(args: Array<String>) {
                     LOGGER.info("Navigating to page: $currentPage")
                 }
 
-                AppScreenSwitcher(pagesState.value, themeState.value) { currentPage ->
+                AppScreenSwitcher(pagesState.value, audioThemeState.value.theme) { currentPage ->
                     with(ReversiScope(appState)) {
                         if (currentViewModel == null) {
                             LOGGER.severe("No ViewModel found for page: $currentPage")
@@ -144,8 +144,7 @@ class App(args: Array<String>) {
 
                         val view = currentPage.createPageView(
                             vm = currentViewModel,
-                            game = game,
-                            playerName = playerName,
+                            gameSession = gameSession,
                             pagesState = pagesState,
                         )
 

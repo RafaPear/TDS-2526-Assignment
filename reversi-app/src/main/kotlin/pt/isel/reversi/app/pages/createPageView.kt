@@ -17,10 +17,7 @@ import pt.isel.reversi.app.pages.settingsPage.SettingsPage
 import pt.isel.reversi.app.pages.settingsPage.SettingsViewModel
 import pt.isel.reversi.app.pages.winnerPage.WinnerPage
 import pt.isel.reversi.app.pages.winnerPage.WinnerPageViewModel
-import pt.isel.reversi.app.state.ReversiScope
-import pt.isel.reversi.app.state.setGame
-import pt.isel.reversi.app.state.setPage
-import pt.isel.reversi.core.game.Game
+import pt.isel.reversi.app.state.*
 
 /**
  * Creates a composable page view if the provided ViewModel is of the expected type T.
@@ -37,7 +34,9 @@ private inline fun <reified T : ViewModel<out UiState>> createPageViewIfType(
     vm: ViewModel<out UiState>,
     noinline content: @Composable ReversiScope.() -> Unit,
 ): @Composable ReversiScope.() -> Unit =
-    if (vm is T) content else { {} }
+    if (vm is T) content else {
+        {}
+    }
 
 /**
  * Creates and returns the appropriate composable page view based on the current [Page] type.
@@ -67,8 +66,7 @@ private inline fun <reified T : ViewModel<out UiState>> createPageViewIfType(
 @Composable
 fun Page.createPageView(
     vm: ViewModel<out UiState>,
-    game: MutableState<Game>,
-    playerName: MutableState<String?>,
+    gameSession: MutableState<GameSession>,
     pagesState: MutableState<PagesState>,
 ): @Composable ReversiScope.() -> Unit = when (this@createPageView) {
     Page.MAIN_MENU -> createPageViewIfType<MainMenuViewModel>(vm) {
@@ -78,7 +76,7 @@ fun Page.createPageView(
     Page.GAME -> createPageViewIfType<GamePageViewModel>(vm) {
         GamePage(viewModel = vm as GamePageViewModel) {
             Snapshot.withMutableSnapshot {
-                game.setGame(it)
+                gameSession.setGame(it)
                 pagesState.setPage(Page.MAIN_MENU)
             }
         }
@@ -97,7 +95,7 @@ fun Page.createPageView(
     Page.NEW_GAME -> createPageViewIfType<NewGameViewModel>(vm) {
         NewGamePage(
             viewModel = vm as NewGameViewModel,
-            playerNameChange = { name: String -> playerName.value = name }) { pagesState.setPage(Page.MAIN_MENU) }
+            playerNameChange = { name: String -> gameSession.setPlayerName(name) }) { pagesState.setPage(Page.MAIN_MENU) }
     }
 
     Page.LOBBY -> createPageViewIfType<LobbyViewModel>(vm) {

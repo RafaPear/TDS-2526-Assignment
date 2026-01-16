@@ -3,6 +3,7 @@
 package pt.isel.reversi.app.state
 
 import androidx.compose.runtime.MutableState
+import pt.isel.reversi.app.AppTheme
 import pt.isel.reversi.app.pages.Page
 import pt.isel.reversi.app.pages.PagesState
 import pt.isel.reversi.app.pages.UiState
@@ -38,12 +39,30 @@ fun MutableState<PagesState>.setPage(page: Page, backPage: Page? = null) {
 }
 
 /**
+ * Sets the application theme in the audio theme state.
+ * @param theme The new application theme.
+ */
+fun MutableState<AudioThemeState>.setTheme(theme: AppTheme) {
+    LOGGER.info("Set theme: ${theme.name}")
+    value = value.copy(theme = theme)
+}
+
+/**
  * Sets the game state.
  * @param game The new game state.
  */
-fun MutableState<Game>.setGame(game: Game) {
+fun MutableState<GameSession>.setGame(game: Game) {
     LOGGER.info("Set new game state")
-    value = game
+    value = value.copy(game = game)
+}
+
+/**
+ * Sets the player name in the game session.
+ * @param name The new player name, or null to unset.
+ */
+fun MutableState<GameSession>.setPlayerName(name: String?) {
+    LOGGER.info("Set player name: ${name ?: "null"}")
+    value = value.copy(playerName = name)
 }
 
 /**

@@ -3,7 +3,6 @@ package pt.isel.reversi.app.pages
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.Snapshot
 import kotlinx.coroutines.CoroutineScope
-import pt.isel.reversi.app.AppTheme
 import pt.isel.reversi.app.pages.aboutPage.AboutPageViewModel
 import pt.isel.reversi.app.pages.game.GamePageViewModel
 import pt.isel.reversi.app.pages.lobby.LobbyViewModel
@@ -11,23 +10,16 @@ import pt.isel.reversi.app.pages.menu.MainMenuViewModel
 import pt.isel.reversi.app.pages.newGamePage.NewGameViewModel
 import pt.isel.reversi.app.pages.settingsPage.SettingsViewModel
 import pt.isel.reversi.app.pages.winnerPage.WinnerPageViewModel
-import pt.isel.reversi.app.state.AppStateImpl
-import pt.isel.reversi.app.state.setGame
-import pt.isel.reversi.app.state.setGlobalError
-import pt.isel.reversi.app.state.setPage
+import pt.isel.reversi.app.state.*
 import pt.isel.reversi.core.exceptions.ReversiException
-import pt.isel.reversi.core.game.Game
-import pt.isel.reversi.utils.audio.AudioPool
 
 
 fun Page.createViewModel(
     scope: CoroutineScope,
     appState: AppStateImpl,
-    game: MutableState<Game>,
-    audioPool: MutableState<AudioPool>,
-    themeState: MutableState<AppTheme>,
+    gameSession: MutableState<GameSession>,
+    audioThemeState: MutableState<AudioThemeState>,
     globalError: MutableState<ReversiException?>,
-    playerName: MutableState<String?>,
     pagesState: MutableState<PagesState>,
 ) = when (this) {
     Page.MAIN_MENU -> MainMenuViewModel(
@@ -38,40 +30,40 @@ fun Page.createViewModel(
     )
 
     Page.GAME -> GamePageViewModel(
-        game.value,
+        gameSession.value.game,
         globalError = globalError.value,
         scope = scope,
         setGlobalError = { it, type -> globalError.setGlobalError(it, type) },
         audioPlayMove = {
-            audioPool.value.run {
-                stop(themeState.value.placePieceSound)
-                play(themeState.value.placePieceSound)
+            audioThemeState.value.audioPool.run {
+                stop(audioThemeState.value.theme.placePieceSound)
+                play(audioThemeState.value.theme.placePieceSound)
             }
         },
         setPage = { pagesState.setPage(it, backPage = Page.MAIN_MENU) },
-        setGame = { game.setGame(it) },
+        setGame = { gameSession.setGame(it) },
     )
 
     Page.SETTINGS -> SettingsViewModel(
         scope,
         appState,
-        setTheme = { themeState.value = it },
+        setTheme = { audioThemeState.setTheme(it)},
         setGlobalError = { it, type -> globalError.setGlobalError(it, type) },
         setPlayerName = {
-            playerName.value = it
+            gameSession.setPlayerName(it)
             val newName = it ?: return@SettingsViewModel
-            val gameState = game.value.gameState ?: return@SettingsViewModel
-            val myPiece = game.value.myPiece ?: return@SettingsViewModel
+            val gameState = gameSession.value.game.gameState ?: return@SettingsViewModel
+            val myPiece = gameSession.value.game.myPiece ?: return@SettingsViewModel
             val newGameState = gameState.changeName(newName, myPiece)
-            game.setGame(
-                game.value.copy(
+            gameSession.setGame(
+                gameSession.value.game.copy(
                     gameState = newGameState
                 )
             )
-            game.value.saveOnlyBoard(newGameState)
+            gameSession.value.game.saveOnlyBoard(newGameState)
         },
-        saveGame = { game.value.saveEndGame() },
-        setGame = { game.setGame(it) },
+        saveGame = { gameSession.value.game.saveEndGame() },
+        setGame = { gameSession.setGame(it) },
         globalError = globalError.value
     )
 
@@ -87,7 +79,7 @@ fun Page.createViewModel(
         setGlobalError = { it, type -> globalError.setGlobalError(it, type) },
         createGame = { newGame ->
             Snapshot.withMutableSnapshot {
-                game.setGame(newGame)
+                gameSession.setGame(newGame)
                 pagesState.setPage(Page.GAME, backPage = Page.MAIN_MENU)
             }
         }
@@ -99,7 +91,7 @@ fun Page.createViewModel(
         setGlobalError = { it, type -> globalError.setGlobalError(it, type) },
         pickGame = {
             Snapshot.withMutableSnapshot {
-                game.setGame(it)
+                gameSession.setGame(it)
                 pagesState.setPage(Page.GAME, backPage = Page.MAIN_MENU)
             }
         },
@@ -107,7 +99,7 @@ fun Page.createViewModel(
     )
 
     Page.WINNER -> WinnerPageViewModel(
-        game.value,
+        gameSession.value.game,
         globalError = globalError.value,
         setGlobalError = { it, type -> globalError.setGlobalError(it, type) }
     )

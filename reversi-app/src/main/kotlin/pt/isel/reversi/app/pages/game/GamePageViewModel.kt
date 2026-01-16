@@ -74,8 +74,8 @@ class GamePageViewModel(
     }
 
     fun save() {
-        if (uiState.value == game) return
-        setGame(uiState.value.game)
+        if (_uiState.value == game) return
+        setGame(_uiState.value.game)
     }
 
 
@@ -88,9 +88,10 @@ class GamePageViewModel(
             try {
                 while (isActive) {
                     if (_uiState.value.game.gameState?.winner != null) {
+                        setGame(_uiState.value.game)
                         setPage(Page.WINNER)
                     }
-                    val game = uiState.value.game
+                    val game = _uiState.value.game
                     val gameState = game.gameState
                     val myPiece = game.myPiece ?: run {
                         _uiState.setError(GameNotStartedYet(), ErrorType.ERROR)
@@ -140,16 +141,16 @@ class GamePageViewModel(
     fun isPollingActive() = pollingJob != null
 
     fun setTarget(target: Boolean) {
-        _uiState.value = uiState.value.copy(game = uiState.value.game.setTargetMode(target))
+        _uiState.value = _uiState.value.copy(game = _uiState.value.game.setTargetMode(target))
     }
 
     fun playMove(coordinate: Coordinate) {
         scope.launch {
             try {
                 _uiState.value = _uiState.value.copy(
-                    game = uiState.value.game.play(coordinate)
+                    game = _uiState.value.game.play(coordinate)
                 )
-                setGame(_uiState.value.game)
+                setGame(uiState.value.game)
                 audioPlayMove()
             } catch (e: Exception) {
                 setGame(uiState.value.game)
@@ -158,14 +159,14 @@ class GamePageViewModel(
         }
     }
 
-    fun getAvailablePlays() = uiState.value.game.getAvailablePlays()
+    fun getAvailablePlays() = _uiState.value.game.getAvailablePlays()
 
     fun pass() {
         scope.launch {
             try {
-                _uiState.value = uiState.value.copy(game = uiState.value.game.pass())
+                _uiState.value = _uiState.value.copy(game = _uiState.value.game.pass())
             } catch (e: Exception) {
-                setGame(uiState.value.game)
+                setGame(_uiState.value.game)
                 _uiState.setError(e)
             }
         }

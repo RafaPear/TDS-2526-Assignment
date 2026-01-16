@@ -22,25 +22,28 @@ import pt.isel.reversi.utils.audio.AudioPool
  * @property playerName The name of the current player, if set.
  */
 data class AppState(
-    override val game: Game,
+    override val gameSession: GameSession,
     override val pagesState: PagesState,
-    override val audioPool: AudioPool,
     override val globalError: ReversiException?,
-    override val theme: AppTheme,
-    override val playerName: String?,
-    private val serviceC: GameServiceImpl = game.service
+    override val audioThemeState: AudioThemeState,
+    private val serviceC: GameServiceImpl = gameSession.game.service
 ) : AppStateImpl {
     override val service get() = game.service
 
     companion object {
         // Empty AppState for initialization
         fun empty(service: GameServiceImpl): AppState = AppState(
-            game = Game(service = service),
+            gameSession = GameSession(Game(service = service), null),
             pagesState = PagesState(Page.MAIN_MENU, Page.NONE),
-            audioPool = AudioPool(emptyList()),
             globalError = null,
-            theme = AppThemes.DARK.appTheme,
-            playerName = null
+            audioThemeState = AudioThemeState(
+                audioPool = AudioPool(emptyList()),
+                theme = AppThemes.DARK.appTheme
+            )
         )
     }
 }
+
+data class GameSession(val game: Game, val playerName: String?)
+data class AudioThemeState(val audioPool: AudioPool, val theme: AppTheme)
+

@@ -8,11 +8,13 @@ import pt.isel.reversi.core.game.gameServices.GameServiceImpl
 import pt.isel.reversi.utils.audio.AudioPool
 
 interface AppStateImpl {
-    val game: Game
+    val gameSession: GameSession
     val pagesState: PagesState
-    val audioPool: AudioPool
     val globalError: ReversiException?
-    val theme: AppTheme
-    val playerName: String?
     val service: GameServiceImpl
+    val audioThemeState: AudioThemeState
+    val game: Game get() = this.gameSession.game
+    val playerName: String? get() = this.gameSession.playerName
+    val audioPool: AudioPool get() = this.audioThemeState.audioPool
+    val theme: AppTheme get() = this.audioThemeState.theme
 }
