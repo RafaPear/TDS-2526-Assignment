@@ -29,8 +29,9 @@ data class AppState(
     override val theme: AppTheme,
     override val playerName: String?,
     private val serviceC: GameServiceImpl = game.service
-): AppStateImpl {
+) : AppStateImpl {
     override val service get() = game.service
+
     companion object {
         // Empty AppState for initialization
         fun empty(service: GameServiceImpl): AppState = AppState(

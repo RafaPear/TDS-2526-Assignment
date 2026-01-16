@@ -80,7 +80,7 @@ fun ReversiScope.ScaffoldView(
                         )
                     },
                     navigationIcon = {
-                        if (!isLoading && appState.pagesState.page!= Page.MAIN_MENU) {
+                        if (!isLoading && appState.pagesState.page != Page.MAIN_MENU) {
                             previousPageContent()
                         }
                     }

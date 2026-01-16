@@ -35,6 +35,6 @@ internal class PlayerSerializer : Serializer<Player, String> {
             throw InvalidPlayerInFile("Points must be non-negative in line: '$obj'")
         }
         val type = pieceTypeSerializer.deserialize(symbol.first())
-        return Player(type, name = name , points = points.toInt())
+        return Player(type, name = name, points = points.toInt())
     }
 }

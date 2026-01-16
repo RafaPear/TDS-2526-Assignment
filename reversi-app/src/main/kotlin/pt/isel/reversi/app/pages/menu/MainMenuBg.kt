@@ -66,7 +66,8 @@ fun ReversiScope.AnimatedBackground() {
     LaunchedEffect(Unit) {
         while (isActive) {
             if (activePieces.size < MAX_PIECES) {
-                val canAddSpecial = activePieces.count { it.isSpecial } <= SPECIAL_PIECES_MAX && Random.nextFloat() < SPECIAL_PIECE_CHANCE
+                val canAddSpecial =
+                    activePieces.count { it.isSpecial } <= SPECIAL_PIECES_MAX && Random.nextFloat() < SPECIAL_PIECE_CHANCE
                 activePieces.add(createNewPiece(canAddSpecial))
             }
             activePieces.removeAll { it.xPercent > 1.2f }

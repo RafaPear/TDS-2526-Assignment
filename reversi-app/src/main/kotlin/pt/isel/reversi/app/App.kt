@@ -27,8 +27,8 @@ import java.lang.System.setProperty
 import kotlin.system.exitProcess
 
 class App(args: Array<String>) {
-    private val initializedArgs = initializeAppArgs(args) ?:
-    throw IllegalStateException("Failed to initialize application arguments")
+    private val initializedArgs =
+        initializeAppArgs(args) ?: throw IllegalStateException("Failed to initialize application arguments")
 
     // unica forma que permite sincronizar o estado do app no exit
     private val appJob = SupervisorJob()

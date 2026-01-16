@@ -23,12 +23,15 @@ The module consists of:
 ### Storage Contracts
 
 #### Storage<K, T, U>
+
 Synchronous storage contract:
+
 - `K` — Key type (typically String for game names)
 - `T` — Domain type being stored (e.g., GameState)
 - `U` — Storage format (typically String)
 
 Methods:
+
 - `new(id, factory)` — Creates a new entity and stores it
 - `load(id)` — Retrieves an entity by key
 - `save(id, obj)` — Persists an entity
@@ -38,7 +41,9 @@ Methods:
 - `close()` — Releases resources
 
 #### AsyncStorage<K, T, U>
+
 Same contract as Storage but with suspend functions for non-blocking I/O:
+
 - All methods are `suspend fun`
 - Suitable for coroutine-based applications
 - Used by reversi-cli for responsive user experience
@@ -46,7 +51,9 @@ Same contract as Storage but with suspend functions for non-blocking I/O:
 ### Serializer Contract
 
 #### Serializer<T, U>
+
 Converts between domain types and storage format:
+
 - `serialize(obj: T): U` — Domain object to storage format
 - `deserialize(obj: U): T` — Storage format to domain object
 
@@ -55,7 +62,9 @@ Must preserve round-trip identity: `deserialize(serialize(x)) == x`
 ## File-Based Storage
 
 ### FileStorage
+
 Implements synchronous Storage contract using text files:
+
 - Stores each entity in a separate `.txt` file
 - Files named after the entity key (game name)
 - Uses provided Serializer to convert GameState to/from text
@@ -64,7 +73,9 @@ Implements synchronous Storage contract using text files:
 Example: Game "mygame" is stored in `saves/mygame.txt`
 
 ### AsyncFileStorage
+
 Non-blocking version of FileStorage:
+
 - Uses Kotlin coroutines for I/O
 - Suitable for interactive applications (CLI)
 - Prevents UI freezing during save/load operations
@@ -72,12 +83,14 @@ Non-blocking version of FileStorage:
 ### File Format
 
 Each saved game file contains:
+
 1. **Players Line** — Serialized player data (symbol,points;...)
 2. **Last Player Line** — Who played last (# or @)
 3. **Winner Line** — Winner data if game ended (empty if ongoing)
 4. **Board Lines** — Board size, then pieces (row,col,symbol)
 
 Example:
+
 ```
 #,12;@,5;
 #
@@ -90,6 +103,7 @@ Example:
 ```
 
 This format is:
+
 - **Human-readable** — Can be manually inspected
 - **Line-oriented** — Easy to parse and debug
 - **Sparse** — Only stores pieces, not empty squares
@@ -98,7 +112,9 @@ This format is:
 ## Database Support
 
 ### AsyncMongoDBStorage
+
 Optional MongoDB backend for storing games:
+
 - Stores game documents in MongoDB
 - Implements AsyncStorage interface
 - Provides scalability for server deployments
@@ -109,6 +125,7 @@ Optional MongoDB backend for storing games:
 The storage module uses serializers from the core module:
 
 ### Core Serializers (in reversi-core)
+
 - `GameStateSerializer` — Entire game state
 - `BoardSerializer` — Board and pieces
 - `PlayerSerializer` — Player data
@@ -116,12 +133,15 @@ The storage module uses serializers from the core module:
 - `PieceTypeSerializer` — Piece symbols
 
 ### Storage Module Role
+
 Storage module knows nothing about GameState; it only:
+
 1. Calls the provided Serializer
 2. Writes/reads bytes from files
 3. Manages directory structure and file lifecycle
 
 This separation means:
+
 - Serialization logic lives with domain types (core module)
 - Storage logic is reusable with any Serializable type
 - Different storage backends can be used without changing serializers
@@ -129,12 +149,14 @@ This separation means:
 ## Configuration
 
 Storage uses configuration from core module via `CoreConfig`:
+
 - `savesPath` — Directory for saved games (default: "saves")
 - Can be changed at runtime to test different storage locations
 
 ## Error Handling
 
 Storage exceptions (typically from FileSystem):
+
 - File not found when loading non-existent game
 - I/O errors when reading/writing files
 - Permission errors when accessing file system
@@ -154,22 +176,26 @@ These propagate to the caller as `Exception` or `IOException`.
 ## Usage Patterns
 
 ### Loading a Game
+
 ```
 val storage = AsyncFileStorage(GameStateSerializer(), "saves")
 val gameState = storage.load("mygame")
 ```
 
 ### Saving a Game
+
 ```
 storage.save("mygame", gameState)
 ```
 
 ### Listing All Games
+
 ```
 val allGameNames = storage.loadAllIds()
 ```
 
 ### Cleaning Up
+
 ```
 storage.close()
 ```
@@ -177,6 +203,7 @@ storage.close()
 ## Integration
 
 The storage module integrates with:
+
 - **reversi-core** — Domain types and serializers
 - **reversi-cli** — Uses AsyncFileStorage for game persistence
 - **File System** — Reads/writes `.txt` files in saves folder

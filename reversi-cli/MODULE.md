@@ -20,7 +20,9 @@ The module is organized into two main packages:
 - **Commands Package** — Individual command implementations
 
 ### CLI Coordinator (CLI.kt)
+
 The main loop that:
+
 1. Displays a welcome message
 2. Creates a command parser with all registered commands
 3. Repeatedly reads input and dispatches to the parser
@@ -30,12 +32,15 @@ The main loop that:
 The CLI uses KtFlag's CommandParser for flexible argument parsing and colored output.
 
 ### Command Pattern
+
 All commands extend `CommandImpl<Game>` and provide:
+
 - `CommandInfo` metadata (title, description, aliases, usage)
 - An `execute()` method that takes arguments and a game context
 - A return value indicating success/failure and the new game state
 
 This design allows commands to be:
+
 - Tested independently
 - Added/removed dynamically
 - Configured with different parameters
@@ -44,71 +49,77 @@ This design allows commands to be:
 ## Commands
 
 ### Game Management
+
 - **NewCmd (n)** — Creates a new game with specified first player (# or @)
-  - Syntax: `new # [name]`
-  - Optional name saves game to persistent storage
-  - Saves previous game before creating new one
+    - Syntax: `new # [name]`
+    - Optional name saves game to persistent storage
+    - Saves previous game before creating new one
 
 - **JoinCmd (j)** — Joins an existing saved game
-  - Syntax: `join <name> [#|@]`
-  - Loads game from storage by name
-  - Optional piece type specifies which side you control
-  - Useful for multi-player or turn-based scenarios
+    - Syntax: `join <name> [#|@]`
+    - Loads game from storage by name
+    - Optional piece type specifies which side you control
+    - Useful for multi-player or turn-based scenarios
 
 ### Gameplay
+
 - **PlayCmd (p)** — Executes a move at specified coordinates
-  - Syntax: `play (row) (col)` or `play (rowcol)`
-  - Supports multiple coordinate formats:
-    - `play 3 4` (two separate arguments)
-    - `play 3A` (row + letter column)
-    - `play 34` (row + digit column)
-  - Validates move legality before executing
-  - Displays updated board after move
+    - Syntax: `play (row) (col)` or `play (rowcol)`
+    - Supports multiple coordinate formats:
+        - `play 3 4` (two separate arguments)
+        - `play 3A` (row + letter column)
+        - `play 34` (row + digit column)
+    - Validates move legality before executing
+    - Displays updated board after move
 
 - **PassCmd** — Passes turn when no legal moves available
-  - Syntax: `pass`
-  - Checks that player actually has no legal moves
-  - Counts consecutive passes; ends game after two
-  - Announces winner if game ends
+    - Syntax: `pass`
+    - Checks that player actually has no legal moves
+    - Counts consecutive passes; ends game after two
+    - Announces winner if game ends
 
 ### Game Viewing
+
 - **ShowCmd (s)** — Displays current board and game state
-  - Syntax: `show`
-  - Shows ASCII board with piece positions
-  - Displays both players' scores
-  - Indicates current turn
-  - Shows game name if applicable
+    - Syntax: `show`
+    - Shows ASCII board with piece positions
+    - Displays both players' scores
+    - Indicates current turn
+    - Shows game name if applicable
 
 - **RefreshCmd (r)** — Reloads game state from storage
-  - Syntax: `refresh`
-  - Useful in multi-process scenarios where another instance might have updated the game
-  - Reloads from storage and redisplays board
+    - Syntax: `refresh`
+    - Useful in multi-process scenarios where another instance might have updated the game
+    - Reloads from storage and redisplays board
 
 ### Game Control
+
 - **TargetCmd** — Toggles target mode for visual feedback
-  - Syntax: `target [true|false|yes|no|1|0|on|off]`
-  - Enables/disables highlighting of available moves
-  - Supports various boolean representations
+    - Syntax: `target [true|false|yes|no|1|0|on|off]`
+    - Enables/disables highlighting of available moves
+    - Supports various boolean representations
 
 - **ExitCmd (exit, quit, q)** — Terminates the application
-  - Prompts to save current game before exit if needed
-  - Persists game state to storage
-  - Closes any open resources
+    - Prompts to save current game before exit if needed
+    - Persists game state to storage
+    - Closes any open resources
 
 ### Debug Commands (--debug flag)
+
 - **DebugCmd (dbg)** — Displays detailed internal state
-  - Shows board representation
-  - Lists player information
-  - Displays configuration values
-  - Lists saved games in storage folder
+    - Shows board representation
+    - Lists player information
+    - Displays configuration values
+    - Lists saved games in storage folder
 
 - **ListGamesCmd (lg)** — Lists all saved games
-  - Shows files in the saves directory
-  - Helpful for testing and debugging
+    - Shows files in the saves directory
+    - Helpful for testing and debugging
 
 ## Configuration
 
 The CLI reads configuration from `reversi-cli.properties`:
+
 - `WELCOME_MESSAGE` — Message shown at startup
 - `PROMPT` — Command prompt symbol
 - Color configuration (`PROMPT_COLOR`, `TEXT_COLOR`, `ERROR_COLOR`, etc.)
@@ -128,6 +139,7 @@ Colors can be customized to match terminal capabilities.
 ## Integration
 
 The CLI integrates with:
+
 - **reversi-core** — Game logic and types
 - **reversi-storage** — Persistence (loading and saving games)
 - **reversi-utils** — Configuration loading and utilities
@@ -138,6 +150,7 @@ The CLI is intentionally thin, delegating all business logic to the core and sto
 ## Error Handling
 
 Commands provide user-friendly error messages:
+
 - "Game is not defined" — When operations require a game but none is active
 - "Invalid coordinates provided" — For malformed move syntax
 - "It's not your turn" — For networked games
@@ -148,6 +161,7 @@ These messages help users understand what went wrong and how to fix it.
 ## Testing
 
 Commands are designed to be testable:
+
 - Each command can be tested independently with mock Game objects
 - Command parsing can be tested without I/O
 - Output rendering can be captured and verified

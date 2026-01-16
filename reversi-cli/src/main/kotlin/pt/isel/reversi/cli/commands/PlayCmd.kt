@@ -68,7 +68,11 @@ object PlayCmd : CommandImpl<Game>() {
      * @return A CommandResult with the updated game state or an error message.
      */
     override fun execute(vararg args: String, context: Game?): CommandResult<Game> {
-        TRACKER.trackFunctionCall(customName = "PlayCmd.execute", details = "args=${args.joinToString()}", category = "CLI.Command")
+        TRACKER.trackFunctionCall(
+            customName = "PlayCmd.execute",
+            details = "args=${args.joinToString()}",
+            category = "CLI.Command"
+        )
         if (context == null) {
             return ERROR("Game is not defined. Cannot play.")
         }

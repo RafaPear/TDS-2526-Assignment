@@ -164,7 +164,9 @@ private fun ReversiScope.MissingPlayerRow(type: PieceType) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Surface(
                 shape = CircleShape,
-                color = (if (type == PieceType.BLACK) getTheme().darkPieceColor else getTheme().lightPieceColor).copy(alpha = 0.1f),
+                color = (if (type == PieceType.BLACK) getTheme().darkPieceColor else getTheme().lightPieceColor).copy(
+                    alpha = 0.1f
+                ),
                 border = BorderStroke(1.dp, getTheme().lightPieceColor.copy(alpha = 0.3f)),
                 modifier = Modifier.size(24.dp)
             ) {}

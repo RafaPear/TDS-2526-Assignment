@@ -25,6 +25,7 @@ The app is organized into layers:
 ### MVVM Pattern
 
 **ViewModel Layer:**
+
 - Manages state for each screen
 - Coordinates between UI and core logic
 - Handles user input (moves, commands)
@@ -32,12 +33,14 @@ The app is organized into layers:
 - Exposes state as observable flows
 
 **View Layer (Compose):**
+
 - Renders UI based on ViewModel state
 - Sends user events to ViewModel
 - Handles animations and transitions
 - Provides visual feedback
 
 **Model Layer (Core):**
+
 - Immutable Game and GameState objects
 - Pure game logic (via core module)
 - Persistence (via storage module)
@@ -45,7 +48,9 @@ The app is organized into layers:
 ## Key Components
 
 ### Main Application
+
 The entry point that:
+
 1. Initializes configuration
 2. Creates the main window
 3. Sets up theming and styling
@@ -55,12 +60,14 @@ The entry point that:
 ### Pages/Screens
 
 #### Menu Screen
+
 - New Game creation
 - Load Game selection
 - Settings
 - Exit
 
 #### Game Screen
+
 - Interactive board display
 - Piece rendering with colors
 - Legal move highlighting
@@ -71,6 +78,7 @@ The entry point that:
 - Game menu
 
 #### Game Over Screen
+
 - Winner announcement
 - Final scores
 - Play Again option
@@ -81,11 +89,13 @@ The entry point that:
 Each screen has a corresponding ViewModel:
 
 **MenuViewModel:**
+
 - Available games list
 - New game parameters
 - Navigation state
 
 **GameViewModel:**
+
 - Current game state
 - Board representation
 - Available moves
@@ -93,6 +103,7 @@ Each screen has a corresponding ViewModel:
 - Move execution coordination
 
 **GameOverViewModel:**
+
 - Winner determination
 - Final statistics
 - Return to menu
@@ -100,6 +111,7 @@ Each screen has a corresponding ViewModel:
 ### Composable Components
 
 **Board Display:**
+
 - Grid layout for 8x8 board
 - Piece rendering with symbols/colors
 - Legal move highlighting
@@ -107,12 +119,14 @@ Each screen has a corresponding ViewModel:
 - Animations for piece placement
 
 **Player Info:**
+
 - Current player indicator
 - Score display
 - Piece color indicators
 - Turn status
 
 **Buttons and Controls:**
+
 - Move buttons
 - Pass button
 - Game menu button
@@ -122,6 +136,7 @@ Each screen has a corresponding ViewModel:
 ## User Experience
 
 ### Visual Feedback
+
 - Board highlights legal moves
 - Pieces animated when placed
 - Colors distinguish Black and White
@@ -129,6 +144,7 @@ Each screen has a corresponding ViewModel:
 - Score updates in real-time
 
 ### Game Flow
+
 1. Start app → See main menu
 2. Create new game or load saved game
 3. View board with current player highlighted
@@ -141,6 +157,7 @@ Each screen has a corresponding ViewModel:
 10. Return to menu to play again
 
 ### Save/Load
+
 - Current game auto-saves to storage
 - Can resume interrupted games
 - Load screen shows all saved games
@@ -149,6 +166,7 @@ Each screen has a corresponding ViewModel:
 ## Reactive State Management
 
 Uses Kotlin Flow for reactive updates:
+
 - Board state flows to UI
 - Player scores flow to UI
 - Available moves flow to UI
@@ -156,6 +174,7 @@ Uses Kotlin Flow for reactive updates:
 - All updates are immutable and predictable
 
 Benefits:
+
 - UI automatically updates when state changes
 - Testable state transformations
 - No callback hell
@@ -165,6 +184,7 @@ Benefits:
 ## Configuration
 
 Reads from `reversi-app.properties`:
+
 - Theme settings (colors, fonts)
 - Animation speeds
 - Board display options
@@ -175,6 +195,7 @@ Reads from `reversi-app.properties`:
 ## Integration
 
 The app integrates with:
+
 - **reversi-core** — Game logic and types
 - **reversi-storage** — Save/load functionality
 - **reversi-utils** — Configuration and logging
@@ -204,18 +225,21 @@ The app integrates with:
 ## Testing
 
 **Unit Tests:**
+
 - ViewModel logic without UI
 - State transitions
 - Move validation
 - Configuration loading
 
 **UI Tests (Future):**
+
 - Component rendering
 - User interaction
 - Visual regression
 - Accessibility
 
 **Integration Tests:**
+
 - Full game flow
 - Save/load round-trips
 - Config persistence
@@ -223,6 +247,7 @@ The app integrates with:
 ## Future Enhancements
 
 Potential improvements:
+
 - Network multiplayer (play against remote opponent)
 - AI opponent using minimax or neural network
 - Game statistics and analytics

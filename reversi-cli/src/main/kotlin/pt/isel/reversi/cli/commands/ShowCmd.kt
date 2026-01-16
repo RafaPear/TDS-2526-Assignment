@@ -34,7 +34,8 @@ object ShowCmd : CommandImpl<Game>() {
 
         val board = gs.board
         val players = listOf(
-            Player(PieceType.WHITE, points = board.totalWhitePieces), Player(PieceType.BLACK, points = board.totalBlackPieces)
+            Player(PieceType.WHITE, points = board.totalWhitePieces),
+            Player(PieceType.BLACK, points = board.totalBlackPieces)
         )
         val lastPLayer = gs.lastPlayer
         val name = context.currGameName

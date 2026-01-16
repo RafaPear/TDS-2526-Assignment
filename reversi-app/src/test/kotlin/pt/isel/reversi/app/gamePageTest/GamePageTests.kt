@@ -187,7 +187,7 @@ class GamePageTests {
 
         setContent {
             val scope = rememberCoroutineScope()
-            val gameViewModel = GamePageViewModel(game, scope, { gameSaved = it }, { }, {},null, {_,_ ->})
+            val gameViewModel = GamePageViewModel(game, scope, { gameSaved = it }, { }, {}, null, { _, _ -> })
 
             ReversiScope(appState).GamePage(
                 viewModel = gameViewModel, onLeave = { })

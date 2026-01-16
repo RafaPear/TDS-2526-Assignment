@@ -41,10 +41,14 @@ import pt.isel.reversi.utils.LOGGER
  * @param setError Callback to clear or update the error.
  */
 @Composable
-fun ReversiScope.ErrorMessage(error: ReversiException?, modifier: Modifier = Modifier, setError: (Exception?, ErrorType?) -> Unit) {
+fun ReversiScope.ErrorMessage(
+    error: ReversiException?,
+    modifier: Modifier = Modifier,
+    setError: (Exception?, ErrorType?) -> Unit
+) {
     // Avoid logging on every recomposition, only when error changes
     LaunchedEffect(error) {
-        val error = error?: return@LaunchedEffect
+        val error = error ?: return@LaunchedEffect
         when (error.type) {
             ErrorType.INFO -> LOGGER.info("${error.message}")
             ErrorType.WARNING -> LOGGER.warning("${error.message}")
@@ -54,16 +58,20 @@ fun ReversiScope.ErrorMessage(error: ReversiException?, modifier: Modifier = Mod
     }
 
     when (error?.type) {
-        ErrorType.INFO -> ToastMessage(error,modifier, setError)
-        ErrorType.WARNING -> WarningMessage(error,modifier, setError)
-        ErrorType.ERROR -> ToastMessage(error,modifier, setError)
-        ErrorType.CRITICAL -> ToastMessage(error,modifier, setError)
+        ErrorType.INFO -> ToastMessage(error, modifier, setError)
+        ErrorType.WARNING -> WarningMessage(error, modifier, setError)
+        ErrorType.ERROR -> ToastMessage(error, modifier, setError)
+        ErrorType.CRITICAL -> ToastMessage(error, modifier, setError)
         null -> return
     }
 }
 
 @Composable
-fun ReversiScope.WarningMessage(error: ReversiException?, modifier: Modifier = Modifier, setError: (Exception?, ErrorType?) -> Unit) {
+fun ReversiScope.WarningMessage(
+    error: ReversiException?,
+    modifier: Modifier = Modifier,
+    setError: (Exception?, ErrorType?) -> Unit
+) {
     val errorMessage = error?.message ?: return
 
     val overlayColor = Color.Black.copy(alpha = 0.6f)
@@ -133,7 +141,11 @@ fun ReversiScope.WarningMessage(error: ReversiException?, modifier: Modifier = M
  * @param setError Callback to clear the error after display.
  */
 @Composable
-fun ReversiScope.ToastMessage(error: ReversiException?, modifier: Modifier = Modifier, setError: (Exception?, ErrorType?) -> Unit) {
+fun ReversiScope.ToastMessage(
+    error: ReversiException?,
+    modifier: Modifier = Modifier,
+    setError: (Exception?, ErrorType?) -> Unit
+) {
     val offsetY = remember { Animatable(-100f) }
     val message = error?.message
 

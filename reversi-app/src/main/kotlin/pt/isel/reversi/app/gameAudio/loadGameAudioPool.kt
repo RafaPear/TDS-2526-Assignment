@@ -16,7 +16,11 @@ import pt.isel.reversi.utils.loadResourcesFromFolder
  * Loads the game's audio pool from the resources.
  * @return An AudioPool containing all loaded audio tracks.
  */
-fun loadGameAudioPool(theme: AppTheme, mainFolder: String = "audios/", setErrorFun: (ReversiException) -> Unit): AudioPool {
+fun loadGameAudioPool(
+    theme: AppTheme,
+    mainFolder: String = "audios/",
+    setErrorFun: (ReversiException) -> Unit
+): AudioPool {
     val audioNames = theme.getAudioNames().toSet()
     val musicNames = theme.getAudioMusicNames().toSet()
 
@@ -31,6 +35,7 @@ fun loadGameAudioPool(theme: AppTheme, mainFolder: String = "audios/", setErrorF
                     url,
                     AudioModifier().setToLoopInfinitely()
                 )
+
                 in audioNames -> loadAudio(name, url.toURI().toURL())
                 else -> null
             }

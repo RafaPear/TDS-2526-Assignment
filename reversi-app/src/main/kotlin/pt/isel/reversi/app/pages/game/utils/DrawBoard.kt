@@ -220,6 +220,7 @@ fun ReversiScope.cellView(
 
     }
 }
+
 private fun drawPiece(
     radius: Float,
     center: Offset,

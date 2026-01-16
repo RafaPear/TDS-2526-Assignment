@@ -24,7 +24,9 @@ The module is organized into:
 ## Configuration Management
 
 ### ConfigLoader<U : Config>
+
 A generic configuration loader that:
+
 1. Reads Java properties files
 2. Auto-creates missing files with default values
 3. Adds missing keys on each run
@@ -32,11 +34,13 @@ A generic configuration loader that:
 5. Persists configuration back to disk
 
 **Process:**
+
 - On first run: Creates file and writes default values from `getDefaultConfigFileEntries()`
 - On subsequent runs: Reads file, adds any missing keys with defaults, updates file
 - Returns a fully populated Config object
 
 **Example:**
+
 ```kotlin
 val loader = ConfigLoader("config/myapp.properties") { props ->
     MyConfig(props)
@@ -45,11 +49,14 @@ val config = loader.loadConfig()
 ```
 
 ### Config Interface
+
 Implemented by modules to define their configuration:
+
 - `map: Map<String, String>` — All configuration properties
 - `getDefaultConfigFileEntries(): Map<String, String>` — Default values to use when keys are missing
 
 **Examples:**
+
 - `CoreConfig` (reversi-core) — Game logic configuration
 - `CliConfig` (reversi-cli) — CLI appearance (colors, prompt)
 
@@ -58,6 +65,7 @@ Each module can independently define and manage its configuration.
 ## Environment Constants
 
 ### Directory Structure
+
 ```
 data/
 ├── config/
@@ -75,6 +83,7 @@ data/
 ```
 
 ### Constants
+
 - `BASE_FOLDER = "data"` — Root directory for application data
 - `CONFIG_FOLDER = "data/config"` — All configuration files
 - `CORE_CONFIG_FILE = "data/config/reversi-core.properties"` — Core configuration
@@ -87,6 +96,7 @@ These centralized constants prevent hardcoding paths throughout the codebase.
 ## Logging Infrastructure
 
 ### Global Logger
+
 ```kotlin
 val LOGGER: Logger = Logger.getGlobal().apply {
     useParentHandlers = false
@@ -99,12 +109,14 @@ val LOGGER: Logger = Logger.getGlobal().apply {
 ```
 
 **Features:**
+
 - Configured with `StdOutConsoleHandler` for console output
 - Uses `PlainFormatter` for simple, readable format
 - All log levels are captured (Level.ALL)
 - Used throughout the application for consistent logging
 
 **Usage:**
+
 ```kotlin
 LOGGER.info("Game started: $gameName")
 LOGGER.warning("Invalid move attempted")
@@ -114,32 +126,41 @@ LOGGER.severe("Failed to load configuration")
 ## Logging Components
 
 ### PlainFormatter
+
 Formats log messages in plain text:
+
 - No complex metadata
 - Human-readable timestamps
 - Clear level indicators
 - Compact output suitable for console
 
 ### StdOutConsoleHandler
+
 Outputs log records to standard output:
+
 - Writes to System.out
 - Captures all levels from configured logger
 
 ## Audio System (Optional)
 
 ### AudioWrapper
+
 Manages sound playback:
+
 - Loads audio files
 - Controls volume
 - Plays sounds during gameplay
 
 ### AudioModifier
+
 Modifies audio properties:
+
 - Pitch adjustment
 - Volume control
 - Playback speed
 
 ### Audio Controls
+
 - `BooleanControlWrapper` — On/off controls
 - `FloatControlWrapper` — Continuous controls (volume, pitch)
 
@@ -148,6 +169,7 @@ These allow the application to provide audio feedback without forcing the featur
 ## Helper Functions and Extensions
 
 ### Utility Functions
+
 - `makePathString()` — Constructs file paths with proper separators
 - Extension functions for common operations
 - String formatting utilities
@@ -168,6 +190,7 @@ These small helpers promote consistency and reduce boilerplate.
 ### Using Configuration in a Module
 
 1. Create Config implementation:
+
 ```kotlin
 class MyModuleConfig(override val map: Map<String, String>) : Config {
     val myValue = map["myKey"] ?: "default"
@@ -179,6 +202,7 @@ class MyModuleConfig(override val map: Map<String, String>) : Config {
 ```
 
 2. Load configuration:
+
 ```kotlin
 val loader = ConfigLoader("data/config/mymodule.properties") { props ->
     MyModuleConfig(props)
@@ -204,6 +228,7 @@ val logFile = File(BASE_LOG_FILE_NAME)
 ## Integration
 
 The utils module is used by:
+
 - **reversi-core** — Configuration loading for game logic
 - **reversi-cli** — CLI configuration and logging
 - **reversi-storage** — Path constants and utilities

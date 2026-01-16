@@ -85,7 +85,11 @@ fun initializeAppArgs(args: Array<String>): InitializedArgs? {
     return InitializedArgs(audioPool)
 }
 
-suspend fun runStorageHealthCheck(service: GameServiceImpl, testConf: CoreConfig? = null, save: Boolean = true): Exception? {
+suspend fun runStorageHealthCheck(
+    service: GameServiceImpl,
+    testConf: CoreConfig? = null,
+    save: Boolean = true
+): Exception? {
     val loadedConf = testConf ?: loadCoreConfig()
     if (loadedConf.gameStorageType == GameStorageType.DATABASE_STORAGE) {
         LOGGER.info("Remote storage detected, checking connectivity...")

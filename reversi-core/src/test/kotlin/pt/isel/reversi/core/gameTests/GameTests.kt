@@ -310,7 +310,7 @@ class GameTests {
             currGameName = null,
             service = EmptyGameService()
         )
-        uut = uut.copy (
+        uut = uut.copy(
             gameState = uut.gameState?.copy(winner = Player(PieceType.WHITE)),
         )
 

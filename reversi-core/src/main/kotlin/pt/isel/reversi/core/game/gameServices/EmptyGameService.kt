@@ -3,7 +3,7 @@ package pt.isel.reversi.core.game.gameServices
 import pt.isel.reversi.core.game.Game
 import pt.isel.reversi.core.gameState.GameState
 
-class EmptyGameService: GameServiceImpl {
+class EmptyGameService : GameServiceImpl {
     override fun getStorageTypeName(): String {
         return "FakeStorage"
     }

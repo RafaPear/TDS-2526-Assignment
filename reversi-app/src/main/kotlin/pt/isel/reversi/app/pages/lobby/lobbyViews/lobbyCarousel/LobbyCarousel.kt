@@ -78,6 +78,7 @@ fun ColumnScope.LobbyCarousel(
         val delayMillis = when (getCardStatus(game, currentGameName)) {
             CardStatus.EMPTY,
             CardStatus.CURRENT_GAME -> 100L
+
             CardStatus.WAITING_FOR_PLAYERS -> 500L
             CardStatus.FULL -> 15_000L
             CardStatus.CORRUPTED -> 20_000L
@@ -86,7 +87,7 @@ fun ColumnScope.LobbyCarousel(
         try {
             while (isActive) {
                 viewModel.refreshGame(game)
-                if (leftGame != null)  viewModel.refreshGame(leftGame)
+                if (leftGame != null) viewModel.refreshGame(leftGame)
                 if (rightGame != null) viewModel.refreshGame(rightGame)
                 delay(delayMillis)
             }

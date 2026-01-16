@@ -36,7 +36,7 @@ fun ReversiScope.GamePage(
     val theme = appState.theme
 
     // TODO Mudar logica do error .. Ian -> Startar o global error aaaaaaaaaa
-    if (!game.hasStarted()){
+    if (!game.hasStarted()) {
         LOGGER.warning("Game not started yet, navigating back to previous page")
         viewModel.setError(GameNotStartedYet(), null)
         onLeave(game)

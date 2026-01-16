@@ -78,7 +78,7 @@ class CardStatusTests {
             players = MatchPlayers(),
             lastPlayer = PieceType.BLACK
         )
-        val game = Game(currGameName = "testGame", gameState = gameState,service = EmptyGameService())
+        val game = Game(currGameName = "testGame", gameState = gameState, service = EmptyGameService())
         val lobbyStats = LobbyLoadedState(game.gameState!!, game.currGameName!!)
         val expected = CardStatus.EMPTY
 

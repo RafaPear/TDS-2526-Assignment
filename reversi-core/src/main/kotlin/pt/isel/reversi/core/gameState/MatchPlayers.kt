@@ -9,7 +9,7 @@ import pt.isel.reversi.core.board.PieceType
  * @property player1 The first player, or null if not yet assigned.
  * @property player2 The second player, or null if not yet assigned.
  */
-data class MatchPlayers(val player1: Player? = null, val player2: Player? = null): Iterable<Player> {
+data class MatchPlayers(val player1: Player? = null, val player2: Player? = null) : Iterable<Player> {
     init {
         if (player1 != null && player2 != null) {
             require(player1.type != player2.type) { "Players must have different piece types" }
@@ -88,25 +88,13 @@ data class MatchPlayers(val player1: Player? = null, val player2: Player? = null
         }
 
     /**
-     * Gets the first available player in the match.
-     * Priority: player1, then player2.
-     * @return The first non-null player, or null if no players are assigned.
-     */
-    fun getFirstPlayer(): Player? =
-        when {
-            player1 != null -> player1
-            player2 != null -> player2
-            else -> null
-        }
-
-    /**
      * Adds a new player to the match if there is space available and the player type is not already taken.
      * @param newPlayerName The player to add.
      * @return A new MatchPlayers with the added player, or null if the player could not be added.
      */
     fun addPlayerOrNull(newPlayerName: Player) = when {
         this.isFull() -> null
-        this.getPlayerByType(newPlayerName.type) != null  -> null
+        this.getPlayerByType(newPlayerName.type) != null -> null
         this.player1 == null -> MatchPlayers(newPlayerName, this.player2)
         this.player2 == null -> MatchPlayers(this.player1, newPlayerName)
         else -> null

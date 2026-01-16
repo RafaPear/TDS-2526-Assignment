@@ -34,7 +34,6 @@ class PassCmdTests {
     }
 
 
-
     @Test
     fun `Test PassCmd execution`() {
         val result = PassCmd.executeWrapper(

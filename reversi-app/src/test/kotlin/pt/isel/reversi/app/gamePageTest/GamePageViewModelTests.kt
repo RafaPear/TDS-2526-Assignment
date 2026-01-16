@@ -16,14 +16,14 @@ import kotlin.test.*
 class GamePageViewModelTests {
 
     fun vmForTest(scope: CoroutineScope) = GamePageViewModel(
-            game,
-            scope,
-            {},
-            {},
+        game,
+        scope,
         {},
-            null,
-            {_,_ ->}
-        )
+        {},
+        {},
+        null,
+        { _, _ -> }
+    )
 
     val game = runBlocking {
         startNewGame(

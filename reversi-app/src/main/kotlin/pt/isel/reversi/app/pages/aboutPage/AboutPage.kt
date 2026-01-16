@@ -10,7 +10,6 @@ import pt.isel.reversi.app.pages.Page
 import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.app.state.ReversiText
 import pt.isel.reversi.app.utils.PreviousPage
-import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.utils.TRACKER
 
 

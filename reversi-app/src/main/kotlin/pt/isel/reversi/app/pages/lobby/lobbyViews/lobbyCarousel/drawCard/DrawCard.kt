@@ -42,9 +42,11 @@ fun statusBadgeTestTag(gameId: String) = "status_badge_$gameId"
 
 fun statusTextTestTag(gameid: String) = "status_text_$gameid"
 
-fun scoreItemPieceTestTag(scorePainelTestTag: String, pieceType: PieceType) = "score_item_${scorePainelTestTag}_${pieceType.name}"
+fun scoreItemPieceTestTag(scorePainelTestTag: String, pieceType: PieceType) =
+    "score_item_${scorePainelTestTag}_${pieceType.name}"
 
-fun scoreItemScoreTestTag(scorePainelTestTag: String, pieceType: PieceType, score: Int) = "score_item_${scorePainelTestTag}_${pieceType.name}_score_$score"
+fun scoreItemScoreTestTag(scorePainelTestTag: String, pieceType: PieceType, score: Int) =
+    "score_item_${scorePainelTestTag}_${pieceType.name}_score_$score"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,7 +96,7 @@ fun ReversiScope.GameCard(
 
             Spacer(Modifier.height(8.dp))
 
-            ScorePanel(board = state.board, scorePainelTestTag =  scorePanelTestTag(name))
+            ScorePanel(board = state.board, scorePainelTestTag = scorePanelTestTag(name))
         }
     }
 }
@@ -178,7 +180,6 @@ private fun ReversiScope.PlayerNamesInGameBadge(players: MatchPlayers) {
         }
     }
 }
-
 
 
 @Composable

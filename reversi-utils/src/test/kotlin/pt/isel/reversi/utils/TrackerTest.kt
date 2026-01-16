@@ -309,6 +309,7 @@ class TrackerTest {
     @Test
     fun testTrackViewModelWithObject() {
         class TestViewModel
+
         val viewModel = TestViewModel()
         tracker.trackViewModelCreated<TestViewModel>(viewModel)
 
