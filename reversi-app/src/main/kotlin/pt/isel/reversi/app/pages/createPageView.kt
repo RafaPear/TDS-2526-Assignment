@@ -15,8 +15,6 @@ import pt.isel.reversi.app.pages.newGamePage.NewGamePage
 import pt.isel.reversi.app.pages.newGamePage.NewGameViewModel
 import pt.isel.reversi.app.pages.settingsPage.SettingsPage
 import pt.isel.reversi.app.pages.settingsPage.SettingsViewModel
-import pt.isel.reversi.app.pages.statisticsPage.StatisticsPage
-import pt.isel.reversi.app.pages.statisticsPage.StatisticsPageViewModel
 import pt.isel.reversi.app.pages.winnerPage.WinnerPage
 import pt.isel.reversi.app.pages.winnerPage.WinnerPageViewModel
 import pt.isel.reversi.app.state.ReversiScope
@@ -105,10 +103,6 @@ fun Page.createPageView(
 
     Page.LOBBY -> createPageViewIfType<LobbyViewModel>(vm) {
         LobbyMenu(viewModel = vm as LobbyViewModel) { pagesState.setPage(Page.MAIN_MENU) }
-    }
-
-    Page.STATISTICS -> createPageViewIfType<StatisticsPageViewModel>(vm) {
-        StatisticsPage(viewModel = vm as StatisticsPageViewModel) { pagesState.setPage(Page.MAIN_MENU) }
     }
 
     Page.WINNER -> createPageViewIfType<WinnerPageViewModel>(vm) {

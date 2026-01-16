@@ -79,9 +79,6 @@ fun FrameWindowScope.MakeMenuBar(
         }
 
         Menu("Dev") {
-            Item("Estatísticas de Tracking") {
-                setPage(Page.STATISTICS)
-            }
             Item("Nullify Game State") {
                 setGame(Game(service = appState.service))
                 LOGGER.info("Estado do jogo anulado para fins de teste.")

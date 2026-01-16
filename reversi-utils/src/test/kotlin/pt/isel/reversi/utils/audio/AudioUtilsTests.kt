@@ -1,10 +1,18 @@
 package pt.isel.reversi.utils.audio
 
 import kotlinx.coroutines.runBlocking
+import pt.isel.reversi.utils.BASE_FOLDER
+import java.io.File
 import java.net.URL
 import kotlin.test.*
 
 class AudioUtilsTests {
+
+    @AfterTest
+    @BeforeTest
+    fun cleanUp() {
+        File(BASE_FOLDER).deleteRecursively()
+    }
 
     // Helper function to create a mock audio file URL for testing
     private fun createTestAudioUrl(): URL {

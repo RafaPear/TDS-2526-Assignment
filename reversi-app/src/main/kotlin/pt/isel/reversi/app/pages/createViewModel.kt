@@ -10,7 +10,6 @@ import pt.isel.reversi.app.pages.lobby.LobbyViewModel
 import pt.isel.reversi.app.pages.menu.MainMenuViewModel
 import pt.isel.reversi.app.pages.newGamePage.NewGameViewModel
 import pt.isel.reversi.app.pages.settingsPage.SettingsViewModel
-import pt.isel.reversi.app.pages.statisticsPage.StatisticsPageViewModel
 import pt.isel.reversi.app.pages.winnerPage.WinnerPageViewModel
 import pt.isel.reversi.app.state.AppStateImpl
 import pt.isel.reversi.app.state.setGame
@@ -105,12 +104,6 @@ fun Page.createViewModel(
             }
         },
         globalError = globalError.value,
-    )
-
-    Page.STATISTICS -> StatisticsPageViewModel(
-        scope = scope,
-        globalError = globalError.value,
-        setGlobalError = { it, type -> globalError.setGlobalError(it, type) },
     )
 
     Page.WINNER -> WinnerPageViewModel(

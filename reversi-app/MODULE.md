@@ -10,7 +10,7 @@ The module builds upon the immutable core domain model and storage layer, provid
 interaction management. All game rules and state are delegated to the core module, keeping the app lightweight and
 focused on presentation.
 
-![Reversi App Screenshot](../images/UML_Structure_CLI.png)
+![Reversi App Structure](../images/UML_Structure_APP.png)
 
 ## Architecture
 

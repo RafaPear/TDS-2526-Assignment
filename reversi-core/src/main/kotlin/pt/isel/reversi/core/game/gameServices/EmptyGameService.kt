@@ -35,7 +35,7 @@ class EmptyGameService: GameServiceImpl {
     }
 
     override suspend fun runStorageHealthCheck() {
-
+        // No-op
     }
 
     override suspend fun closeService() {

@@ -32,15 +32,19 @@ fun generateUniqueTimestampedFileName(baseName: String, extension: String): Stri
  * If a file with the same name already exists, a counter is added to the name.
  */
 fun setLoggerFilePath() {
-    val runFolder = RUN_LOG_FOLDER  // already created at startup
-    val baseName = generateUniqueTimestampedFileName("reversi-log", ".log")
-    val name = "$runFolder/$baseName"
+    val name = getLoggerFilePath()
     File(name).createNewFile()
     val logFileHandler = java.util.logging.FileHandler(name, true).also {
         it.formatter = PlainFormatter()
     }
     LOGGER.addHandler(logFileHandler)
-    LOGGER.info("Logging to file '$name' enabled. Run folder: '$runFolder'")
+    LOGGER.info("Logging to file '$name' enabled. Run folder: '$RUN_LOG_FOLDER'")
+}
+
+fun getLoggerFilePath(): String {
+    val runFolder = RUN_LOG_FOLDER  // already created at startup
+    val baseName = generateUniqueTimestampedFileName("reversi-log", ".log")
+    return "$runFolder/$baseName"
 }
 
 

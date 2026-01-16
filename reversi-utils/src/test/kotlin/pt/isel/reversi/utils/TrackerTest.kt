@@ -12,6 +12,11 @@ class TrackerTest {
         tracker = DevTracker()
     }
 
+    @AfterTest
+    fun cleanUp() {
+        File(BASE_FOLDER).deleteRecursively()
+    }
+
     @Test
     fun testTrackPageEnter() {
         tracker.trackPageEnter("TestPage")

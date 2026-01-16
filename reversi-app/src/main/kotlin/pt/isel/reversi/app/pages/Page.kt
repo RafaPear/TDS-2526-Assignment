@@ -20,7 +20,6 @@ enum class Page(val level: Int) {
     //SAVE_GAME(1),
     LOBBY(1),
     GAME(2),
-    STATISTICS(1),
     WINNER(3)
 }
 
