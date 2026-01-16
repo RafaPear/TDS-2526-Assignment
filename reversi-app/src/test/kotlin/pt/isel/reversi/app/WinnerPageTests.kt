@@ -4,8 +4,9 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import kotlinx.coroutines.runBlocking
 import pt.isel.reversi.app.app.state.AppState
+import pt.isel.reversi.app.app.state.GameSession
+import pt.isel.reversi.app.app.state.PagesState
 import pt.isel.reversi.app.pages.Page
-import pt.isel.reversi.app.pages.PagesState
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.game.gameServices.EmptyGameService
 import pt.isel.reversi.core.game.startNewGame
@@ -37,8 +38,8 @@ class WinnerPageTests {
     }
 
     val appState = AppState.empty(service = EmptyGameService()).copy(
-        game = game,
-        pagesState = PagesState(Page.GAME, Page.NONE)
+        gameSession = GameSession(game, null),
+        pagesState = PagesState(Page.GAME, Page.NONE, null)
     )
 
     @Test
