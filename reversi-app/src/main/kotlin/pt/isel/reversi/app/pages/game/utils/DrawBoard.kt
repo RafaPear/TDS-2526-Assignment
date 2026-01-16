@@ -20,11 +20,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
+import pt.isel.reversi.app.app.state.ReversiScope
+import pt.isel.reversi.app.app.state.getTheme
 import pt.isel.reversi.app.pages.game.testTagBoard
 import pt.isel.reversi.app.pages.game.testTagCellView
 import pt.isel.reversi.app.pages.game.testTagPiece
-import pt.isel.reversi.app.state.ReversiScope
-import pt.isel.reversi.app.state.getTheme
 import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.board.Piece

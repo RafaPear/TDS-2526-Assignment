@@ -1,4 +1,4 @@
-package pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel
+package pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.drawCard
 
 import androidx.compose.ui.graphics.Color
 import pt.isel.reversi.app.pages.lobby.LobbyLoadedState

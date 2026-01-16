@@ -2,13 +2,13 @@ package pt.isel.reversi.app.pages.game
 
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.*
+import pt.isel.reversi.app.app.state.setError
 import pt.isel.reversi.app.exceptions.GameCorrupted
 import pt.isel.reversi.app.exceptions.GameNotStartedYet
 import pt.isel.reversi.app.pages.Page
 import pt.isel.reversi.app.pages.ScreenState
 import pt.isel.reversi.app.pages.UiState
 import pt.isel.reversi.app.pages.ViewModel
-import pt.isel.reversi.app.state.setError
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.ReversiException

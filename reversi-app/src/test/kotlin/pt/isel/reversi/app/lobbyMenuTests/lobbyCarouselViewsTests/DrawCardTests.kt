@@ -1,13 +1,12 @@
 package pt.isel.reversi.app.lobbyMenuTests.lobbyCarouselViewsTests
 
 import androidx.compose.ui.test.*
+import pt.isel.reversi.app.app.state.AppState
+import pt.isel.reversi.app.app.state.ReversiScope
 import pt.isel.reversi.app.pages.game.testTagBoard
 import pt.isel.reversi.app.pages.game.testTagCellView
 import pt.isel.reversi.app.pages.lobby.LobbyLoadedState
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.drawCard.*
-import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.getCardStatus
-import pt.isel.reversi.app.state.AppState
-import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.game.Game
@@ -56,7 +55,7 @@ class DrawCardTests {
             )
         }
 
-        onNodeWithTag(cardTestTag(name)).assertExists()
+        onNodeWithTag(testTagCard(name)).assertExists()
     }
 
     @Test
@@ -73,10 +72,10 @@ class DrawCardTests {
             )
         }
 
-        onNodeWithTag(cardTestTag(name)).assertExists()
-        onNodeWithTag(headerBadgeTestTag(name), true).assertExists()
+        onNodeWithTag(testTagCard(name)).assertExists()
+        onNodeWithTag(testTagHeaderBadge(name), true).assertExists()
         onNodeWithTag(testTagBoard(), true).assertExists()
-        onNodeWithTag(scorePanelTestTag(name), true).assertExists()
+        onNodeWithTag(testTagScorePanel(name), true).assertExists()
     }
 
     @Test
@@ -93,7 +92,7 @@ class DrawCardTests {
             )
         }
 
-        onNodeWithTag(cardTestTag(name)).assertIsEnabled()
+        onNodeWithTag(testTagCard(name)).assertIsEnabled()
     }
 
     @Test
@@ -110,7 +109,7 @@ class DrawCardTests {
             )
         }
 
-        onNodeWithTag(cardTestTag(name)).assertIsNotEnabled()
+        onNodeWithTag(testTagCard(name)).assertIsNotEnabled()
     }
 
     @Test
@@ -128,8 +127,8 @@ class DrawCardTests {
             )
         }
 
-        onNodeWithTag(statusTextTestTag(name), true).assertTextContains(name)
-        onNodeWithTag(statusBadgeTestTag(name), true).assertTextContains(cardStatus.text)
+        onNodeWithTag(testTagStatusText(name), true).assertTextContains(name)
+        onNodeWithTag(testTagStatusBadge(name), true).assertTextContains(cardStatus.text)
     }
 
     @Test
@@ -169,24 +168,24 @@ class DrawCardTests {
         val totalBlack = board.totalBlackPieces
         val totalWhite = board.totalWhitePieces
 
-        val blackPieceTestTag = scoreItemPieceTestTag(
-            scorePainelTestTag = scorePanelTestTag(gameId = name),
+        val blackPieceTestTag = testTagScoreItemPiece(
+            scorePainelTestTag = testTagScorePanel(gameId = name),
             pieceType = PieceType.BLACK
         )
 
-        val whitePieceTestTag = scoreItemPieceTestTag(
-            scorePainelTestTag = scorePanelTestTag(gameId = name),
+        val whitePieceTestTag = testTagScoreItemPiece(
+            scorePainelTestTag = testTagScorePanel(gameId = name),
             pieceType = PieceType.WHITE
         )
 
-        val blackPiecesScoreTestTag = scoreItemScoreTestTag(
-            scorePainelTestTag = scorePanelTestTag(gameId = name),
+        val blackPiecesScoreTestTag = testTagScoreItemScore(
+            scorePainelTestTag = testTagScorePanel(gameId = name),
             pieceType = PieceType.BLACK,
             score = totalBlack
         )
 
-        val whitePiecesScoreTestTag = scoreItemScoreTestTag(
-            scorePainelTestTag = scorePanelTestTag(gameId = name),
+        val whitePiecesScoreTestTag = testTagScoreItemScore(
+            scorePainelTestTag = testTagScorePanel(gameId = name),
             pieceType = PieceType.WHITE,
             score = totalWhite
         )

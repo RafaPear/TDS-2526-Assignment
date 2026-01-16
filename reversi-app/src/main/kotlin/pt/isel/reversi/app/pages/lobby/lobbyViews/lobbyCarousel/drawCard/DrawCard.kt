@@ -22,30 +22,29 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.isel.reversi.app.app.state.ReversiScope
+import pt.isel.reversi.app.app.state.ReversiText
+import pt.isel.reversi.app.app.state.getTheme
 import pt.isel.reversi.app.pages.game.utils.DrawBoard
 import pt.isel.reversi.app.pages.lobby.LobbyLoadedState
-import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.CardStatus
-import pt.isel.reversi.app.state.ReversiScope
-import pt.isel.reversi.app.state.ReversiText
-import pt.isel.reversi.app.state.getTheme
 import pt.isel.reversi.core.board.Board
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.gameState.MatchPlayers
 
-fun cardTestTag(gameId: String) = "game_card_$gameId"
+fun testTagCard(gameId: String) = "game_card_$gameId"
 
-fun headerBadgeTestTag(gameId: String) = "header_badge_$gameId"
+fun testTagHeaderBadge(gameId: String) = "header_badge_$gameId"
 
-fun scorePanelTestTag(gameId: String) = "score_panel_$gameId"
+fun testTagScorePanel(gameId: String) = "score_panel_$gameId"
 
-fun statusBadgeTestTag(gameId: String) = "status_badge_$gameId"
+fun testTagStatusBadge(gameId: String) = "status_badge_$gameId"
 
-fun statusTextTestTag(gameid: String) = "status_text_$gameid"
+fun testTagStatusText(gameid: String) = "status_text_$gameid"
 
-fun scoreItemPieceTestTag(scorePainelTestTag: String, pieceType: PieceType) =
+fun testTagScoreItemPiece(scorePainelTestTag: String, pieceType: PieceType) =
     "score_item_${scorePainelTestTag}_${pieceType.name}"
 
-fun scoreItemScoreTestTag(scorePainelTestTag: String, pieceType: PieceType, score: Int) =
+fun testTagScoreItemScore(scorePainelTestTag: String, pieceType: PieceType, score: Int) =
     "score_item_${scorePainelTestTag}_${pieceType.name}_score_$score"
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,7 +66,7 @@ fun ReversiScope.GameCard(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier.shadow(16.dp, RoundedCornerShape(24.dp))
-            .testTag(cardTestTag(name)),
+            .testTag(testTagCard(name)),
         shape = RoundedCornerShape(24.dp),
         border = BorderStroke(1.dp, Color.White.copy(0.1f)),
         colors = CardDefaults.cardColors(
@@ -96,7 +95,7 @@ fun ReversiScope.GameCard(
 
             Spacer(Modifier.height(8.dp))
 
-            ScorePanel(board = state.board, scorePainelTestTag = scorePanelTestTag(name))
+            ScorePanel(board = state.board, scorePainelTestTag = testTagScorePanel(name))
         }
     }
 }
@@ -188,16 +187,16 @@ private fun ReversiScope.HeaderBadge(statusText: String, statusColor: Color, nam
         Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .testTag(headerBadgeTestTag(name)),
+            .testTag(testTagHeaderBadge(name)),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         ReversiText(
             text = name,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.testTag(statusTextTestTag(name)),
+            modifier = Modifier.testTag(testTagStatusText(name)),
         )
-        StatusBadge(statusText, statusColor, modifier = Modifier.testTag(statusBadgeTestTag(name)))
+        StatusBadge(statusText, statusColor, modifier = Modifier.testTag(testTagStatusBadge(name)))
     }
 }
 
@@ -230,14 +229,14 @@ private fun ReversiScope.ScorePanel(modifier: Modifier = Modifier, board: Board,
         ScoreItem(
             type = PieceType.BLACK,
             score = board.totalBlackPieces,
-            pieceTestTag = scoreItemPieceTestTag(scorePainelTestTag, PieceType.BLACK),
-            scoreTestTag = scoreItemScoreTestTag(scorePainelTestTag, PieceType.BLACK, board.totalBlackPieces)
+            pieceTestTag = testTagScoreItemPiece(scorePainelTestTag, PieceType.BLACK),
+            scoreTestTag = testTagScoreItemScore(scorePainelTestTag, PieceType.BLACK, board.totalBlackPieces)
         )
         ScoreItem(
             type = PieceType.WHITE,
             score = board.totalWhitePieces,
-            pieceTestTag = scoreItemPieceTestTag(scorePainelTestTag, PieceType.WHITE),
-            scoreTestTag = scoreItemScoreTestTag(scorePainelTestTag, PieceType.WHITE, board.totalWhitePieces)
+            pieceTestTag = testTagScoreItemPiece(scorePainelTestTag, PieceType.WHITE),
+            scoreTestTag = testTagScoreItemScore(scorePainelTestTag, PieceType.WHITE, board.totalWhitePieces)
         )
     }
 }

@@ -1,4 +1,4 @@
-package pt.isel.reversi.app
+package pt.isel.reversi.app.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,9 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.isel.reversi.app.state.ReversiScope
-import pt.isel.reversi.app.state.ReversiText
-import pt.isel.reversi.app.state.getTheme
+import pt.isel.reversi.app.app.state.ReversiScope
+import pt.isel.reversi.app.app.state.ReversiText
+import pt.isel.reversi.app.app.state.getTheme
 
 /**
  * Loading overlay composable displaying a circular progress indicator with loading message.

@@ -4,9 +4,9 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.runComposeUiTest
+import pt.isel.reversi.app.app.state.AppState
+import pt.isel.reversi.app.app.state.ReversiScope
 import pt.isel.reversi.app.pages.lobby.lobbyViews.*
-import pt.isel.reversi.app.state.AppState
-import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.core.game.gameServices.EmptyGameService
 import pt.isel.reversi.utils.BASE_FOLDER
 import java.io.File

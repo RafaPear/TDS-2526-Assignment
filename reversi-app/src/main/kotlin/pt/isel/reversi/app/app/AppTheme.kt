@@ -1,4 +1,4 @@
-package pt.isel.reversi.app
+package pt.isel.reversi.app.app
 
 import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.resources.DrawableResource

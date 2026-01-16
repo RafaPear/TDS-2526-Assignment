@@ -5,6 +5,9 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
+import pt.isel.reversi.app.app.state.AppState
+import pt.isel.reversi.app.app.state.GameSession
+import pt.isel.reversi.app.app.state.PagesState
 import pt.isel.reversi.app.pages.Page
 import pt.isel.reversi.app.pages.PagesState
 import pt.isel.reversi.app.pages.game.GamePage
@@ -42,47 +45,13 @@ class WinnerPageTests {
     }
 
     val appState = AppState.empty(service = EmptyGameService()).copy(
-        game = game, pagesState = PagesState(Page.GAME, Page.NONE)
+        gameSession = GameSession(game, null),
+        pagesState = PagesState(Page.GAME, Page.NONE, null)
     )
 
     @Test
     fun `check winner page shows correct winner`() = runComposeUiTest {
         appState
         assert(false)
-//
-//        val scope = rememberCoroutineScope()
-//        val vm = GamePageViewModel(
-//            game,
-//            scope,
-//            {},
-//            { },
-//            {},
-//            null,
-//            { _, _ -> }
-//        )
-//
-//        ReversiScope(appState).GamePage(
-//            viewModel = vm,
-//            onLeave = { }
-//        )
-//
-//        // Simulate game end and navigate to WinnerPage
-//        val winnerVm = pt.isel.reversi.app.pages.winnerPage.WinnerPageViewModel(
-//            game.copy(gameState = game.gameState?.copy(winner = game.players.player1)),
-//            null,
-//            { _, _ -> }
-//        )
-//
-//        ReversiScope(appState).let { reversiScope ->
-//            reversiScope.run {
-//                pt.isel.reversi.app.pages.winnerPage.WinnerPage(
-//                    viewModel = winnerVm,
-//                    onBackToMenu = {}
-//                )
-//            }
-//        }
-//
-//        // Verify that the winner is displayed correctly
-//        composeTestRule.onNodeWithText("Winner: ${game.players.player1.type}").assertExists()
-//    }
+    }
 }

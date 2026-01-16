@@ -6,9 +6,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pt.isel.reversi.app.ScaffoldView
+import pt.isel.reversi.app.app.state.ReversiScope
+import pt.isel.reversi.app.app.state.ReversiText
 import pt.isel.reversi.app.pages.Page
-import pt.isel.reversi.app.state.ReversiScope
-import pt.isel.reversi.app.state.ReversiText
 import pt.isel.reversi.app.utils.PreviousPage
 import pt.isel.reversi.utils.TRACKER
 

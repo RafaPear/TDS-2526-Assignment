@@ -1,11 +1,10 @@
 @file:Suppress("UNCHECKED_CAST")
 
-package pt.isel.reversi.app.state
+package pt.isel.reversi.app.app.state
 
 import androidx.compose.runtime.MutableState
-import pt.isel.reversi.app.AppTheme
+import pt.isel.reversi.app.app.AppTheme
 import pt.isel.reversi.app.pages.Page
-import pt.isel.reversi.app.pages.PagesState
 import pt.isel.reversi.app.pages.UiState
 import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.ErrorType.Companion.toReversiException
@@ -13,16 +12,29 @@ import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.core.game.Game
 import pt.isel.reversi.utils.LOGGER
 
+
 /**
  * Updates the current page in the application state.
  * @param page The new page to set.
  * @param backPage The new back page (auto-calculated if null).
  */
 fun MutableState<PagesState>.setPage(page: Page, backPage: Page? = null) {
-    if (page == value.page) {
-        LOGGER.info("Page is the same: ${page.name}, no changes made")
-        return
+    var newError = value.globalError
+
+    when {
+        value.globalError != null -> {
+            LOGGER.info("Cannot change page to ${page.name} due to existing global error: ${value.globalError?.message}")
+            return
+        }
+
+        page == value.page -> {
+            LOGGER.info("Page is the same: ${page.name}, no changes made")
+            return
+        }
+
+        value.globalError?.type == ErrorType.INFO -> newError = null
     }
+
 
     val newBackPage =
         if (page == Page.MAIN_MENU) {
@@ -34,7 +46,8 @@ fun MutableState<PagesState>.setPage(page: Page, backPage: Page? = null) {
     LOGGER.info("Set page ${page.name}, backPage: ${newBackPage.name}")
     value = value.copy(
         page = page,
-        backPage = newBackPage
+        backPage = newBackPage,
+        globalError = newError
     )
 }
 
@@ -98,8 +111,8 @@ fun <T : UiState> MutableState<T>.setError(error: Exception?, type: ErrorType = 
     value = value.updateScreenState(newScreenState) as T
 }
 
-fun MutableState<ReversiException?>.setGlobalError(error: Exception?, type: ErrorType? = ErrorType.CRITICAL) {
+fun MutableState<PagesState>.setGlobalError(error: Exception?, type: ErrorType? = ErrorType.CRITICAL) {
     LOGGER.info("Set global error: ${error?.message ?: "null"}")
     val newError = error as? ReversiException ?: error?.toReversiException(type ?: ErrorType.CRITICAL)
-    value = newError
+    value = value.copy(globalError = newError)
 }

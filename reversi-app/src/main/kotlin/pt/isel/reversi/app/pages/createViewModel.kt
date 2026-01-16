@@ -3,6 +3,7 @@ package pt.isel.reversi.app.pages
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.Snapshot
 import kotlinx.coroutines.CoroutineScope
+import pt.isel.reversi.app.app.state.*
 import pt.isel.reversi.app.pages.aboutPage.AboutPageViewModel
 import pt.isel.reversi.app.pages.game.GamePageViewModel
 import pt.isel.reversi.app.pages.lobby.LobbyViewModel
@@ -10,8 +11,6 @@ import pt.isel.reversi.app.pages.menu.MainMenuViewModel
 import pt.isel.reversi.app.pages.newGamePage.NewGameViewModel
 import pt.isel.reversi.app.pages.settingsPage.SettingsViewModel
 import pt.isel.reversi.app.pages.winnerPage.WinnerPageViewModel
-import pt.isel.reversi.app.state.*
-import pt.isel.reversi.core.exceptions.ReversiException
 
 
 fun Page.createViewModel(
@@ -19,21 +18,20 @@ fun Page.createViewModel(
     appState: AppStateImpl,
     gameSession: MutableState<GameSession>,
     audioThemeState: MutableState<AudioThemeState>,
-    globalError: MutableState<ReversiException?>,
     pagesState: MutableState<PagesState>,
 ) = when (this) {
     Page.MAIN_MENU -> MainMenuViewModel(
         appState,
-        globalError = globalError.value,
-        setGlobalError = { it, type -> globalError.setGlobalError(it, type) },
+        globalError = pagesState.value.globalError,
+        setGlobalError = { it, type -> pagesState.setGlobalError(it, type) },
         setPage = { pagesState.setPage(it) }
     )
 
     Page.GAME -> GamePageViewModel(
         gameSession.value.game,
-        globalError = globalError.value,
+        globalError = pagesState.value.globalError,
         scope = scope,
-        setGlobalError = { it, type -> globalError.setGlobalError(it, type) },
+        setGlobalError = { it, type -> pagesState.setGlobalError(it, type) },
         audioPlayMove = {
             audioThemeState.value.audioPool.run {
                 stop(audioThemeState.value.theme.placePieceSound)
@@ -48,7 +46,7 @@ fun Page.createViewModel(
         scope,
         appState,
         setTheme = { audioThemeState.setTheme(it)},
-        setGlobalError = { it, type -> globalError.setGlobalError(it, type) },
+        setGlobalError = { it, type -> pagesState.setGlobalError(it, type) },
         setPlayerName = {
             gameSession.setPlayerName(it)
             val newName = it ?: return@SettingsViewModel
@@ -64,19 +62,19 @@ fun Page.createViewModel(
         },
         saveGame = { gameSession.value.game.saveEndGame() },
         setGame = { gameSession.setGame(it) },
-        globalError = globalError.value
+        globalError = pagesState.value.globalError
     )
 
     Page.ABOUT -> AboutPageViewModel(
-        globalError.value,
-        setGlobalError = { it, type -> globalError.setGlobalError(it, type) },
+        pagesState.value.globalError,
+        setGlobalError = { it, type -> pagesState.setGlobalError(it, type) },
     )
 
     Page.NEW_GAME -> NewGameViewModel(
         scope = scope,
         appState = appState,
-        globalError = globalError.value,
-        setGlobalError = { it, type -> globalError.setGlobalError(it, type) },
+        globalError = pagesState.value.globalError,
+        setGlobalError = { it, type -> pagesState.setGlobalError(it, type) },
         createGame = { newGame ->
             Snapshot.withMutableSnapshot {
                 gameSession.setGame(newGame)
@@ -88,20 +86,20 @@ fun Page.createViewModel(
     Page.LOBBY -> LobbyViewModel(
         scope = scope,
         appState = appState,
-        setGlobalError = { it, type -> globalError.setGlobalError(it, type) },
+        setGlobalError = { it, type -> pagesState.setGlobalError(it, type) },
         pickGame = {
             Snapshot.withMutableSnapshot {
                 gameSession.setGame(it)
                 pagesState.setPage(Page.GAME, backPage = Page.MAIN_MENU)
             }
         },
-        globalError = globalError.value,
+        globalError = pagesState.value.globalError,
     )
 
     Page.WINNER -> WinnerPageViewModel(
         gameSession.value.game,
-        globalError = globalError.value,
-        setGlobalError = { it, type -> globalError.setGlobalError(it, type) }
+        globalError = pagesState.value.globalError,
+        setGlobalError = { it, type -> pagesState.setGlobalError(it, type) }
     )
 
     Page.NONE -> null

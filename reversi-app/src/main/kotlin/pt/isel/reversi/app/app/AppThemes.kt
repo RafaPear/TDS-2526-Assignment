@@ -1,4 +1,4 @@
-package pt.isel.reversi.app
+package pt.isel.reversi.app.app
 
 import androidx.compose.ui.graphics.Color
 import reversi.reversi_app.generated.resources.Res

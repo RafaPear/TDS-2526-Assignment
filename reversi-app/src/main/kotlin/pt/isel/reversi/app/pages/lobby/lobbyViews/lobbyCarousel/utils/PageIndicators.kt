@@ -15,8 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.isel.reversi.app.state.ReversiScope
-import pt.isel.reversi.app.state.ReversiText
+import pt.isel.reversi.app.app.state.ReversiScope
+import pt.isel.reversi.app.app.state.ReversiText
 
 fun testTagPageIndicators() = "page_indicators"
 fun testTagPageIndicatorText() = "page_indicator_text"

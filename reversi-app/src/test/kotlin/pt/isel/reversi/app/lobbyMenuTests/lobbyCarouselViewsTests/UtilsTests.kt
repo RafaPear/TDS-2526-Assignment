@@ -7,9 +7,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.*
+import pt.isel.reversi.app.app.state.AppState
+import pt.isel.reversi.app.app.state.ReversiScope
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.utils.*
-import pt.isel.reversi.app.state.AppState
-import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.core.game.gameServices.EmptyGameService
 import pt.isel.reversi.utils.BASE_FOLDER
 import java.io.File

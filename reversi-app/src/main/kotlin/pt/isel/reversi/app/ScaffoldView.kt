@@ -18,10 +18,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
+import pt.isel.reversi.app.app.state.ReversiScope
+import pt.isel.reversi.app.app.state.ReversiText
 import pt.isel.reversi.app.exceptions.ErrorMessage
 import pt.isel.reversi.app.pages.Page
-import pt.isel.reversi.app.state.ReversiScope
-import pt.isel.reversi.app.state.ReversiText
+import pt.isel.reversi.app.utils.Loading
 import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.ReversiException
 

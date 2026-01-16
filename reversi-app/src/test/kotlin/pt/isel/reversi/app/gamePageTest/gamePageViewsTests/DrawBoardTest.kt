@@ -2,11 +2,11 @@ package pt.isel.reversi.app.gamePageTest.gamePageViewsTests
 
 import androidx.compose.ui.test.*
 import kotlinx.coroutines.runBlocking
+import pt.isel.reversi.app.app.state.AppState
+import pt.isel.reversi.app.app.state.ReversiScope
 import pt.isel.reversi.app.pages.game.testTagBoard
 import pt.isel.reversi.app.pages.game.testTagCellView
 import pt.isel.reversi.app.pages.game.utils.DrawBoard
-import pt.isel.reversi.app.state.AppState
-import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.game.gameServices.EmptyGameService
 import pt.isel.reversi.core.game.startNewGame

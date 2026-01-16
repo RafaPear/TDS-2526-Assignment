@@ -6,9 +6,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import pt.isel.reversi.app.app.state.ReversiScope
 import pt.isel.reversi.app.pages.game.utils.DrawBoard
 import pt.isel.reversi.app.pages.game.utils.TextPlayersScore
-import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.core.board.Coordinate
 import pt.isel.reversi.core.game.Game
 
@@ -69,7 +69,12 @@ fun ReversiScope.GamePageView(
 
                 val target = game.target
                 val lastPlayer = game.gameState?.lastPlayer
-                val canPass = getAvailablePlays().isEmpty() && lastPlayer != null && lastPlayer != game.myPiece
+                val canPass =
+                    if (game.currGameName == null ) {
+                        getAvailablePlays().isEmpty()
+                    } else {
+                        getAvailablePlays().isEmpty() && lastPlayer != null && lastPlayer != game.myPiece
+                    }
 
                 TargetButton(target, freeze = freeze) {
                     setTargetMode(!target)

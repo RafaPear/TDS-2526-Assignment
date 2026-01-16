@@ -1,6 +1,6 @@
 package pt.isel.reversi.app.gameAudio
 
-import pt.isel.reversi.app.AppTheme
+import pt.isel.reversi.app.app.AppTheme
 import pt.isel.reversi.app.exceptions.CouldNotLoadAsset
 import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.ReversiException

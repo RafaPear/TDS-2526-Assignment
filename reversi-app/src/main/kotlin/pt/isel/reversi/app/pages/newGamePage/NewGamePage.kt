@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.isel.reversi.app.ScaffoldView
-import pt.isel.reversi.app.state.*
+import pt.isel.reversi.app.app.state.*
 import pt.isel.reversi.app.utils.PreviousPage
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.game.Game

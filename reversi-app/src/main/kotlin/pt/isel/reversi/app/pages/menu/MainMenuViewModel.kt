@@ -1,13 +1,12 @@
 package pt.isel.reversi.app.pages.menu
 
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import pt.isel.reversi.app.app.state.AppStateImpl
+import pt.isel.reversi.app.app.state.getStateAudioPool
 import pt.isel.reversi.app.pages.Page
 import pt.isel.reversi.app.pages.ScreenState
 import pt.isel.reversi.app.pages.UiState
 import pt.isel.reversi.app.pages.ViewModel
-import pt.isel.reversi.app.state.AppStateImpl
-import pt.isel.reversi.app.state.getStateAudioPool
 import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.utils.TRACKER

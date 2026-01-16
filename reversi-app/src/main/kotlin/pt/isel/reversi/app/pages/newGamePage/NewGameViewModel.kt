@@ -3,11 +3,11 @@ package pt.isel.reversi.app.pages.newGamePage
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import pt.isel.reversi.app.app.state.AppStateImpl
 import pt.isel.reversi.app.exceptions.NoPieceSelected
 import pt.isel.reversi.app.pages.ScreenState
 import pt.isel.reversi.app.pages.UiState
 import pt.isel.reversi.app.pages.ViewModel
-import pt.isel.reversi.app.state.AppStateImpl
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.ReversiException

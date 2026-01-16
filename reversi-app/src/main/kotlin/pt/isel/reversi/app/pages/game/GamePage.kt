@@ -6,9 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import pt.isel.reversi.app.ScaffoldView
+import pt.isel.reversi.app.app.state.ReversiScope
 import pt.isel.reversi.app.exceptions.GameNotStartedYet
 import pt.isel.reversi.app.pages.Page
-import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.app.utils.PreviousPage
 import pt.isel.reversi.core.game.Game
 import pt.isel.reversi.utils.LOGGER
@@ -38,7 +38,7 @@ fun ReversiScope.GamePage(
     // TODO Mudar logica do error .. Ian -> Startar o global error aaaaaaaaaa
     if (!game.hasStarted()) {
         LOGGER.warning("Game not started yet, navigating back to previous page")
-        viewModel.setError(GameNotStartedYet(), null)
+        viewModel.setGlobalError(GameNotStartedYet(), null)
         onLeave(game)
         return
     }

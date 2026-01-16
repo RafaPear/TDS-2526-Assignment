@@ -169,6 +169,7 @@ class GameTests {
 
         val expectedCountPass = 1
         val expectedPlayerTurn = PieceType.WHITE
+
         assertEquals(expectedCountPass, uut.countPass)
         assertEquals(expectedPlayerTurn, uut.gameState?.lastPlayer)
 

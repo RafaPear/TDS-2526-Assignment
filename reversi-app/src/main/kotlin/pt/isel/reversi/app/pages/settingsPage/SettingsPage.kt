@@ -12,11 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.isel.reversi.app.AppTheme
-import pt.isel.reversi.app.AppThemes
 import pt.isel.reversi.app.ScaffoldView
+import pt.isel.reversi.app.app.AppTheme
+import pt.isel.reversi.app.app.AppThemes
+import pt.isel.reversi.app.app.state.*
 import pt.isel.reversi.app.pages.Page
-import pt.isel.reversi.app.state.*
 import pt.isel.reversi.app.utils.PreviousPage
 import pt.isel.reversi.core.CoreConfig
 import pt.isel.reversi.core.storage.GameStorageType

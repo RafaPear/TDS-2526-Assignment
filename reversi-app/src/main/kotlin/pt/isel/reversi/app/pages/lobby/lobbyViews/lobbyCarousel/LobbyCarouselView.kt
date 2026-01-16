@@ -15,13 +15,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.isel.reversi.app.app.state.ReversiScope
 import pt.isel.reversi.app.pages.lobby.LobbyLoadedState
+import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.drawCard.CardStatus
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.drawCard.GameCard
+import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.drawCard.getCardStatus
 import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.utils.NavButton
-import pt.isel.reversi.app.state.ReversiScope
+import pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.utils.testTagNavButton
 import kotlin.math.absoluteValue
+
+fun testTagLobbyCarouselPager() = "lobby_carousel_pager"
+fun testTagLobbyCarrouselEmpty() = "lobby_carousel_empty"
+
+const val EMPTY_LOBBY_CAROUSEL_TEXT = "Nenhum jogo encontrado"
 
 @Composable
 fun BoxWithConstraintsScope.LobbyCarouselView(
@@ -43,7 +52,8 @@ fun BoxWithConstraintsScope.LobbyCarouselView(
     HorizontalPager(
         state = pagerState,
         contentPadding = PaddingValues(horizontal = horizontalPadding),
-        pageSpacing = 16.dp
+        pageSpacing = 16.dp,
+        modifier = Modifier.testTag(testTagLobbyCarouselPager())
     ) { page ->
         val pageOffset =
             (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
@@ -79,6 +89,7 @@ fun BoxWithConstraintsScope.LobbyCarouselView(
         if (pagerState.currentPage > 0) {
             NavButton(
                 icon = Icons.AutoMirrored.Rounded.ArrowBackIos,
+                modifier = Modifier.testTag(testTagNavButton("left")),
                 alignment = Alignment.CenterStart,
                 onClick = {
                     onNavButtonClick(pagerState.currentPage - 1)
@@ -88,6 +99,7 @@ fun BoxWithConstraintsScope.LobbyCarouselView(
         if (pagerState.currentPage < games.size - 1) {
             NavButton(
                 icon = Icons.AutoMirrored.Rounded.ArrowForwardIos,
+                modifier = Modifier.testTag(testTagNavButton("right")),
                 alignment = Alignment.CenterEnd,
                 onClick = {
                     onNavButtonClick(pagerState.currentPage + 1)
@@ -96,10 +108,11 @@ fun BoxWithConstraintsScope.LobbyCarouselView(
         }
     } else if (games.isEmpty()) {
         Text(
-            text = "Nenhum jogo encontrado",
+            text = EMPTY_LOBBY_CAROUSEL_TEXT,
             fontSize = 18.sp,
             color = Color.White.copy(alpha = 0.6f),
             modifier = Modifier.align(Alignment.Center)
+                .testTag(testTagLobbyCarrouselEmpty())
         )
     }
 }

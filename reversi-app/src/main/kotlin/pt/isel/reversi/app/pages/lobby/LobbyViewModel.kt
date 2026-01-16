@@ -2,16 +2,16 @@ package pt.isel.reversi.app.pages.lobby
 
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.*
+import pt.isel.reversi.app.app.state.AppStateImpl
+import pt.isel.reversi.app.app.state.getStateAudioPool
+import pt.isel.reversi.app.app.state.setError
+import pt.isel.reversi.app.app.state.setLoading
 import pt.isel.reversi.app.exceptions.GameCorrupted
 import pt.isel.reversi.app.exceptions.GameIsFull
 import pt.isel.reversi.app.pages.Page
 import pt.isel.reversi.app.pages.ScreenState
 import pt.isel.reversi.app.pages.UiState
 import pt.isel.reversi.app.pages.ViewModel
-import pt.isel.reversi.app.state.AppStateImpl
-import pt.isel.reversi.app.state.getStateAudioPool
-import pt.isel.reversi.app.state.setError
-import pt.isel.reversi.app.state.setLoading
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.exceptions.ErrorType
 import pt.isel.reversi.core.exceptions.ReversiException

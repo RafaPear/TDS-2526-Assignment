@@ -1,4 +1,4 @@
-package pt.isel.reversi.app
+package pt.isel.reversi.app.utils
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.CubicBezierEasing
@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import pt.isel.reversi.app.app.AppTheme
+import pt.isel.reversi.app.app.state.PagesState
 import pt.isel.reversi.app.pages.Page
-import pt.isel.reversi.app.pages.PagesState
 
 /**
  * Central component managing transitions between pages in the application.
@@ -27,7 +29,7 @@ import pt.isel.reversi.app.pages.PagesState
 fun AppScreenSwitcher(
     pagesState: PagesState,
     theme: AppTheme,
-    contentAlignment: androidx.compose.ui.Alignment = androidx.compose.ui.Alignment.TopStart,
+    contentAlignment: Alignment = Alignment.TopStart,
     switchAction: @Composable (BoxScope.(page: Page) -> Unit)
 ) {
     val duration = 500

@@ -13,9 +13,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import pt.isel.reversi.app.AppTheme
-import pt.isel.reversi.app.state.ReversiScope
-import pt.isel.reversi.app.state.getTheme
+import pt.isel.reversi.app.app.AppTheme
+import pt.isel.reversi.app.app.state.ReversiScope
+import pt.isel.reversi.app.app.state.getTheme
 import java.util.*
 import kotlin.math.PI
 import kotlin.math.sin

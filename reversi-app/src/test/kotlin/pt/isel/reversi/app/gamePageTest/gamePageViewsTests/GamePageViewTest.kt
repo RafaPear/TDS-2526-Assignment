@@ -4,11 +4,11 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.runComposeUiTest
 import kotlinx.coroutines.runBlocking
+import pt.isel.reversi.app.app.state.AppState
+import pt.isel.reversi.app.app.state.ReversiScope
 import pt.isel.reversi.app.pages.game.GamePageView
 import pt.isel.reversi.app.pages.game.testTagGamePage
 import pt.isel.reversi.app.pages.game.testTagPlayerScore
-import pt.isel.reversi.app.state.AppState
-import pt.isel.reversi.app.state.ReversiScope
 import pt.isel.reversi.core.board.PieceType
 import pt.isel.reversi.core.game.gameServices.EmptyGameService
 import pt.isel.reversi.core.game.startNewGame

@@ -3,9 +3,9 @@ package pt.isel.reversi.app.pages.lobby.lobbyViews.lobbyCarousel.utils
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import pt.isel.reversi.app.state.ReversiScope
-import pt.isel.reversi.app.state.ReversiText
-import pt.isel.reversi.app.state.ReversiTextField
+import pt.isel.reversi.app.app.state.ReversiScope
+import pt.isel.reversi.app.app.state.ReversiText
+import pt.isel.reversi.app.app.state.ReversiTextField
 
 fun testTagSearch() = "lobby_carousel_search"
 

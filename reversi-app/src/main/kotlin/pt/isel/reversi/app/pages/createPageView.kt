@@ -3,6 +3,7 @@ package pt.isel.reversi.app.pages
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.Snapshot
+import pt.isel.reversi.app.app.state.*
 import pt.isel.reversi.app.pages.aboutPage.AboutPage
 import pt.isel.reversi.app.pages.aboutPage.AboutPageViewModel
 import pt.isel.reversi.app.pages.game.GamePage
@@ -17,7 +18,6 @@ import pt.isel.reversi.app.pages.settingsPage.SettingsPage
 import pt.isel.reversi.app.pages.settingsPage.SettingsViewModel
 import pt.isel.reversi.app.pages.winnerPage.WinnerPage
 import pt.isel.reversi.app.pages.winnerPage.WinnerPageViewModel
-import pt.isel.reversi.app.state.*
 
 /**
  * Creates a composable page view if the provided ViewModel is of the expected type T.
@@ -60,7 +60,7 @@ private inline fun <reified T : ViewModel<out UiState>> createPageViewIfType(
  *
  * @see Page
  * @see ViewModel
- * @see PagesState
+ * @see pt.isel.reversi.app.app.state.PagesState
  * @see ReversiScope
  */
 @Composable

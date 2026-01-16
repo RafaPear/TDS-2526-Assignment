@@ -1,4 +1,4 @@
-package pt.isel.reversi.app.state
+package pt.isel.reversi.app.app.state
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

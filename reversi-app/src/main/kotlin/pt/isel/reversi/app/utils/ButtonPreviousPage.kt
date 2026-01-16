@@ -17,8 +17,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import pt.isel.reversi.app.state.ReversiScope
-import pt.isel.reversi.app.state.getTheme
+import pt.isel.reversi.app.app.state.ReversiScope
+import pt.isel.reversi.app.app.state.getTheme
 
 /** Scaling factor for the back button icon when hovered. */
 const val SCALE_MULTIPLIER = 2.0f
