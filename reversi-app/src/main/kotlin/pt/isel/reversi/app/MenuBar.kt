@@ -5,7 +5,8 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import pt.isel.reversi.app.pages.Page
 import pt.isel.reversi.app.state.AppStateImpl
 import pt.isel.reversi.core.exceptions.ErrorType
@@ -27,6 +28,7 @@ import pt.isel.reversi.utils.LOGGER
 @Composable
 fun FrameWindowScope.MakeMenuBar(
     appState: AppStateImpl,
+    scope: CoroutineScope,
     windowState: WindowState,
     setPage: (Page) -> Unit,
     setGame: (Game) -> Unit,
@@ -58,7 +60,7 @@ fun FrameWindowScope.MakeMenuBar(
             }
             Item("Sair do jogo atual") {
                 if (appState.game.currGameName != null) {
-                    runBlocking { appState.service.saveEndGame(appState.game) }
+                    scope.launch { appState.service.saveEndGame(appState.game) }
                 }
                 setGame(Game(service = appState.service))
                 setPage(Page.MAIN_MENU)

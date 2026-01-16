@@ -13,7 +13,6 @@ import pt.isel.reversi.app.utils.addShutdownHook
 import pt.isel.reversi.app.utils.initializeAppArgs
 import pt.isel.reversi.app.utils.installFatalCrashLogger
 import pt.isel.reversi.app.utils.runStorageHealthCheck
-import pt.isel.reversi.core.exceptions.ReversiException
 import pt.isel.reversi.core.game.Game
 import pt.isel.reversi.core.game.gameServices.GameService
 import pt.isel.reversi.core.loadCoreConfig
@@ -62,7 +61,7 @@ class App(args: Array<String>) {
             val isShutdownHookAdded = remember { mutableStateOf(false) }
 
             val gameSession = remember {
-                mutableStateOf<GameSession>(
+                mutableStateOf(
                     value = GameSession(
                         Game(service = initialGameService), null
                     )
@@ -71,14 +70,15 @@ class App(args: Array<String>) {
             val audioThemeState = remember {
                 mutableStateOf(AudioThemeState(initializedArgs.audioPool, AppThemes.DARK.appTheme))
             }
-            val globalError = remember { mutableStateOf<ReversiException?>(null) }
-            val pagesState = remember { mutableStateOf(PagesState(Page.MAIN_MENU, Page.NONE)) }
+
+            val pagesState = remember {
+                mutableStateOf(PagesState(Page.MAIN_MENU, Page.NONE, null))
+            }
 
             val appState = AppState(
                 gameSession = gameSession.value,
                 pagesState = pagesState.value,
                 audioThemeState = audioThemeState.value,
-                globalError = globalError.value,
             )
 
             if (!isShutdownHookAdded.value) {
@@ -104,32 +104,32 @@ class App(args: Array<String>) {
                 window.minimumSize = java.awt.Dimension(800, 800)
                 MakeMenuBar(
                     appState,
+                    scope = scope,
                     windowState,
                     setPage = { pagesState.setPage(it) },
                     setGame = { gameSession.setGame(it) },
                     setTheme = { audioThemeState.setTheme(it) },
                     setGlobalError = { it, type ->
-                        globalError.setGlobalError(it, type)
+                        pagesState.setGlobalError(it, type)
                     },
                 ) { exitProcess(0) }
 
-                val currentPage = pagesState.value.page
 
                 // out [UiState] for allow ViewModel covariance
                 val currentViewModel: ViewModel<out UiState>? =
-                    remember(currentPage, globalError.value) {
+                    remember(pagesState.value) {
                         pagesState.value.page.createViewModel(
                             scope = scope,
                             appState = appState,
                             gameSession = gameSession,
                             audioThemeState = audioThemeState,
-                            globalError = globalError,
                             pagesState = pagesState,
                         )
                     }
 
                 TRACKER.trackRecomposition(category = "App.Main")
 
+                val currentPage = pagesState.value.page
                 // Log navigation once per page change
                 LaunchedEffect(currentPage) {
                     LOGGER.info("Navigating to page: $currentPage")
