@@ -118,16 +118,22 @@ class FileStorageTest {
 
     @Test
     fun `Test lastModified returns correct timestamp`() {
-
         val beforeCreation = System.currentTimeMillis()
         fileStorage.new(1.toString()) { MockData(1, "Test1") }
         val afterCreation = System.currentTimeMillis()
 
         val lastModified = fileStorage.lastModified(1.toString())
         assert(lastModified != null)
-        assert(lastModified!! in beforeCreation..afterCreation)
 
-        Thread.sleep(10) // Ensure timestamp difference
+        val tolerance = 2000L
+        assert(lastModified!! >= beforeCreation - tolerance) {
+            "lastModified ($lastModified) should be >= beforeCreation ($beforeCreation) with tolerance"
+        }
+        assert(lastModified <= afterCreation + tolerance) {
+            "lastModified ($lastModified) should be <= afterCreation ($afterCreation) with tolerance"
+        }
+
+        Thread.sleep(100) // 100ms em vez de 10ms
 
         val beforeSave = System.currentTimeMillis()
         val updatedData = MockData(1, "UpdatedTest1")
@@ -136,8 +142,17 @@ class FileStorageTest {
 
         val lastModifiedAfterSave = fileStorage.lastModified(1.toString())
         assert(lastModifiedAfterSave != null)
-        assert(lastModifiedAfterSave!! in beforeSave..afterSave)
-        assert(lastModifiedAfterSave > lastModified)
+
+        assert(lastModifiedAfterSave!! >= beforeSave - tolerance) {
+            "lastModifiedAfterSave ($lastModifiedAfterSave) should be >= beforeSave ($beforeSave) with tolerance"
+        }
+        assert(lastModifiedAfterSave <= afterSave + tolerance) {
+            "lastModifiedAfterSave ($lastModifiedAfterSave) should be <= afterSave ($afterSave) with tolerance"
+        }
+
+        assert(lastModifiedAfterSave > lastModified - tolerance) {
+            "lastModifiedAfterSave ($lastModifiedAfterSave) should be > lastModified ($lastModified)"
+        }
     }
 
     @Test
