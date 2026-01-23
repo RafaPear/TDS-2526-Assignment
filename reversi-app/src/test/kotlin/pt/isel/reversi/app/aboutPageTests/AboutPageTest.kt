@@ -42,16 +42,4 @@ class AboutPageTest {
         }
         onNodeWithTag(testTagAboutPage()).assertExists()
     }
-
-    @Test
-    fun `check if the About content is displayed`() = runComposeUiTest {
-        val viewModel = aboutPageViewModel
-        setContent {
-            reversiScope.AboutPage(
-                viewModel = viewModel,
-                onLeave = {}
-            )
-        }
-        onNodeWithTag(testTagAboutPage()).assertExists()
-    }
 }

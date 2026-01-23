@@ -1,15 +1,11 @@
 package pt.isel.reversi.app.newGamePageTests
 
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.runComposeUiTest
+import androidx.compose.ui.test.*
 import kotlinx.coroutines.CoroutineScope
 import pt.isel.reversi.app.app.state.AppState
 import pt.isel.reversi.app.app.state.ReversiScope
-import pt.isel.reversi.app.pages.newGamePage.NewGamePage
-import pt.isel.reversi.app.pages.newGamePage.NewGameViewModel
-import pt.isel.reversi.app.pages.newGamePage.testTagNewGamePage
+import pt.isel.reversi.app.pages.newGamePage.*
 import pt.isel.reversi.core.game.Game
 import pt.isel.reversi.core.game.gameServices.EmptyGameService
 import pt.isel.reversi.utils.BASE_FOLDER
@@ -52,7 +48,7 @@ class NewGamePageTest {
     }
 
     @Test
-    fun `check if the Local Game checkbox is displayed`() = runComposeUiTest {
+    fun `check if the local game checkbox is displayed`() = runComposeUiTest {
         setContent {
             val scope = rememberCoroutineScope()
             val viewModel = vmForTest(scope)
@@ -62,7 +58,84 @@ class NewGamePageTest {
                 onLeave = {}
             )
         }
-        onNodeWithTag(testTagNewGamePage()).assertExists()
+        onNodeWithTag(testTagLocalGameCheckbox()).assertExists()
+    }
+
+    @Test
+    fun `check if the local game checkbox is checked by default`() = runComposeUiTest {
+        setContent {
+            val scope = rememberCoroutineScope()
+            val viewModel = vmForTest(scope)
+            reversiScope.NewGamePage(
+                viewModel = viewModel,
+                playerNameChange = {},
+                onLeave = {}
+            )
+        }
+        onNodeWithTag(testTagLocalGameCheckbox()).assertIsOn()
+    }
+
+    @Test
+    fun `check if the Game Name text field is not displayed when local game is checked`() = runComposeUiTest {
+        setContent {
+            val scope = rememberCoroutineScope()
+            val viewModel = vmForTest(scope)
+            reversiScope.NewGamePage(
+                viewModel = viewModel,
+                playerNameChange = {},
+                onLeave = {}
+            )
+        }
+        // assume checkBox is checked by default
+        onNodeWithTag(testTagGameNameTextField()).assertDoesNotExist()
+    }
+
+    @Test
+    fun `check if the Game Name text field is displayed when local game is unchecked`() = runComposeUiTest {
+        setContent {
+            val scope = rememberCoroutineScope()
+            val viewModel = vmForTest(scope)
+            reversiScope.NewGamePage(
+                viewModel = viewModel,
+                playerNameChange = {},
+                onLeave = {}
+            )
+        }
+
+        // assume checkBox is checked by default, so we uncheck it
+        onNodeWithTag(testTagLocalGameCheckbox()).performClick()
+        onNodeWithTag(testTagGameNameTextField()).assertExists()
+    }
+
+    @Test
+    fun `check if the player name text field is displayed when checkBox is unchecked`() = runComposeUiTest {
+        setContent {
+            val scope = rememberCoroutineScope()
+            val viewModel = vmForTest(scope)
+            reversiScope.NewGamePage(
+                viewModel = viewModel,
+                playerNameChange = {},
+                onLeave = {}
+            )
+        }
+        // assume checkBox is checked by default, so we uncheck it
+        onNodeWithTag(testTagLocalGameCheckbox()).performClick()
+        onNodeWithTag(testTagPlayerNameTextField()).assertExists()
+    }
+
+    @Test
+    fun `check if the player name text field is not displayed when checkBox is checked`() = runComposeUiTest {
+        setContent {
+            val scope = rememberCoroutineScope()
+            val viewModel = vmForTest(scope)
+            reversiScope.NewGamePage(
+                viewModel = viewModel,
+                playerNameChange = {},
+                onLeave = {}
+            )
+        }
+        // assume checkBox is checked by default
+        onNodeWithTag(testTagPlayerNameTextField()).assertDoesNotExist()
     }
 
     @Test
@@ -76,11 +149,11 @@ class NewGamePageTest {
                 onLeave = {}
             )
         }
-        onNodeWithTag(testTagNewGamePage()).assertExists()
+        onNodeWithTag(testTagBoardSizeTextField()).assertExists()
     }
 
     @Test
-    fun `check if the Piece dropdown is displayed`() = runComposeUiTest {
+    fun `check if the Piece dropdown button is displayed`() = runComposeUiTest {
         setContent {
             val scope = rememberCoroutineScope()
             val viewModel = vmForTest(scope)
@@ -90,7 +163,38 @@ class NewGamePageTest {
                 onLeave = {}
             )
         }
-        onNodeWithTag(testTagNewGamePage()).assertExists()
+        onNodeWithTag(testTagDropdownButton()).assertExists()
+    }
+
+    @Test
+    fun `check if the Piece dropdown is displayed when clicked`() = runComposeUiTest {
+        setContent {
+            val scope = rememberCoroutineScope()
+            val viewModel = vmForTest(scope)
+            reversiScope.NewGamePage(
+                viewModel = viewModel,
+                playerNameChange = {},
+                onLeave = {}
+            )
+        }
+
+        onNodeWithTag(testTagDropdownButton()).performClick()
+        onNodeWithTag(testTagPieceDropdown()).assertExists()
+    }
+
+    @Test
+    fun `check if the Piece dropdown is not displayed when not clicked`() = runComposeUiTest {
+        setContent {
+            val scope = rememberCoroutineScope()
+            val viewModel = vmForTest(scope)
+            reversiScope.NewGamePage(
+                viewModel = viewModel,
+                playerNameChange = {},
+                onLeave = {}
+            )
+        }
+
+        onNodeWithTag(testTagPieceDropdown()).assertDoesNotExist()
     }
 
     @Test
@@ -104,6 +208,6 @@ class NewGamePageTest {
                 onLeave = {}
             )
         }
-        onNodeWithTag(testTagNewGamePage()).assertExists()
+        onNodeWithTag(testTagStartGameButton()).assertExists()
     }
 }

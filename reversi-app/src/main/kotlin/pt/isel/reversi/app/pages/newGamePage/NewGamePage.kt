@@ -30,7 +30,7 @@ fun testTagPieceDropdown() = "new_game_piece_dropdown"
 fun testTagPieceDropdownBlack() = "new_game_piece_dropdown_black"
 fun testTagPieceDropdownWhite() = "new_game_piece_dropdown_white"
 fun testTagStartGameButton() = "new_game_start_button"
-
+fun testTagDropdownButton() = "new_game_dropdown_button"
 /**
  * New game page for creating a local game with piece selection.
  * Allows the user to choose their piece color and start a new game.
@@ -115,7 +115,8 @@ private fun ReversiScope.NewGamePageView(
                     onCheckedChange = {
                         isLocal = it
                         if (it) game = game.copy(currGameName = "")
-                    }
+                    },
+                    modifier = Modifier.testTag(testTagLocalGameCheckbox())
                 )
             }
 
@@ -127,7 +128,7 @@ private fun ReversiScope.NewGamePageView(
                         game = game.copy(currGameName = it)
                     },
                     label = { ReversiText("Nome do jogo (multijogador)") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag(testTagGameNameTextField()),
                     enabled = !isLocal,
                 )
             }
@@ -137,7 +138,7 @@ private fun ReversiScope.NewGamePageView(
                     value = playerName,
                     onValueChange = { playerName = it },
                     label = { ReversiText("Nome de jogador") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag(testTagPlayerNameTextField()),
                 )
             }
 
@@ -145,7 +146,7 @@ private fun ReversiScope.NewGamePageView(
                 value = boardSize,
                 onValueChange = { boardSize = it },
                 label = { ReversiText("Tamanho do Tabuleiro (4-26)") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().testTag(testTagBoardSizeTextField()),
             )
 
 
@@ -168,7 +169,7 @@ private fun ReversiScope.NewGamePageView(
                 Box(modifier = Modifier.run { fillMaxWidth() }) {
                     OutlinedButton(
                         onClick = { expanded = true },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().testTag(testTagDropdownButton()),
                         shape = RoundedCornerShape(12.dp),
                         border = BorderStroke(1.dp, theme.textColor.copy(0.2f)),
 
@@ -191,21 +192,23 @@ private fun ReversiScope.NewGamePageView(
                     ReversiDropDownMenu(
                         expanded = expanded,
                         onDismissRequest = { expanded = false },
-                        modifier = Modifier.widthIn(min = 200.dp)
+                        modifier = Modifier.widthIn(min = 200.dp).testTag(testTagPieceDropdown()),
                     ) {
                         ReversiDropdownMenuItem(
                             text = "Preto",
                             onClick = {
                                 game = game.changeMyPiece(PieceType.BLACK)
                                 expanded = false
-                            }
+                            },
+                            modifier = Modifier.testTag(testTagPieceDropdownBlack()),
                         )
                         ReversiDropdownMenuItem(
                             text = "Branco",
                             onClick = {
                                 game = game.changeMyPiece(PieceType.WHITE)
                                 expanded = false
-                            }
+                            },
+                            modifier = Modifier.testTag(testTagPieceDropdownWhite())
                         )
                     }
                 }
@@ -214,7 +217,7 @@ private fun ReversiScope.NewGamePageView(
             Spacer(Modifier.height(8.dp))
 
             ReversiButton(
-                modifier = Modifier.fillMaxWidth().height(50.dp),
+                modifier = Modifier.fillMaxWidth().height(50.dp).testTag(testTagStartGameButton()),
                 onClick = {
                     val preparedGame = if (isLocal) game.copy(currGameName = "") else game
                     onClick(preparedGame, boardSize.parseBoardSize(), playerName.ifBlank { null })

@@ -83,7 +83,13 @@ fun ReversiScope.PlayerResultColumn(
     ) {
         Box(modifier = Modifier.size(80.dp)) {
             Canvas(
-                modifier = Modifier.fillMaxSize().semantics { testTag = testTagDrawCrown() }) {
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(
+                        if (isWinner) Modifier.semantics { testTag = testTagDrawCrown() }
+                        else Modifier
+                    )
+            ) {
                 val paddingH = size.height * 0.5f
                 val cx = size.width / 2f
                 val cy = size.height / 2f - paddingH / 2f
@@ -130,3 +136,4 @@ fun ReversiScope.DrawPlayerInfo(player: Player) {
         )
     }
 }
+

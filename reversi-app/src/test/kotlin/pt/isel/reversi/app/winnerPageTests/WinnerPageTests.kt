@@ -2,7 +2,7 @@ package pt.isel.reversi.app.winnerPageTests
 
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.runComposeUiTest
 import kotlinx.coroutines.CoroutineScope
 import pt.isel.reversi.app.app.state.AppState
@@ -83,9 +83,7 @@ class WinnerPageTests {
                 onLeave = {}
             )
         }
-        // The winner page displays both players, so there are 2 crown decorations
-        onAllNodesWithTag(testTagDrawCrown()).fetchSemanticsNodes().size.let { count ->
-            assert(count == 2) { "Expected 2 crown nodes but found $count" }
-        }
+
+        onNodeWithTag(testTagDrawCrown(), true).assertExists()
     }
 }
