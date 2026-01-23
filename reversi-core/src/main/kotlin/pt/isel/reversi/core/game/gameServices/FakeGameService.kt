@@ -25,8 +25,8 @@ class FakeGameService : GameServiceImpl {
     fun load(id: String) =
         _game.find { it.first == id }?.second
 
-    override suspend fun delete(id: String) {
-        _game.find { it.first == id }?.let {
+    override suspend fun delete(gameName: String) {
+        _game.find { it.first == gameName }?.let {
             _game.remove(it)
         }
     }
@@ -50,7 +50,7 @@ class FakeGameService : GameServiceImpl {
         val gs = game.requireStartedGame()
         val name = game.currGameName ?: return (gs.players.isFull())
 
-        val loaded = load(game.currGameName) ?: return false
+        val loaded = load(name) ?: return false
         return (loaded.players.isFull())
     }
 
@@ -135,7 +135,7 @@ class FakeGameService : GameServiceImpl {
             try {
                 new(name) { gameState }
                 return@saveOnlyBoard
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 return
             }
         }
