@@ -98,7 +98,7 @@ The project is organized into five specialized, independently testable modules:
 ## Documentation Site
 
 A full HTML version of the generated documentation is available online:  
-[Reversi Documentation](https://isel-leic-tds.github.io/32d-2526i-g01-muyloco/)
+[Reversi Documentation](https://rafapear.github.io/TDS-2425-Assignment/)
 
 ## Module Structure
 
@@ -170,7 +170,7 @@ Output: `build/dokka/htmlMultiModule/index.html`
 ### Online Documentation
 
 A full HTML version of the generated documentation is available online:  
-[Reversi Documentation](https://isel-leic-tds.github.io/32d-2526i-g01-muyloco/)
+[Reversi Documentation](https://rafapear.github.io/TDS-2425-Assignment/)
 
 ### Module Documentation
 
