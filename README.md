@@ -1,6 +1,6 @@
 # Reversi Board Game - Kotlin (JVM)
 
-[![Release Tests](https://github.com/isel-leic-tds/32d-2526i-g01-muyloco/actions/workflows/release-tests.yml/badge.svg)](https://github.com/isel-leic-tds/32d-2526i-g01-muyloco/actions/workflows/release-tests.yml)
+[![Release Tests](https://github.com/RafaPear/TDS-2425-Assignment/actions/workflows/release-tests.yml/badge.svg)](https://github.com/RafaPear/TDS-2425-Assignment/actions/workflows/release-tests.yml)
 
 A modular, test-friendly implementation of the Reversi board game written in Kotlin (JVM) targeting **Java 21**. 
 The project emphasizes clean separation of concerns, explicit domain modeling, and pluggable persistence.
