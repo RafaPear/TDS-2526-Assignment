@@ -1,6 +1,6 @@
 # Reversi Board Game - Kotlin (JVM)
 
-[![Release Tests](https://github.com/RafaPear/TDS-2425-Assignment/actions/workflows/release-tests.yml/badge.svg)](https://github.com/RafaPear/TDS-2425-Assignment/actions/workflows/release-tests.yml)
+[![Release Tests](https://github.com/RafaPear/TDS-2526-Assignment/actions/workflows/release-tests.yml/badge.svg)](https://github.com/RafaPear/TDS-2526-Assignment/actions/workflows/release-tests.yml)
 
 A modular, test-friendly implementation of the Reversi board game written in Kotlin (JVM) targeting **Java 21**. 
 The project emphasizes clean separation of concerns, explicit domain modeling, and pluggable persistence.
@@ -98,7 +98,7 @@ The project is organized into five specialized, independently testable modules:
 ## Documentation Site
 
 A full HTML version of the generated documentation is available online:  
-[Reversi Documentation](https://rafapear.github.io/TDS-2425-Assignment/)
+[Reversi Documentation](https://rafapear.github.io/TDS-2526-Assignment/)
 
 ## Module Structure
 
@@ -170,7 +170,7 @@ Output: `build/dokka/htmlMultiModule/index.html`
 ### Online Documentation
 
 A full HTML version of the generated documentation is available online:  
-[Reversi Documentation](https://rafapear.github.io/TDS-2425-Assignment/)
+[Reversi Documentation](https://rafapear.github.io/TDS-2526-Assignment/)
 
 ### Module Documentation
 
